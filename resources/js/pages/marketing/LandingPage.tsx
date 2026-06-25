@@ -205,21 +205,24 @@ const FrameworkBackground = () => (
     {/* Grid Pattern Ala Next.js / Tailwind UI */}
     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_100%)]" />
     
-    {/* Vibrant Ambient Orbs (Fuchsia, Cyan, Violet) */}
+    {/* Vibrant Ambient Orbs (Optimized without CSS Blur) */}
     <motion.div 
       animate={{ scale: [1, 1.2, 1], x: [0, 50, 0], y: [0, -50, 0] }}
       transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute top-[0%] -left-[10%] w-[600px] h-[600px] md:w-[800px] md:h-[800px] blur-[150px] bg-fuchsia-600/20 rounded-full mix-blend-screen" 
+      className="absolute top-[0%] -left-[10%] w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full bg-[radial-gradient(circle_at_center,rgba(192,38,211,0.15)_0%,transparent_70%)] pointer-events-none" 
+      style={{ willChange: 'transform' }}
     />
     <motion.div 
       animate={{ scale: [1, 1.3, 1], x: [0, -50, 0], y: [0, 50, 0] }}
       transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute top-[40%] -right-[10%] w-[800px] h-[800px] md:w-[1000px] md:h-[1000px] blur-[180px] bg-violet-600/20 rounded-full mix-blend-screen" 
+      className="absolute top-[40%] -right-[10%] w-[800px] h-[800px] md:w-[1000px] md:h-[1000px] rounded-full bg-[radial-gradient(circle_at_center,rgba(124,58,237,0.15)_0%,transparent_70%)] pointer-events-none" 
+      style={{ willChange: 'transform' }}
     />
     <motion.div 
       animate={{ scale: [1, 1.1, 1], x: [0, 30, 0], y: [0, 30, 0] }}
       transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute bottom-[-10%] left-[20%] w-[700px] h-[700px] md:w-[900px] md:h-[900px] blur-[150px] bg-cyan-600/20 rounded-full mix-blend-screen" 
+      className="absolute bottom-[-10%] left-[20%] w-[700px] h-[700px] md:w-[900px] md:h-[900px] rounded-full bg-[radial-gradient(circle_at_center,rgba(8,145,178,0.15)_0%,transparent_70%)] pointer-events-none" 
+      style={{ willChange: 'transform' }}
     />
     
     {/* Cinematic AI Hero Image - INTRO ANIMATION */}
@@ -234,7 +237,7 @@ const FrameworkBackground = () => (
         animate={{ scale: [1, 1.08, 1], y: [0, -15, 0] }}
         transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
         className="absolute inset-0 bg-cover bg-center bg-no-repeat origin-bottom"
-        style={{ backgroundImage: 'url("/images/ai-assets/ai-gym-hero.png")' }}
+        style={{ backgroundImage: 'url("/images/ai-assets/ai-gym-hero.png")', willChange: 'transform' }}
       />
       
       {/* Scanning Laser Line */}
