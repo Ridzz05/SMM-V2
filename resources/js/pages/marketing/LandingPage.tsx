@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import { 
-  Layers, Cpu, Terminal, Users, QrCode, BarChart3, Shield, 
-  ArrowRight, CheckCircle, Database, BrainCircuit, Fingerprint, 
+import {
+  Layers, Cpu, Terminal, Users, QrCode, BarChart3, Shield,
+  ArrowRight, CheckCircle, Database, BrainCircuit, Fingerprint,
   CalendarDays, LineChart, Zap, UserCheck, Stethoscope, ChevronRight, Activity, VolumeX
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -12,172 +12,55 @@ import { motion } from 'framer-motion';
 // ==========================================
 const SciFiScannerAudio = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const audioCtxRef = useRef<any>(null);
-  const nodesRef = useRef<any[]>([]);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const hasAutoPlayed = useRef(false);
 
-  const startAudio = async () => {
-    if (isPlaying || nodesRef.current.length > 0) return;
-
-    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-    if (!audioCtxRef.current) audioCtxRef.current = new AudioContext();
-    
-    const ctx = audioCtxRef.current;
-    if (ctx.state === 'suspended') {
-      try {
-        await ctx.resume();
-      } catch (e) {
-        return; // Blocked by browser
-      }
-    }
-
-    if (ctx.state !== 'running') return; // Still blocked
-
-    // Use a Dynamics Compressor to make it LOUD and punchy without distortion
-    const masterGain = ctx.createGain();
-    masterGain.gain.setValueAtTime(0, ctx.currentTime);
-    masterGain.gain.linearRampToValueAtTime(2.0, ctx.currentTime + 1); // 200% volume master
-    
-    const compressor = ctx.createDynamicsCompressor();
-    compressor.threshold.setValueAtTime(-20, ctx.currentTime);
-    compressor.knee.setValueAtTime(10, ctx.currentTime);
-    compressor.ratio.setValueAtTime(12, ctx.currentTime);
-    compressor.attack.setValueAtTime(0, ctx.currentTime);
-    compressor.release.setValueAtTime(0.25, ctx.currentTime);
-    
-    masterGain.connect(compressor);
-    compressor.connect(ctx.destination);
-
-    // 1. Base Electrical Hum (Subtle machine noise)
-    const humOsc = ctx.createOscillator();
-    humOsc.type = 'sawtooth';
-    humOsc.frequency.setValueAtTime(55, ctx.currentTime);
-    
-    const humFilter = ctx.createBiquadFilter();
-    humFilter.type = 'lowpass';
-    humFilter.frequency.setValueAtTime(200, ctx.currentTime);
-    
-    const humGain = ctx.createGain();
-    humGain.gain.setValueAtTime(0.6, ctx.currentTime); 
-    
-    humOsc.connect(humFilter);
-    humFilter.connect(humGain);
-    humGain.connect(masterGain);
-    humOsc.start();
-
-    // 2. High-Frequency Laser Scanner Beam (Steady flutter)
-    const beamOsc = ctx.createOscillator();
-    beamOsc.type = 'sine';
-    beamOsc.frequency.setValueAtTime(2800, ctx.currentTime); 
-    
-    const beamGain = ctx.createGain();
-    beamGain.gain.setValueAtTime(0.15, ctx.currentTime); 
-    
-    const beamLFO = ctx.createOscillator();
-    beamLFO.type = 'square';
-    beamLFO.frequency.setValueAtTime(20, ctx.currentTime); 
-    
-    const beamLFOGain = ctx.createGain();
-    beamLFOGain.gain.setValueAtTime(0.15, ctx.currentTime); 
-    
-    beamLFO.connect(beamLFOGain);
-    beamLFOGain.connect(beamGain.gain);
-    
-    beamOsc.connect(beamGain);
-    beamGain.connect(masterGain);
-    
-    beamOsc.start();
-    beamLFO.start();
-
-    // 3. Pure Robotic Data Processing
-    const dataOsc = ctx.createOscillator();
-    dataOsc.type = 'square'; 
-    
-    const dataGain = ctx.createGain();
-    dataGain.gain.setValueAtTime(0, ctx.currentTime);
-    
-    dataOsc.connect(dataGain);
-    dataGain.connect(masterGain);
-    dataOsc.start();
-
-    const glitchInterval = setInterval(() => {
-      if(ctx.state !== 'running') return;
-      const now = ctx.currentTime;
-      
-      if (Math.random() > 0.4) {
-        const freq = 1500 + Math.random() * 3000; 
-        dataOsc.frequency.setValueAtTime(freq, now);
-        dataGain.gain.setValueAtTime(0.3, now);
-        dataGain.gain.linearRampToValueAtTime(0, now + 0.05); 
-      }
-    }, 40);
-
-    nodesRef.current = [humOsc, beamOsc, beamLFO, dataOsc, masterGain, glitchInterval];
-    setIsPlaying(true);
-    hasAutoPlayed.current = true;
-  };
-
-  const stopAudio = () => {
-    if (!isPlaying) return;
-    const masterGain = nodesRef.current[4];
-    if (masterGain && audioCtxRef.current) {
-      masterGain.gain.linearRampToValueAtTime(0.001, audioCtxRef.current.currentTime + 1);
-      setTimeout(() => {
-        nodesRef.current.forEach(node => {
-          if (node.stop) node.stop();
-          if (node.disconnect) node.disconnect();
-        });
-        clearInterval(nodesRef.current[5]);
-        nodesRef.current = [];
-        setIsPlaying(false);
-      }, 1000);
-    }
-  };
-
   const toggleAudio = () => {
-    if (!isPlaying) {
-      startAudio();
+    if (!iframeRef.current) return;
+    
+    if (isPlaying) {
+      iframeRef.current.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
     } else {
-      stopAudio();
+      iframeRef.current.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
     }
+    setIsPlaying(!isPlaying);
   };
 
   useEffect(() => {
-    // Attempt Auto-Play Strategy
     const handleInteraction = () => {
       if (!hasAutoPlayed.current && !isPlaying) {
-        startAudio().then(() => {
-          if (hasAutoPlayed.current) {
-            // Clean up listeners once successfully started
-            ['click', 'scroll', 'touchstart', 'mousemove'].forEach(e => 
-              window.removeEventListener(e, handleInteraction)
-            );
-          }
-        });
+        hasAutoPlayed.current = true;
+        toggleAudio();
+        ['click', 'scroll', 'touchstart', 'mousemove'].forEach(e =>
+          window.removeEventListener(e, handleInteraction)
+        );
       }
     };
 
-    // Try immediately (Works if user just navigated here via React Router)
-    handleInteraction();
-
-    // Fallback: Start audio on the very first interaction (Browser policy compliance)
-    ['click', 'scroll', 'touchstart', 'mousemove'].forEach(e => 
+    ['click', 'scroll', 'touchstart', 'mousemove'].forEach(e =>
       window.addEventListener(e, handleInteraction, { passive: true })
     );
 
     return () => {
-      ['click', 'scroll', 'touchstart', 'mousemove'].forEach(e => 
+      ['click', 'scroll', 'touchstart', 'mousemove'].forEach(e =>
         window.removeEventListener(e, handleInteraction)
       );
     };
-  }, []);
+  }, [isPlaying]);
 
   return (
-    <button 
-      onClick={toggleAudio}
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-full bg-black/80 border border-cyan-500/50 text-cyan-400 hover:bg-cyan-900/50 hover:scale-105 backdrop-blur-md transition-all shadow-[0_0_15px_rgba(34,211,238,0.3)] group"
-    >
-      {isPlaying ? (
+    <>
+      <iframe
+        ref={iframeRef}
+        src="https://www.youtube.com/embed/RgKAFK5djSk?enablejsapi=1&autoplay=0&loop=1&playlist=RgKAFK5djSk"
+        allow="autoplay"
+        style={{ display: 'none' }}
+      />
+      <button
+        onClick={toggleAudio}
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-full bg-black/80 border border-cyan-500/50 text-cyan-400 hover:bg-cyan-900/50 hover:scale-105 backdrop-blur-md transition-all shadow-[0_0_15px_rgba(34,211,238,0.3)] group"
+      >
+        {isPlaying ? (
         <>
           <div className="flex items-center gap-1 h-4">
             <span className="w-1 h-2/3 bg-cyan-400 animate-[pulse_0.5s_infinite]" />
@@ -191,8 +74,9 @@ const SciFiScannerAudio = () => {
           <VolumeX className="w-4 h-4 text-slate-400 group-hover:text-cyan-400" />
           <span className="text-[10px] font-mono tracking-widest text-slate-400 group-hover:text-cyan-400">ENABLE SCANNER AUDIO</span>
         </>
-      )}
-    </button>
+        )}
+      </button>
+    </>
   );
 };
 
@@ -201,48 +85,48 @@ const SciFiScannerAudio = () => {
 // ==========================================
 const FrameworkBackground = () => (
   <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-[#020617]">
-    
+
     {/* Grid Pattern Ala Next.js / Tailwind UI */}
     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_100%)]" />
-    
+
     {/* Vibrant Ambient Orbs (Optimized without CSS Blur) */}
-    <motion.div 
+    <motion.div
       animate={{ scale: [1, 1.2, 1], x: [0, 50, 0], y: [0, -50, 0] }}
       transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute top-[0%] -left-[10%] w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full bg-[radial-gradient(circle_at_center,rgba(192,38,211,0.15)_0%,transparent_70%)] pointer-events-none" 
+      className="absolute top-[0%] -left-[10%] w-[600px] h-[600px] md:w-[800px] md:h-[800px] rounded-full bg-[radial-gradient(circle_at_center,rgba(192,38,211,0.15)_0%,transparent_70%)] pointer-events-none"
       style={{ willChange: 'transform' }}
     />
-    <motion.div 
+    <motion.div
       animate={{ scale: [1, 1.3, 1], x: [0, -50, 0], y: [0, 50, 0] }}
       transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute top-[40%] -right-[10%] w-[800px] h-[800px] md:w-[1000px] md:h-[1000px] rounded-full bg-[radial-gradient(circle_at_center,rgba(124,58,237,0.15)_0%,transparent_70%)] pointer-events-none" 
+      className="absolute top-[40%] -right-[10%] w-[800px] h-[800px] md:w-[1000px] md:h-[1000px] rounded-full bg-[radial-gradient(circle_at_center,rgba(124,58,237,0.15)_0%,transparent_70%)] pointer-events-none"
       style={{ willChange: 'transform' }}
     />
-    <motion.div 
+    <motion.div
       animate={{ scale: [1, 1.1, 1], x: [0, 30, 0], y: [0, 30, 0] }}
       transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute bottom-[-10%] left-[20%] w-[700px] h-[700px] md:w-[900px] md:h-[900px] rounded-full bg-[radial-gradient(circle_at_center,rgba(8,145,178,0.15)_0%,transparent_70%)] pointer-events-none" 
+      className="absolute bottom-[-10%] left-[20%] w-[700px] h-[700px] md:w-[900px] md:h-[900px] rounded-full bg-[radial-gradient(circle_at_center,rgba(8,145,178,0.15)_0%,transparent_70%)] pointer-events-none"
       style={{ willChange: 'transform' }}
     />
-    
+
     {/* Cinematic AI Hero Image - INTRO ANIMATION */}
-    <motion.div 
+    <motion.div
       initial={{ height: "100vh", opacity: 1 }}
       animate={{ height: "70vh", opacity: 0.4 }}
       transition={{ duration: 1.5, delay: 3, ease: [0.76, 0, 0.24, 1] }}
       className="absolute top-0 left-0 right-0 overflow-hidden"
     >
       {/* Background Image (Ken Burns Animated) */}
-      <motion.div 
+      <motion.div
         animate={{ scale: [1, 1.08, 1], y: [0, -15, 0] }}
         transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
         className="absolute inset-0 bg-cover bg-center bg-no-repeat origin-bottom"
         style={{ backgroundImage: 'url("/images/ai-assets/ai-gym-hero.png")', willChange: 'transform' }}
       />
-      
+
       {/* Scanning Laser Line */}
-      <motion.div 
-        animate={{ top: ["-10%", "110%", "-10%"] }} 
+      <motion.div
+        animate={{ top: ["-10%", "110%", "-10%"] }}
         transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
         className="absolute left-0 right-0 h-[2px] bg-cyan-400 shadow-[0_0_30px_8px_rgba(34,211,238,0.8)] z-20 flex justify-center"
       >
@@ -259,7 +143,7 @@ const FrameworkBackground = () => (
       <div className="absolute bottom-[20%] right-[20%] w-16 h-16 border-r-2 border-b-2 border-cyan-500/50 z-10" />
 
       {/* Dynamic Mask Overlay - Fades in as it shrinks */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5, delay: 3, ease: "easeInOut" }}
@@ -273,7 +157,7 @@ const FrameworkBackground = () => (
 // 2. SUB-KOMPONEN: MODERN FRAMEWORK FEATURE CARD
 // ==========================================
 const ModernFeatureCard = ({ icon: Icon, title, desc, tag, imagePath, delay = 0 }: { icon: any, title: string, desc: string, tag: string, imagePath: string, delay?: number }) => (
-  <motion.div 
+  <motion.div
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: false, margin: "-50px" }}
@@ -282,10 +166,10 @@ const ModernFeatureCard = ({ icon: Icon, title, desc, tag, imagePath, delay = 0 
   >
     {/* Cover Image Section */}
     <div className="h-48 w-full relative overflow-hidden border-b border-white/5 bg-slate-900">
-      <img 
-        src={imagePath} 
-        alt={title} 
-        className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" 
+      <img
+        src={imagePath}
+        alt={title}
+        className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent opacity-80" />
       <div className="absolute bottom-4 left-4">
@@ -294,7 +178,7 @@ const ModernFeatureCard = ({ icon: Icon, title, desc, tag, imagePath, delay = 0 
         </span>
       </div>
     </div>
-    
+
     {/* Content Section */}
     <div className="p-6 flex-1 flex flex-col">
       <div className="flex items-center gap-3 mb-3">
@@ -312,7 +196,7 @@ const ModernFeatureCard = ({ icon: Icon, title, desc, tag, imagePath, delay = 0 
 // 3. SUB-KOMPONEN: HOLOGRAPHIC FOUNDER CARD
 // ==========================================
 const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0 }: { icon: any, role: string, name: string, imageUrl: string, desc: string, delay?: number }) => (
-  <motion.div 
+  <motion.div
     initial={{ opacity: 0, y: 50 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: false, margin: "-50px" }}
@@ -321,21 +205,21 @@ const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0
   >
     {/* Animated Background Tech Grid */}
     <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.03)_1px,transparent_1px)] bg-[size:20px_20px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0 pointer-events-none" />
-    
+
     {/* Holographic Scanning Line */}
-    <motion.div 
-      animate={{ y: ["-10px", "650px"] }} 
+    <motion.div
+      animate={{ y: ["-10px", "650px"] }}
       transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
-      className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_20px_2px_#22d3ee] z-20 opacity-0 group-hover:opacity-100 mix-blend-screen" 
+      className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_20px_2px_#22d3ee] z-20 opacity-0 group-hover:opacity-100 mix-blend-screen"
     />
-    
+
     {/* Image Container (Portrait Format) */}
     <div className="absolute inset-0 w-full h-full z-0">
-      <img 
-        src={imageUrl} 
-        alt={name} 
-        className="w-full h-full object-cover object-top opacity-50 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 grayscale group-hover:grayscale-0" 
-        onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=050505&color=22D3EE&bold=true&size=512`; }} 
+      <img
+        src={imageUrl}
+        alt={name}
+        className="w-full h-full object-cover object-top opacity-50 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 grayscale group-hover:grayscale-0"
+        onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=050505&color=22D3EE&bold=true&size=512`; }}
       />
       {/* Vignet & Gradients */}
       <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent" />
@@ -344,33 +228,33 @@ const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0
 
     {/* Content Overlay */}
     <div className="relative z-10 flex flex-col h-full p-8 justify-between">
-      
+
       {/* Top Header Row */}
       <div className="flex justify-between items-start">
-         <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-cyan-400 font-mono text-[10px] uppercase tracking-widest shadow-lg">
-           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_5px_#22d3ee]" /> System Active
-         </span>
-         <div className="w-12 h-12 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-slate-400 group-hover:text-cyan-400 group-hover:border-cyan-400/50 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-500">
-           <Icon className="w-6 h-6" />
-         </div>
+        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-cyan-400 font-mono text-[10px] uppercase tracking-widest shadow-lg">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_5px_#22d3ee]" /> System Active
+        </span>
+        <div className="w-12 h-12 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-slate-400 group-hover:text-cyan-400 group-hover:border-cyan-400/50 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-500">
+          <Icon className="w-6 h-6" />
+        </div>
       </div>
 
       {/* Text Details (Slides up on hover) */}
       <div className="transform translate-y-16 group-hover:translate-y-0 transition-transform duration-500 ease-out">
         <h4 className="text-[11px] md:text-xs font-mono text-cyan-400 tracking-[0.3em] uppercase mb-3 drop-shadow-md">{role}</h4>
         <h3 className="text-3xl md:text-4xl font-black text-white mb-6 tracking-tight uppercase drop-shadow-lg leading-none">{name}</h3>
-        
+
         {/* Hidden on default, appears gracefully on hover */}
         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-           <div className="w-full h-px bg-white/10 mb-5 relative overflow-hidden">
-             <motion.div 
-                initial={{ x: "-100%" }}
-                whileInView={{ x: "200%" }}
-                transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
-                className="absolute left-0 top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" 
-             />
-           </div>
-           <p className="text-slate-300 text-sm leading-relaxed font-light line-clamp-4">{desc}</p>
+          <div className="w-full h-px bg-white/10 mb-5 relative overflow-hidden">
+            <motion.div
+              initial={{ x: "-100%" }}
+              whileInView={{ x: "200%" }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
+              className="absolute left-0 top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
+            />
+          </div>
+          <p className="text-slate-300 text-sm leading-relaxed font-light line-clamp-4">{desc}</p>
         </div>
       </div>
     </div>
@@ -386,7 +270,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post('/request-demo', { onSuccess: () => { if(!errors) { alert('Request demo berhasil terkirim!'); setShowForm(false); } } });
+    post('/request-demo', { onSuccess: () => { if (!errors) { alert('Request demo berhasil terkirim!'); setShowForm(false); } } });
   };
 
   return (
@@ -394,13 +278,28 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
       <Head title="ERP Infrastructure - PT Solusi Mitra Mandiri" />
       <SciFiScannerAudio />
       <div className="min-h-screen bg-transparent text-slate-100 font-sans antialiased selection:bg-cyan-500/30 selection:text-white relative overflow-x-hidden">
-        
         <FrameworkBackground />
 
+        {/* --- TOP NAVIGATION BAR --- */}
+        <div className="absolute top-0 left-0 w-full z-50 p-6 md:p-8 flex justify-start items-center">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="bg-white/100 rounded-xl md:rounded-2xl overflow-hidden shadow-[0_0_25px_rgba(34,211,238,0.5)] border border-cyan-500/30 flex items-center justify-center p-1"
+          >
+            <img 
+              src="/images/logo.png" 
+              alt="PT Solusi Mitra Mandiri Logo" 
+              className="h-16 md:h-24 w-auto object-contain"
+            />
+          </motion.div>
+        </div>
+
         {/* --- 1. HERO SECTION (CLEAN TYPOGRAPHY) --- */}
-        <motion.header 
-          initial={{ opacity: 0, y: 50, filter: "blur(10px)" }} 
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} 
+        <motion.header
+          initial={{ opacity: 0, y: 50, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 1.2, delay: 3.5, ease: "easeOut" }}
           className="relative max-w-7xl mx-auto px-4 pt-48 pb-24 text-center z-10 flex flex-col items-center min-h-screen justify-center md:min-h-0 md:justify-start"
         >
@@ -409,18 +308,18 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
             Memperkenalkan Infrastruktur FitOS 2.0
             <ChevronRight className="w-3 h-3 text-slate-500" />
           </a>
-          
+
           <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight max-w-5xl mx-auto mb-6 leading-[1.1]">
-            Arsitektur Perangkat Lunak untuk <br className="hidden md:block"/>
+            Arsitektur Perangkat Lunak untuk <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-cyan-500">
               Operasional Mega-Gym
             </span>
           </h1>
-          
+
           <p className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
             Sistem ERP komprehensif yang dirancang untuk otomasi skala enterprise. Menyambungkan CRM, POS, Edge AI Biometrics, dan analitik data dalam satu pangkalan data relasional.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row justify-center gap-4 w-full sm:w-auto">
             <button onClick={() => setShowForm(!showForm)} className="px-6 py-3 bg-white text-black font-semibold rounded-lg shadow-lg hover:bg-slate-200 transition-all flex items-center justify-center gap-2 text-sm">
               Deploy Ekosistem <ArrowRight className="w-4 h-4" />
@@ -438,26 +337,26 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
               <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 text-slate-500 hover:text-white p-2">X</button>
               <h3 className="text-xl font-bold text-white mb-2">Request Deployment</h3>
               <p className="text-slate-400 text-sm mb-6">Konsultasikan kebutuhan spesifik infrastruktur PT Solusi Mitra Mandiri Anda.</p>
-              
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Nama Perusahaan</label>
-                    <input type="text" required value={data.company_name} onChange={e => setData('company_name', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all"/>
+                    <input type="text" required value={data.company_name} onChange={e => setData('company_name', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Penanggung Jawab</label>
-                    <input type="text" required value={data.pic_name} onChange={e => setData('pic_name', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all"/>
+                    <input type="text" required value={data.pic_name} onChange={e => setData('pic_name', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all" />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Nomor Telepon / WA</label>
-                    <input type="text" required value={data.phone_number} onChange={e => setData('phone_number', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all"/>
+                    <input type="text" required value={data.phone_number} onChange={e => setData('phone_number', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Alamat Email</label>
-                    <input type="email" required value={data.email} onChange={e => setData('email', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all"/>
+                    <input type="email" required value={data.email} onChange={e => setData('email', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all" />
                   </div>
                 </div>
                 <div>
@@ -484,18 +383,9 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
             <p className="text-slate-400 text-base md:text-lg max-w-2xl">Memadukan keahlian rekayasa perangkat lunak tingkat tinggi, sains data, dan tata kelola bisnis korporasi dalam satu pilar arsitektur yang solid.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {founders && founders.length > 0 ? (
-              founders.map((founder: any, index: number) => {
-                const icons = [Layers, Cpu, Terminal];
-                return <HolographicTeamCard key={founder.id || index} icon={icons[index] || Layers} role={founder.role} name={founder.name} imageUrl={founder.image_path} desc={founder.description} delay={0.1 * index} />;
-              })
-            ) : (
-              <>
-                <HolographicTeamCard icon={Layers} role="Director of Product" name="Founder Product" imageUrl="/images/founders/founder-product.png" desc="Memimpin visi strategis dan peta jalan pengembangan ekosistem ERP yang holistik." delay={0.1} />
-                <HolographicTeamCard icon={Cpu} role="Chief Technology Officer" name="Founder Tech" imageUrl="/images/founders/founder-cto.png" desc="Arsitek utama di balik integrasi mutakhir infrastruktur berbasis kecerdasan buatan." delay={0.2} />
-                <HolographicTeamCard icon={Terminal} role="Head of Software" name="Founder Engineer" imageUrl="/images/founders/founder-engineering.png" desc="Pakar rekayasa perangkat lunak yang memimpin optimasi performa inti aplikasi." delay={0.3} />
-              </>
-            )}
+            <HolographicTeamCard icon={Layers} role="Director of Product" name="Andi Adellia" imageUrl="/images/founders/founder-1-hd.png" desc="Memimpin visi strategis dan peta jalan pengembangan ekosistem ERP yang holistik." delay={0.1} />
+            <HolographicTeamCard icon={Cpu} role="Chief Technology Officer" name="Jonathan Immanuel Alexander" imageUrl="/images/founders/founder-2.jpg" desc="Arsitek utama di balik integrasi mutakhir infrastruktur berbasis kecerdasan buatan." delay={0.2} />
+            <HolographicTeamCard icon={Terminal} role="Head of Software" name="Founder Engineer" imageUrl="/images/founders/founder-engineering.png" desc="Pakar rekayasa perangkat lunak yang memimpin optimasi performa inti aplikasi." delay={0.3} />
           </div>
         </section>
 
@@ -514,9 +404,9 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
           <div className="relative">
             {/* The Hz Wave Cyber Backbone */}
             <div className="absolute left-10 md:left-1/2 top-0 bottom-0 w-[50px] -translate-x-1/2 overflow-hidden z-0 flex justify-center">
-              
+
               {/* Animated SVG Wave Background (Infinite Scroll) */}
-              <motion.div 
+              <motion.div
                 animate={{ y: [0, 200] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                 className="absolute -top-[200px] bottom-0 w-full"
@@ -529,10 +419,10 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
               />
 
               {/* Glowing Scanner overlaying the wave */}
-              <motion.div 
-                animate={{y: ["-200%", "8000%"]}} 
-                transition={{ duration: 5, repeat: Infinity, ease: "linear" }} 
-                className="absolute top-0 w-full h-64 bg-gradient-to-b from-transparent via-cyan-400/30 to-transparent shadow-[0_0_20px_2px_#22d3ee] mix-blend-screen" 
+              <motion.div
+                animate={{ y: ["-200%", "8000%"] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                className="absolute top-0 w-full h-64 bg-gradient-to-b from-transparent via-cyan-400/30 to-transparent shadow-[0_0_20px_2px_#22d3ee] mix-blend-screen"
               />
             </div>
 
@@ -543,15 +433,15 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                 { step: "PHASE_03", icon: "/images/ai-assets/icon-journey-3.png", title: "Biometric Enrollment", desc: "Pendaftaran parameter wajah melalui Kiosk mandiri. Sinkronisasi edge-to-cloud untuk akses tanpa kartu." },
                 { step: "PHASE_04", icon: "/images/ai-assets/icon-journey-4.png", title: "AI Inference Plan", desc: "Mesin OpenRouter LLM memproses payload JSON kebugaran dan mereturn Workout Plan generatif presisi tinggi." }
               ].map((item, index) => (
-                <motion.div 
-                  key={item.step} 
-                  initial={{ opacity: 0, y: 40 }} 
-                  whileInView={{ opacity: 1, y: 0 }} 
-                  viewport={{ once: false, margin: "-100px" }} 
-                  transition={{ duration: 0.7, delay: 0.1 }} 
+                <motion.div
+                  key={item.step}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false, margin: "-100px" }}
+                  transition={{ duration: 0.7, delay: 0.1 }}
                   className="relative flex flex-col md:flex-row items-center w-full group"
                 >
-                  
+
                   {/* Spacer for alternating layout (Desktop only) */}
                   <div className={`hidden md:block w-1/2 ${index % 2 === 0 ? 'md:order-3' : 'md:order-1'}`} />
 
@@ -564,23 +454,23 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                   {/* Holographic Content Box */}
                   <div className={`w-full md:w-1/2 flex pl-28 md:pl-0 ${index % 2 === 0 ? 'md:justify-end md:pr-28 md:order-1' : 'md:justify-start md:pl-28 md:order-3'}`}>
                     <div className="p-8 rounded-3xl bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 group-hover:border-cyan-500/30 transition-all duration-500 relative overflow-hidden backdrop-blur-sm w-full max-w-[420px] group-hover:shadow-[0_10px_40px_-10px_rgba(34,211,238,0.15)] group-hover:-translate-y-1">
-                       
-                       {/* Cyber Glow Line */}
-                       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                       
-                       {/* Background Tech Grid */}
-                       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
-                       
-                       <div className="relative z-10">
-                         <div className="flex items-center justify-between mb-6">
-                           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#000] border border-cyan-500/20 text-cyan-400 font-mono text-[10px] uppercase tracking-widest shadow-inner">
-                             <Zap className="w-3 h-3 text-cyan-400" /> {item.step}
-                           </span>
-                           <span className="text-white/10 font-mono text-2xl font-black group-hover:text-cyan-500/10 transition-colors">0{index + 1}</span>
-                         </div>
-                         <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-cyan-50 transition-colors">{item.title}</h3>
-                         <p className="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">{item.desc}</p>
-                       </div>
+
+                      {/* Cyber Glow Line */}
+                      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+                      {/* Background Tech Grid */}
+                      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+
+                      <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-6">
+                          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#000] border border-cyan-500/20 text-cyan-400 font-mono text-[10px] uppercase tracking-widest shadow-inner">
+                            <Zap className="w-3 h-3 text-cyan-400" /> {item.step}
+                          </span>
+                          <span className="text-white/10 font-mono text-2xl font-black group-hover:text-cyan-500/10 transition-colors">0{index + 1}</span>
+                        </div>
+                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-cyan-50 transition-colors">{item.title}</h3>
+                        <p className="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">{item.desc}</p>
+                      </div>
                     </div>
                   </div>
 
@@ -600,29 +490,29 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { 
-                  role: "Membership Consultant", 
-                  type: "square", 
-                  icon: "/images/ai-assets/icon-role-1.png", 
-                  desc: "Akses read-only ke Cohort Analysis, pelacakan Funnel Ratios, dan modul Follow Up harian dengan filter waktu." 
+                {
+                  role: "Membership Consultant",
+                  type: "square",
+                  icon: "/images/ai-assets/icon-role-1.png",
+                  desc: "Akses read-only ke Cohort Analysis, pelacakan Funnel Ratios, dan modul Follow Up harian dengan filter waktu."
                 },
-                { 
-                  role: "Customer Service", 
-                  type: "square", 
-                  icon: "/images/ai-assets/icon-role-2.png", 
-                  desc: "Modul write-access POS, pencetakan struk digital, manipulasi state kedatangan, dan booking kelas instruktur." 
+                {
+                  role: "Customer Service",
+                  type: "square",
+                  icon: "/images/ai-assets/icon-role-2.png",
+                  desc: "Modul write-access POS, pencetakan struk digital, manipulasi state kedatangan, dan booking kelas instruktur."
                 },
-                { 
-                  role: "Admin & Manager", 
-                  type: "tall", 
-                  icon: "/images/ai-assets/icon-role-4.png", 
-                  desc: "Akses Root (Level 0). Memiliki kontrol penuh atas seluruh sistem, manajemen otorisasi middleware (Roles), audit log aktivitas seluruh karyawan, penetapan Real-time KPI, serta analitik komprehensif untuk proyeksi finansial bisnis Gym." 
+                {
+                  role: "Admin & Manager",
+                  type: "tall",
+                  icon: "/images/ai-assets/icon-role-4.png",
+                  desc: "Akses Root (Level 0). Memiliki kontrol penuh atas seluruh sistem, manajemen otorisasi middleware (Roles), audit log aktivitas seluruh karyawan, penetapan Real-time KPI, serta analitik komprehensif untuk proyeksi finansial bisnis Gym."
                 },
-                { 
-                  role: "Personal Trainer", 
-                  type: "wide", 
-                  icon: "/images/ai-assets/icon-role-3.png", 
-                  desc: "Otorisasi khusus untuk pencatatan session logs, pengawalan Gym Orientation harian, manajemen target anatomi klien, dan mutation data komposisi tubuh (Body Metric). Dirancang khusus untuk workflow on-the-floor tanpa membebani kompleksitas antarmuka." 
+                {
+                  role: "Personal Trainer",
+                  type: "wide",
+                  icon: "/images/ai-assets/icon-role-3.png",
+                  desc: "Otorisasi khusus untuk pencatatan session logs, pengawalan Gym Orientation harian, manajemen target anatomi klien, dan mutation data komposisi tubuh (Body Metric). Dirancang khusus untuk workflow on-the-floor tanpa membebani kompleksitas antarmuka."
                 }
               ].map((role, idx) => {
                 const isTall = role.type === 'tall';
@@ -630,12 +520,12 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                 const isSquare = role.type === 'square';
 
                 return (
-                  <motion.div 
-                    key={idx} 
-                    initial={{ opacity: 0, y: 20 }} 
-                    whileInView={{ opacity: 1, y: 0 }} 
-                    viewport={{ once: false, margin: "-50px" }} 
-                    transition={{ duration: 0.5, delay: idx * 0.1 }} 
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: false, margin: "-50px" }}
+                    transition={{ duration: 0.5, delay: idx * 0.1 }}
                     className={`
                       bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden
                       hover:border-cyan-500/30 transition-all duration-500 group relative p-8 shadow-2xl
@@ -647,7 +537,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                   >
                     {/* Background decoration */}
                     <div className="absolute -right-20 -top-20 w-48 h-48 bg-cyan-500/5 blur-[80px] rounded-full group-hover:bg-cyan-500/20 transition-colors duration-700" />
-                    
+
                     {/* Tech Background Pattern */}
                     <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiLz48L3N2Zz4=')] opacity-50 mix-blend-overlay pointer-events-none" />
 
@@ -660,32 +550,32 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                       ${isWide ? 'w-full md:w-[40%] aspect-[4/3] md:aspect-square mb-6 md:mb-0 md:order-2' : ''}
                       ${isSquare ? 'w-16 h-16 mb-8 border-cyan-500/20 p-1' : ''}
                     `}>
-                       <img src={role.icon} alt={role.role} className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100 ${isSquare ? 'rounded-xl' : ''}`} />
-                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      <img src={role.icon} alt={role.role} className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100 ${isSquare ? 'rounded-xl' : ''}`} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>
 
                     {/* Text Content */}
                     <div className={`relative z-10 flex-1 flex flex-col ${isWide ? 'md:order-1' : ''}`}>
-                       {isTall && (
-                         <div className="mb-4">
-                           <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-cyan-950 border border-cyan-800 shadow-[0_0_15px_rgba(34,211,238,0.2)] text-cyan-400">
-                             <Shield className="w-5 h-5" />
-                           </span>
-                         </div>
-                       )}
-                       
-                       <h3 className={`font-bold text-white mb-3 group-hover:text-cyan-50 transition-colors ${isTall ? 'text-2xl' : 'text-xl'}`}>{role.role}</h3>
-                       <p className="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">{role.desc}</p>
-                       
-                       {/* Button / Indicator for Admin */}
-                       {isTall && (
-                         <div className="mt-auto pt-8">
-                           <div className="w-full h-px bg-gradient-to-r from-white/10 via-white/5 to-transparent mb-6" />
-                           <span className="inline-flex items-center gap-2 text-cyan-400 text-[10px] font-mono uppercase tracking-widest bg-cyan-950/30 px-3 py-1.5 rounded-md border border-cyan-800/30">
-                              <Database className="w-3 h-3" /> System Root Auth
-                           </span>
-                         </div>
-                       )}
+                      {isTall && (
+                        <div className="mb-4">
+                          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-cyan-950 border border-cyan-800 shadow-[0_0_15px_rgba(34,211,238,0.2)] text-cyan-400">
+                            <Shield className="w-5 h-5" />
+                          </span>
+                        </div>
+                      )}
+
+                      <h3 className={`font-bold text-white mb-3 group-hover:text-cyan-50 transition-colors ${isTall ? 'text-2xl' : 'text-xl'}`}>{role.role}</h3>
+                      <p className="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">{role.desc}</p>
+
+                      {/* Button / Indicator for Admin */}
+                      {isTall && (
+                        <div className="mt-auto pt-8">
+                          <div className="w-full h-px bg-gradient-to-r from-white/10 via-white/5 to-transparent mb-6" />
+                          <span className="inline-flex items-center gap-2 text-cyan-400 text-[10px] font-mono uppercase tracking-widest bg-cyan-950/30 px-3 py-1.5 rounded-md border border-cyan-800/30">
+                            <Database className="w-3 h-3" /> System Root Auth
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 );
@@ -705,7 +595,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
               <p className="text-slate-400 text-sm leading-relaxed mb-8 max-w-lg">
                 Dibangun di atas infrastruktur *cloud-native*. PT Solusi Mitra Mandiri memanfaatkan komputasi AI *Edge* dan *Cloud LLM* untuk pengambilan keputusan yang deterministik.
               </p>
-              
+
               <div className="space-y-6">
                 {[
                   { icon: Zap, title: "Edge AI Biometrics (face-api.js)", desc: "Inferensi pengenalan wajah dilakukan langsung pada *browser node* di Kiosk tanpa beban latensi server pusat." },
@@ -726,25 +616,25 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                 ))}
               </div>
             </motion.div>
-            
+
             {/* Elegant Tech Image Container */}
             <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, margin: "-50px" }} transition={{ duration: 0.6 }} className="relative h-[350px] md:h-[500px] w-full rounded-2xl overflow-hidden border border-white/10 bg-slate-900/50 backdrop-blur-md shadow-[0_0_50px_rgba(34,211,238,0.1)] p-2 group mt-12 lg:mt-0">
               <motion.div animate={{ y: [-10, 10, -10] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-2 z-0 overflow-hidden rounded-xl border border-cyan-500/20">
                 <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/40 to-blue-900/20 z-10" />
                 <img src="/images/ai-assets/feature-ai-posture.png" alt="Architecture" className="w-full h-full object-cover opacity-70 mix-blend-screen grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" />
-                
+
                 {/* Tech Grid Overlay */}
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.15)_1px,transparent_1px)] bg-[size:40px_40px] z-10 pointer-events-none mix-blend-overlay" />
-                
+
                 {/* Holographic Scanning Laser */}
-                <motion.div 
-                  animate={{ top: ["-10%", "110%"] }} 
+                <motion.div
+                  animate={{ top: ["-10%", "110%"] }}
                   transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                   className="absolute left-0 right-0 h-[2px] bg-cyan-400 shadow-[0_0_30px_8px_rgba(34,211,238,0.8)] z-20 flex justify-center"
                 >
-                   <div className="w-1/2 h-full bg-white shadow-[0_0_10px_2px_white]" />
+                  <div className="w-1/2 h-full bg-white shadow-[0_0_10px_2px_white]" />
                 </motion.div>
-                
+
                 {/* Scanning Reticles */}
                 <div className="absolute top-[10%] left-[10%] w-10 h-10 border-l-2 border-t-2 border-cyan-400/70 z-20" />
                 <div className="absolute bottom-[10%] right-[10%] w-10 h-10 border-r-2 border-b-2 border-cyan-400/70 z-20" />
@@ -764,7 +654,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
               Lihat Spesifikasi Lengkap <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <ModernFeatureCard tag="Module 01" icon={Users} title="CRM & Leads Funnel" desc="Manajemen prospek hulu dengan pipeline status kustom. Konversi terekam pada basis data relasional anggota." imagePath="/images/ai-assets/feature-crm.png" delay={0.1} />
             <ModernFeatureCard tag="Module 02" icon={Terminal} title="POS & Inventory" desc="Sistem pembayaran kasir yang terintegrasi langsung dengan mutasi stok gudang dan aktivasi *session token* PT." imagePath="/images/ai-assets/feature-pos.png" delay={0.2} />
@@ -778,7 +668,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
         {/* --- FOOTER CLEAN --- */}
         <footer className="border-t border-white/10 bg-[#000000] py-12 relative z-10 text-center">
           <p className="text-slate-500 text-xs font-mono">
-            © 2026 PT Solusi Mitra Mandiri. All rights reserved. <br/>
+            © 2026 PT Solusi Mitra Mandiri. All rights reserved. <br />
             Engineered for High-Performance Enterprise.
           </p>
         </footer>
