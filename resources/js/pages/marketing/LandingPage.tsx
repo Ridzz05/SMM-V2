@@ -200,19 +200,26 @@ const SciFiScannerAudio = () => {
 // 1. SUB-KOMPONEN: FRAMEWORK STYLE BACKGROUND
 // ==========================================
 const FrameworkBackground = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-    {/* Base Background */}
-    <div className="absolute inset-0 bg-[#000000]" />
+  <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-[#020617]">
     
     {/* Grid Pattern Ala Next.js / Tailwind UI */}
-    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+    <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_100%)]" />
     
-    {/* Subtle Glow di Tengah Atas (Infinite Pulse) */}
+    {/* Vibrant Ambient Orbs (Fuchsia, Cyan, Violet) */}
     <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: [0.15, 0.3, 0.15], scale: [0.9, 1.1, 0.9] }}
-      transition={{ opacity: { delay: 4, duration: 2 }, scale: { duration: 8, repeat: Infinity, ease: "easeInOut" } }}
-      className="absolute left-1/2 top-0 -translate-x-1/2 w-[800px] h-[400px] blur-[100px] bg-cyan-600 rounded-full" 
+      animate={{ scale: [1, 1.2, 1], x: [0, 50, 0], y: [0, -50, 0] }}
+      transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+      className="absolute top-[0%] -left-[10%] w-[600px] h-[600px] md:w-[800px] md:h-[800px] blur-[150px] bg-fuchsia-600/20 rounded-full mix-blend-screen" 
+    />
+    <motion.div 
+      animate={{ scale: [1, 1.3, 1], x: [0, -50, 0], y: [0, 50, 0] }}
+      transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+      className="absolute top-[40%] -right-[10%] w-[800px] h-[800px] md:w-[1000px] md:h-[1000px] blur-[180px] bg-violet-600/20 rounded-full mix-blend-screen" 
+    />
+    <motion.div 
+      animate={{ scale: [1, 1.1, 1], x: [0, 30, 0], y: [0, 30, 0] }}
+      transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+      className="absolute bottom-[-10%] left-[20%] w-[700px] h-[700px] md:w-[900px] md:h-[900px] blur-[150px] bg-cyan-600/20 rounded-full mix-blend-screen" 
     />
     
     {/* Cinematic AI Hero Image - INTRO ANIMATION */}
@@ -299,34 +306,70 @@ const ModernFeatureCard = ({ icon: Icon, title, desc, tag, imagePath, delay = 0 
 );
 
 // ==========================================
-// 3. SUB-KOMPONEN: CRISP FOUNDER CARD
+// 3. SUB-KOMPONEN: HOLOGRAPHIC FOUNDER CARD
 // ==========================================
-const CrispTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0 }: { icon: any, role: string, name: string, imageUrl: string, desc: string, delay?: number }) => (
+const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0 }: { icon: any, role: string, name: string, imageUrl: string, desc: string, delay?: number }) => (
   <motion.div 
-    initial={{ opacity: 0, y: 30 }}
+    initial={{ opacity: 0, y: 50 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: false, margin: "-50px" }}
-    transition={{ duration: 0.5, delay }}
-    className="group flex flex-col bg-[#050505] border border-white/10 rounded-3xl overflow-hidden hover:border-cyan-500/30 transition-all duration-500 shadow-2xl relative"
+    transition={{ duration: 0.7, delay }}
+    className="group flex flex-col relative rounded-3xl overflow-hidden bg-slate-900/60 backdrop-blur-md border border-white/5 hover:border-cyan-500/40 transition-all duration-700 w-full h-[500px] md:h-[600px] shadow-2xl hover:shadow-[0_0_50px_rgba(34,211,238,0.15)] hover:-translate-y-2"
   >
-    <div className="w-full aspect-square relative overflow-hidden bg-slate-900">
+    {/* Animated Background Tech Grid */}
+    <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.03)_1px,transparent_1px)] bg-[size:20px_20px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0 pointer-events-none" />
+    
+    {/* Holographic Scanning Line */}
+    <motion.div 
+      animate={{ y: ["-10px", "650px"] }} 
+      transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+      className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_20px_2px_#22d3ee] z-20 opacity-0 group-hover:opacity-100 mix-blend-screen" 
+    />
+    
+    {/* Image Container (Portrait Format) */}
+    <div className="absolute inset-0 w-full h-full z-0">
       <img 
         src={imageUrl} 
         alt={name} 
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-        onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1E293B&color=F8FAFC&bold=true&size=512`; }} 
+        className="w-full h-full object-cover object-top opacity-50 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 grayscale group-hover:grayscale-0" 
+        onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=050505&color=22D3EE&bold=true&size=512`; }} 
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent opacity-90" />
-      
-      <div className="absolute top-4 right-4 w-10 h-10 rounded-xl bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-cyan-400 shadow-lg">
-        <Icon className="w-5 h-5" />
-      </div>
+      {/* Vignet & Gradients */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/60 to-transparent" />
     </div>
-    
-    <div className="p-6 md:p-8 flex flex-col relative z-10 -mt-24">
-      <h4 className="text-xs font-bold text-cyan-400 tracking-[0.2em] uppercase mb-2 drop-shadow-md">{role}</h4>
-      <h3 className="text-2xl md:text-3xl font-black text-white mb-4 tracking-tight leading-none drop-shadow-md">{name}</h3>
-      <p className="text-slate-300 text-sm md:text-base leading-relaxed font-light opacity-90">{desc}</p>
+
+    {/* Content Overlay */}
+    <div className="relative z-10 flex flex-col h-full p-8 justify-between">
+      
+      {/* Top Header Row */}
+      <div className="flex justify-between items-start">
+         <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-cyan-400 font-mono text-[10px] uppercase tracking-widest shadow-lg">
+           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_5px_#22d3ee]" /> System Active
+         </span>
+         <div className="w-12 h-12 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-slate-400 group-hover:text-cyan-400 group-hover:border-cyan-400/50 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-500">
+           <Icon className="w-6 h-6" />
+         </div>
+      </div>
+
+      {/* Text Details (Slides up on hover) */}
+      <div className="transform translate-y-16 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+        <h4 className="text-[11px] md:text-xs font-mono text-cyan-400 tracking-[0.3em] uppercase mb-3 drop-shadow-md">{role}</h4>
+        <h3 className="text-3xl md:text-4xl font-black text-white mb-6 tracking-tight uppercase drop-shadow-lg leading-none">{name}</h3>
+        
+        {/* Hidden on default, appears gracefully on hover */}
+        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+           <div className="w-full h-px bg-white/10 mb-5 relative overflow-hidden">
+             <motion.div 
+                initial={{ x: "-100%" }}
+                whileInView={{ x: "200%" }}
+                transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
+                className="absolute left-0 top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" 
+             />
+           </div>
+           <p className="text-slate-300 text-sm leading-relaxed font-light line-clamp-4">{desc}</p>
+        </div>
+      </div>
     </div>
   </motion.div>
 );
@@ -347,7 +390,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
     <>
       <Head title="ERP Infrastructure - PT Solusi Mitra Mandiri" />
       <SciFiScannerAudio />
-      <div className="min-h-screen bg-[#000000] text-slate-100 font-sans antialiased selection:bg-cyan-500/30 selection:text-white relative overflow-x-hidden">
+      <div className="min-h-screen bg-transparent text-slate-100 font-sans antialiased selection:bg-cyan-500/30 selection:text-white relative overflow-x-hidden">
         
         <FrameworkBackground />
 
@@ -428,23 +471,26 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
           </div>
         )}
 
-        {/* --- 2. FOUNDING TEAM SECTION (CRISP) --- */}
-        <section className="max-w-6xl mx-auto px-4 py-20 relative z-10">
-          <div className="flex flex-col items-center mb-12 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">Kepemimpinan Eksekutif</h2>
-            <p className="text-slate-400 text-sm max-w-xl">Memadukan keahlian rekayasa perangkat lunak, sains data, dan tata kelola bisnis korporasi dalam satu pilar arsitektur.</p>
+        {/* --- 2. EXECUTIVE LEADERSHIP (HOLOGRAPHIC PROFILES) --- */}
+        <section className="max-w-7xl mx-auto px-4 py-32 relative z-10">
+          <div className="flex flex-col items-center mb-20 text-center">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-xs uppercase tracking-widest mb-6">
+              <Users className="w-4 h-4" /> The Architects
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Kepemimpinan Eksekutif</h2>
+            <p className="text-slate-400 text-base md:text-lg max-w-2xl">Memadukan keahlian rekayasa perangkat lunak tingkat tinggi, sains data, dan tata kelola bisnis korporasi dalam satu pilar arsitektur yang solid.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {founders && founders.length > 0 ? (
               founders.map((founder: any, index: number) => {
                 const icons = [Layers, Cpu, Terminal];
-                return <CrispTeamCard key={founder.id || index} icon={icons[index] || Layers} role={founder.role} name={founder.name} imageUrl={founder.image_path} desc={founder.description} delay={0.1 * index} />;
+                return <HolographicTeamCard key={founder.id || index} icon={icons[index] || Layers} role={founder.role} name={founder.name} imageUrl={founder.image_path} desc={founder.description} delay={0.1 * index} />;
               })
             ) : (
               <>
-                <CrispTeamCard icon={Layers} role="Director of Product" name="Founder Product" imageUrl="/images/founders/founder-product.png" desc="Memimpin visi strategis dan peta jalan pengembangan ekosistem ERP." delay={0.1} />
-                <CrispTeamCard icon={Cpu} role="Chief Technology Officer" name="Founder Tech" imageUrl="/images/founders/founder-cto.png" desc="Arsitek utama di balik integrasi mutakhir berbasis kecerdasan buatan." delay={0.2} />
-                <CrispTeamCard icon={Terminal} role="Head of Software" name="Founder Engineer" imageUrl="/images/founders/founder-engineering.png" desc="Pakar rekayasa perangkat lunak yang memimpin performa inti aplikasi." delay={0.3} />
+                <HolographicTeamCard icon={Layers} role="Director of Product" name="Founder Product" imageUrl="/images/founders/founder-product.png" desc="Memimpin visi strategis dan peta jalan pengembangan ekosistem ERP yang holistik." delay={0.1} />
+                <HolographicTeamCard icon={Cpu} role="Chief Technology Officer" name="Founder Tech" imageUrl="/images/founders/founder-cto.png" desc="Arsitek utama di balik integrasi mutakhir infrastruktur berbasis kecerdasan buatan." delay={0.2} />
+                <HolographicTeamCard icon={Terminal} role="Head of Software" name="Founder Engineer" imageUrl="/images/founders/founder-engineering.png" desc="Pakar rekayasa perangkat lunak yang memimpin optimasi performa inti aplikasi." delay={0.3} />
               </>
             )}
           </div>
@@ -452,42 +498,88 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
 
         <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-        {/* --- 3. THE MEMBER JOURNEY (CLEAN TIMELINE) --- */}
-        <section className="max-w-5xl mx-auto px-4 py-24 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Pipeline Otomatisasi Member</h2>
-            <p className="text-slate-400 text-sm max-w-xl mx-auto">Siklus hidup end-to-end: dari prospek mentah hingga menjadi entitas data aktif yang mengamankan pendapatan berulang.</p>
+        {/* --- 3. THE DATA PIPELINE (CYBER-TIMELINE) --- */}
+        <section className="max-w-6xl mx-auto px-4 py-32 relative z-10">
+          <div className="text-center mb-24">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-xs uppercase tracking-widest mb-6">
+              <Activity className="w-4 h-4" /> System Architecture
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Pipeline Otomatisasi Member</h2>
+            <p className="text-slate-400 text-base md:text-lg max-w-2xl mx-auto">Siklus hidup end-to-end: merubah entitas prospek mentah menjadi aliran data aktif yang mengamankan pendapatan berulang.</p>
           </div>
 
           <div className="relative">
-            {/* Timeline Line */}
-            <div className="absolute left-8 md:left-1/2 top-4 bottom-4 w-px bg-white/10" />
-            
-            <div className="space-y-16">
+            {/* The Hz Wave Cyber Backbone */}
+            <div className="absolute left-10 md:left-1/2 top-0 bottom-0 w-[50px] -translate-x-1/2 overflow-hidden z-0 flex justify-center">
+              
+              {/* Animated SVG Wave Background (Infinite Scroll) */}
+              <motion.div 
+                animate={{ y: [0, 200] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="absolute -top-[200px] bottom-0 w-full"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='50' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 25 0 C 50 30, 50 70, 25 100 C 0 130, 0 170, 25 200' stroke='rgb(34,211,238)' fill='none' stroke-width='2' opacity='0.8' /%3E%3Cpath d='M 25 0 C 40 10, 40 40, 25 50 C 10 60, 10 90, 25 100 C 40 110, 40 140, 25 150 C 10 160, 10 190, 25 200' stroke='rgb(59,130,246)' fill='none' stroke-width='1.5' opacity='0.5' /%3E%3Cpath d='M 25 0 C 35 5, 35 20, 25 25 C 15 30, 15 45, 25 50 C 35 55, 35 70, 25 75 C 15 80, 15 95, 25 100 C 35 105, 35 120, 25 125 C 15 130, 15 145, 25 150 C 35 155, 35 170, 25 175 C 15 180, 15 195, 25 200' stroke='rgb(255,255,255)' fill='none' stroke-width='0.5' opacity='0.3' /%3E%3Cline x1='25' y1='0' x2='25' y2='200' stroke='rgb(34,211,238)' stroke-width='1' opacity='0.2' /%3E%3C/svg%3E")`,
+                  backgroundRepeat: 'repeat-y',
+                  backgroundSize: '100% 200px',
+                  backgroundPosition: 'center top'
+                }}
+              />
+
+              {/* Glowing Scanner overlaying the wave */}
+              <motion.div 
+                animate={{y: ["-200%", "8000%"]}} 
+                transition={{ duration: 5, repeat: Infinity, ease: "linear" }} 
+                className="absolute top-0 w-full h-64 bg-gradient-to-b from-transparent via-cyan-400/30 to-transparent shadow-[0_0_20px_2px_#22d3ee] mix-blend-screen" 
+              />
+            </div>
+
+            <div className="space-y-16 md:space-y-32">
               {[
-                { step: "01", icon: "/images/ai-assets/icon-journey-1.png", title: "Lead Generation & Funnel", desc: "Membership Consultant mengelola prospek (Follow Up, Appointment, Show). Perubahan state menjadi 'Joined' menginisiasi *webhook*." },
-                { step: "02", icon: "/images/ai-assets/icon-journey-2.png", title: "POS & State Hydration", desc: "Transaksi divalidasi. Mutasi ini otomatis menghidrasi database dengan masa aktif baru, memotong stok gudang, dan mengisi relasi kuota PT." },
-                { step: "03", icon: "/images/ai-assets/icon-journey-3.png", title: "Biometric Enrollment", desc: "Pendaftaran parameter wajah melalui Kiosk mandiri. Sinkronisasi *edge-to-cloud* yang memitigasi anomali kehadiran." },
-                { step: "04", icon: "/images/ai-assets/icon-journey-4.png", title: "Gym Orientation & AI Inference", desc: "Asesmen kebugaran perdana. Mesin *OpenRouter LLM* menerima *payload* JSON dan mereturn *Workout Plan* generatif yang presisi." }
+                { step: "PHASE_01", icon: "/images/ai-assets/icon-journey-1.png", title: "Lead Gen & Funnel", desc: "Membership Consultant mengelola prospek. Perubahan state menjadi 'Joined' menginisiasi webhook mutasi data." },
+                { step: "PHASE_02", icon: "/images/ai-assets/icon-journey-2.png", title: "POS State Hydration", desc: "Transaksi divalidasi. Database dihidrasi otomatis dengan masa aktif baru, sinkronisasi stok, & kuota PT." },
+                { step: "PHASE_03", icon: "/images/ai-assets/icon-journey-3.png", title: "Biometric Enrollment", desc: "Pendaftaran parameter wajah melalui Kiosk mandiri. Sinkronisasi edge-to-cloud untuk akses tanpa kartu." },
+                { step: "PHASE_04", icon: "/images/ai-assets/icon-journey-4.png", title: "AI Inference Plan", desc: "Mesin OpenRouter LLM memproses payload JSON kebugaran dan mereturn Workout Plan generatif presisi tinggi." }
               ].map((item, index) => (
-                <motion.div key={item.step} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, margin: "-50px" }} transition={{ duration: 0.5, delay: index * 0.1 }} className="relative flex flex-col md:flex-row items-start md:items-center gap-8 md:justify-between group">
+                <motion.div 
+                  key={item.step} 
+                  initial={{ opacity: 0, y: 40 }} 
+                  whileInView={{ opacity: 1, y: 0 }} 
+                  viewport={{ once: false, margin: "-100px" }} 
+                  transition={{ duration: 0.7, delay: 0.1 }} 
+                  className="relative flex flex-col md:flex-row items-center w-full group"
+                >
                   
-                  {/* Left Side (Content for Evens, Empty for Odds) */}
-                  <div className={`flex-1 pl-20 md:pl-0 md:text-right ${index % 2 !== 0 ? 'md:order-1' : 'md:order-3'}`}>
-                    <div className={`md:max-w-sm ${index % 2 !== 0 ? 'ml-auto' : ''}`}>
-                      <span className="text-cyan-500 font-mono text-xs font-semibold tracking-wider block mb-2">Phase {item.step}</span>
-                      <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                      <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                  {/* Spacer for alternating layout (Desktop only) */}
+                  <div className={`hidden md:block w-1/2 ${index % 2 === 0 ? 'md:order-3' : 'md:order-1'}`} />
+
+                  {/* HUGE Center Cyber Node */}
+                  <div className={`absolute top-0 md:top-auto left-0 md:left-1/2 md:-translate-x-1/2 w-20 h-20 md:w-40 md:h-40 shrink-0 rounded-[2rem] md:rounded-[3rem] bg-slate-900 border-4 md:border-8 border-slate-950 flex items-center justify-center z-10 overflow-hidden group-hover:border-cyan-500/50 transition-colors duration-500 shadow-[0_0_0_2px_rgba(255,255,255,0.05)] md:shadow-[0_0_0_4px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_40px_rgba(34,211,238,0.5)]`}>
+                    <img src={item.icon} alt={item.title} className="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
+                    <div className="absolute inset-0 bg-cyan-500/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </div>
+
+                  {/* Holographic Content Box */}
+                  <div className={`w-full md:w-1/2 flex pl-28 md:pl-0 ${index % 2 === 0 ? 'md:justify-end md:pr-28 md:order-1' : 'md:justify-start md:pl-28 md:order-3'}`}>
+                    <div className="p-8 rounded-3xl bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 group-hover:border-cyan-500/30 transition-all duration-500 relative overflow-hidden backdrop-blur-sm w-full max-w-[420px] group-hover:shadow-[0_10px_40px_-10px_rgba(34,211,238,0.15)] group-hover:-translate-y-1">
+                       
+                       {/* Cyber Glow Line */}
+                       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                       
+                       {/* Background Tech Grid */}
+                       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+                       
+                       <div className="relative z-10">
+                         <div className="flex items-center justify-between mb-6">
+                           <span className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#000] border border-cyan-500/20 text-cyan-400 font-mono text-[10px] uppercase tracking-widest shadow-inner">
+                             <Zap className="w-3 h-3 text-cyan-400" /> {item.step}
+                           </span>
+                           <span className="text-white/10 font-mono text-2xl font-black group-hover:text-cyan-500/10 transition-colors">0{index + 1}</span>
+                         </div>
+                         <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-cyan-50 transition-colors">{item.title}</h3>
+                         <p className="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">{item.desc}</p>
+                       </div>
                     </div>
                   </div>
-
-                  {/* Center Node */}
-                  <div className={`absolute left-0 md:static md:order-2 w-16 h-16 rounded-2xl bg-[#0A0A0A] border border-cyan-400/30 flex items-center justify-center shadow-[0_0_15px_rgba(34,211,238,0.2)] group-hover:border-cyan-400/60 group-hover:shadow-[0_0_30px_rgba(34,211,238,0.4)] transition-all z-10 shrink-0 overflow-hidden p-1`}>
-                    <img src={item.icon} alt={item.title} className="w-full h-full object-cover rounded-xl group-hover:scale-110 transition-transform duration-500" />
-                  </div>
-
-                  {/* Right Side (Empty for Evens, Content for Odds) */}
-                  <div className="flex-1 hidden md:block md:order-1" />
 
                 </motion.div>
               ))}
@@ -496,28 +588,105 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
         </section>
 
         {/* --- 4. ROLE-BASED CONTROL (BENTO GRID - CLEAN) --- */}
-        <section className="bg-[#050505] border-y border-white/5 py-24 relative z-10">
+        <section className="bg-slate-900/30 backdrop-blur-md border-y border-white/5 py-24 relative z-10">
           <div className="max-w-7xl mx-auto px-4">
             <div className="mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">RBAC (Role-Based Access Control)</h2>
               <p className="text-slate-400 text-sm max-w-xl">Akses yang terpartisi secara tegas. Setiap fungsi jabatan menerima antarmuka khusus (Middleware tersendiri) untuk memaksimalkan efisiensi.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[
-                { role: "Membership Consultant", icon: "/images/ai-assets/icon-role-1.png", desc: "Akses *read-only* ke Cohort Analysis, pelacakan Funnel Ratios, dan modul Follow Up harian dengan filter waktu." },
-                { role: "Customer Service", icon: "/images/ai-assets/icon-role-2.png", desc: "Modul *write-access* POS, pencetakan struk digital, manipulasi *state* kedatangan, dan *booking* kelas instruktur." },
-                { role: "Personal Trainer", icon: "/images/ai-assets/icon-role-3.png", desc: "Otorisasi khusus untuk pencatatan *session logs*, pengawalan Gym Orientation, dan *mutation* data anatomi member." },
-                { role: "Admin & Manager", icon: "/images/ai-assets/icon-role-4.png", desc: "Hak akses *Root*. Analitik komprehensif, *Real-time KPI*, manajemen *roles*, dan audit histori transaksi log." }
-              ].map((role, idx) => (
-                <motion.div key={idx} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, margin: "-50px" }} transition={{ duration: 0.4, delay: idx * 0.1 }} className="bg-[#0A0A0A] border border-white/10 rounded-2xl p-6 hover:bg-[#111] hover:border-white/20 transition-all group flex flex-col h-full">
-                  <div className="w-14 h-14 rounded-xl bg-black border border-cyan-500/20 flex items-center justify-center text-slate-400 group-hover:border-cyan-400/50 mb-5 transition-colors overflow-hidden p-0.5 shadow-lg group-hover:shadow-[0_0_15px_rgba(34,211,238,0.3)]">
-                    <img src={role.icon} alt={role.role} className="w-full h-full object-cover rounded-lg group-hover:scale-110 transition-transform duration-500" />
-                  </div>
-                  <h3 className="text-base font-bold text-slate-100 mb-2">{role.role}</h3>
-                  <p className="text-slate-400 text-xs leading-relaxed mt-auto">{role.desc}</p>
-                </motion.div>
-              ))}
+                { 
+                  role: "Membership Consultant", 
+                  type: "square", 
+                  icon: "/images/ai-assets/icon-role-1.png", 
+                  desc: "Akses read-only ke Cohort Analysis, pelacakan Funnel Ratios, dan modul Follow Up harian dengan filter waktu." 
+                },
+                { 
+                  role: "Customer Service", 
+                  type: "square", 
+                  icon: "/images/ai-assets/icon-role-2.png", 
+                  desc: "Modul write-access POS, pencetakan struk digital, manipulasi state kedatangan, dan booking kelas instruktur." 
+                },
+                { 
+                  role: "Admin & Manager", 
+                  type: "tall", 
+                  icon: "/images/ai-assets/icon-role-4.png", 
+                  desc: "Akses Root (Level 0). Memiliki kontrol penuh atas seluruh sistem, manajemen otorisasi middleware (Roles), audit log aktivitas seluruh karyawan, penetapan Real-time KPI, serta analitik komprehensif untuk proyeksi finansial bisnis Gym." 
+                },
+                { 
+                  role: "Personal Trainer", 
+                  type: "wide", 
+                  icon: "/images/ai-assets/icon-role-3.png", 
+                  desc: "Otorisasi khusus untuk pencatatan session logs, pengawalan Gym Orientation harian, manajemen target anatomi klien, dan mutation data komposisi tubuh (Body Metric). Dirancang khusus untuk workflow on-the-floor tanpa membebani kompleksitas antarmuka." 
+                }
+              ].map((role, idx) => {
+                const isTall = role.type === 'tall';
+                const isWide = role.type === 'wide';
+                const isSquare = role.type === 'square';
+
+                return (
+                  <motion.div 
+                    key={idx} 
+                    initial={{ opacity: 0, y: 20 }} 
+                    whileInView={{ opacity: 1, y: 0 }} 
+                    viewport={{ once: false, margin: "-50px" }} 
+                    transition={{ duration: 0.5, delay: idx * 0.1 }} 
+                    className={`
+                      bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden
+                      hover:border-cyan-500/30 transition-all duration-500 group relative p-8 shadow-2xl
+                      hover:shadow-[0_10px_40px_-10px_rgba(34,211,238,0.15)] hover:-translate-y-1
+                      ${isTall ? 'md:col-span-2 lg:col-span-1 lg:row-span-2 flex flex-col' : ''}
+                      ${isWide ? 'md:col-span-2 lg:col-span-2 lg:row-span-1 flex flex-col md:flex-row items-center gap-8' : ''}
+                      ${isSquare ? 'col-span-1 flex flex-col' : ''}
+                    `}
+                  >
+                    {/* Background decoration */}
+                    <div className="absolute -right-20 -top-20 w-48 h-48 bg-cyan-500/5 blur-[80px] rounded-full group-hover:bg-cyan-500/20 transition-colors duration-700" />
+                    
+                    {/* Tech Background Pattern */}
+                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiLz48L3N2Zz4=')] opacity-50 mix-blend-overlay pointer-events-none" />
+
+                    {/* Image container */}
+                    <div className={`
+                      shrink-0 rounded-2xl overflow-hidden bg-black border border-white/5 
+                      shadow-[0_0_20px_rgba(0,0,0,0.5)] group-hover:border-cyan-500/50 group-hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]
+                      transition-all duration-500 z-10 relative
+                      ${isTall ? 'w-full aspect-[4/3] mb-8' : ''}
+                      ${isWide ? 'w-full md:w-[40%] aspect-[4/3] md:aspect-square mb-6 md:mb-0 md:order-2' : ''}
+                      ${isSquare ? 'w-16 h-16 mb-8 border-cyan-500/20 p-1' : ''}
+                    `}>
+                       <img src={role.icon} alt={role.role} className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100 ${isSquare ? 'rounded-xl' : ''}`} />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    </div>
+
+                    {/* Text Content */}
+                    <div className={`relative z-10 flex-1 flex flex-col ${isWide ? 'md:order-1' : ''}`}>
+                       {isTall && (
+                         <div className="mb-4">
+                           <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-cyan-950 border border-cyan-800 shadow-[0_0_15px_rgba(34,211,238,0.2)] text-cyan-400">
+                             <Shield className="w-5 h-5" />
+                           </span>
+                         </div>
+                       )}
+                       
+                       <h3 className={`font-bold text-white mb-3 group-hover:text-cyan-50 transition-colors ${isTall ? 'text-2xl' : 'text-xl'}`}>{role.role}</h3>
+                       <p className="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">{role.desc}</p>
+                       
+                       {/* Button / Indicator for Admin */}
+                       {isTall && (
+                         <div className="mt-auto pt-8">
+                           <div className="w-full h-px bg-gradient-to-r from-white/10 via-white/5 to-transparent mb-6" />
+                           <span className="inline-flex items-center gap-2 text-cyan-400 text-[10px] font-mono uppercase tracking-widest bg-cyan-950/30 px-3 py-1.5 rounded-md border border-cyan-800/30">
+                              <Database className="w-3 h-3" /> System Root Auth
+                           </span>
+                         </div>
+                       )}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -556,23 +725,26 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
             </motion.div>
             
             {/* Elegant Tech Image Container */}
-            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, margin: "-50px" }} transition={{ duration: 0.6 }} className="relative h-[500px] w-full rounded-2xl overflow-hidden border border-white/10 bg-[#050505] shadow-2xl p-2 hidden lg:block">
-              <motion.div animate={{ y: [-10, 10, -10] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/20 to-blue-900/10" />
-                <img src="/images/ai-assets/feature-ai-posture.png" alt="Architecture" className="w-full h-full object-cover rounded-xl opacity-60 mix-blend-screen" />
-              </motion.div>
-              
-              {/* Overlay UI mockup elements */}
-              <motion.div animate={{ y: [10, -10, 10] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute top-16 left-8 right-8 p-4 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 z-10">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-2 h-2 rounded-full bg-red-500" />
-                  <div className="w-2 h-2 rounded-full bg-yellow-500" />
-                  <div className="w-2 h-2 rounded-full bg-green-500" />
-                  <span className="ml-2 text-[10px] font-mono text-slate-500">POSTURE_ANALYSIS.json</span>
-                </div>
-                <div className="font-mono text-[10px] text-cyan-400 leading-relaxed">
-                  {`{\n  "status": 200,\n  "data": {\n    "confidence": 0.98,\n    "detected_anomalies": ["kyphosis_mild"],\n    "recommendation": "generate_workout_plan"\n  }\n}`}
-                </div>
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, margin: "-50px" }} transition={{ duration: 0.6 }} className="relative h-[350px] md:h-[500px] w-full rounded-2xl overflow-hidden border border-white/10 bg-slate-900/50 backdrop-blur-md shadow-[0_0_50px_rgba(34,211,238,0.1)] p-2 group mt-12 lg:mt-0">
+              <motion.div animate={{ y: [-10, 10, -10] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-2 z-0 overflow-hidden rounded-xl border border-cyan-500/20">
+                <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/40 to-blue-900/20 z-10" />
+                <img src="/images/ai-assets/feature-ai-posture.png" alt="Architecture" className="w-full h-full object-cover opacity-70 mix-blend-screen grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" />
+                
+                {/* Tech Grid Overlay */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.15)_1px,transparent_1px)] bg-[size:40px_40px] z-10 pointer-events-none mix-blend-overlay" />
+                
+                {/* Holographic Scanning Laser */}
+                <motion.div 
+                  animate={{ top: ["-10%", "110%"] }} 
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  className="absolute left-0 right-0 h-[2px] bg-cyan-400 shadow-[0_0_30px_8px_rgba(34,211,238,0.8)] z-20 flex justify-center"
+                >
+                   <div className="w-1/2 h-full bg-white shadow-[0_0_10px_2px_white]" />
+                </motion.div>
+                
+                {/* Scanning Reticles */}
+                <div className="absolute top-[10%] left-[10%] w-10 h-10 border-l-2 border-t-2 border-cyan-400/70 z-20" />
+                <div className="absolute bottom-[10%] right-[10%] w-10 h-10 border-r-2 border-b-2 border-cyan-400/70 z-20" />
               </motion.div>
             </motion.div>
           </div>
