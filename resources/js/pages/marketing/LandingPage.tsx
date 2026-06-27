@@ -58,21 +58,21 @@ const SciFiScannerAudio = () => {
       />
       <button
         onClick={toggleAudio}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-full bg-black/80 border border-cyan-500/50 text-cyan-400 hover:bg-cyan-900/50 hover:scale-105 backdrop-blur-md transition-all shadow-[0_0_15px_rgba(34,211,238,0.3)] group"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-full bg-black/80 border border-violet-500/50 text-violet-400 hover:bg-violet-900/50 hover:scale-105 backdrop-blur-md transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)] group"
       >
         {isPlaying ? (
         <>
           <div className="flex items-center gap-1 h-4">
-            <span className="w-1 h-2/3 bg-cyan-400 animate-[pulse_0.5s_infinite]" />
-            <span className="w-1 h-full bg-cyan-400 animate-[pulse_0.3s_infinite]" />
-            <span className="w-1 h-1/2 bg-cyan-400 animate-[pulse_0.7s_infinite]" />
+            <span className="w-1 h-2/3 bg-violet-400 animate-[pulse_0.5s_infinite]" />
+            <span className="w-1 h-full bg-violet-400 animate-[pulse_0.3s_infinite]" />
+            <span className="w-1 h-1/2 bg-violet-400 animate-[pulse_0.7s_infinite]" />
           </div>
           <span className="text-[10px] font-mono tracking-widest font-bold">SCANNER AUDIO ON</span>
         </>
       ) : (
         <>
-          <VolumeX className="w-4 h-4 text-slate-400 group-hover:text-cyan-400" />
-          <span className="text-[10px] font-mono tracking-widest text-slate-400 group-hover:text-cyan-400">ENABLE SCANNER AUDIO</span>
+          <VolumeX className="w-4 h-4 text-slate-400 group-hover:text-violet-400" />
+          <span className="text-[10px] font-mono tracking-widest text-slate-400 group-hover:text-violet-400">ENABLE SCANNER AUDIO</span>
         </>
         )}
       </button>
@@ -84,7 +84,7 @@ const SciFiScannerAudio = () => {
 // 1. SUB-KOMPONEN: FRAMEWORK STYLE BACKGROUND
 // ==========================================
 const FrameworkBackground = () => (
-  <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-[#020617]">
+  <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-[#090512]">
 
     {/* Grid Pattern Ala Next.js / Tailwind UI */}
     <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_100%)]" />
@@ -105,42 +105,35 @@ const FrameworkBackground = () => (
     <motion.div
       animate={{ scale: [1, 1.1, 1], x: [0, 30, 0], y: [0, 30, 0] }}
       transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute bottom-[-10%] left-[20%] w-[700px] h-[700px] md:w-[900px] md:h-[900px] rounded-full bg-[radial-gradient(circle_at_center,rgba(8,145,178,0.15)_0%,transparent_70%)] pointer-events-none"
+      className="absolute bottom-[-10%] left-[20%] w-[700px] h-[700px] md:w-[900px] md:h-[900px] rounded-full bg-[radial-gradient(circle_at_center,rgba(109,40,217,0.18)_0%,transparent_70%)] pointer-events-none"
       style={{ willChange: 'transform' }}
     />
 
-    {/* Cinematic AI Hero Image - INTRO ANIMATION */}
-    <motion.div
-      initial={{ height: "100vh", opacity: 1 }}
-      animate={{ height: "70vh", opacity: 0.4 }}
-      transition={{ duration: 1.5, delay: 3, ease: [0.76, 0, 0.24, 1] }}
-      className="absolute top-0 left-0 right-0 overflow-hidden"
-    >
-      {/* Background Image (Ken Burns Animated) */}
-      <motion.div
-        animate={{ scale: [1, 1.08, 1], y: [0, -15, 0] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+    {/* Cinematic AI Hero Image */}
+    <div className="absolute top-0 left-0 right-0 h-[70vh] opacity-40 overflow-hidden">
+      {/* Background Image */}
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat origin-bottom"
-        style={{ backgroundImage: 'url("/images/ai-assets/ai-gym-hero.png")', willChange: 'transform' }}
+        style={{ backgroundImage: 'url("/images/ai-assets/ai-gym-hero.png")' }}
       />
 
       {/* Scanning Laser Line */}
       <motion.div
         animate={{ top: ["-10%", "110%", "-10%"] }}
         transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
-        className="absolute left-0 right-0 h-[2px] bg-cyan-400 shadow-[0_0_30px_8px_rgba(34,211,238,0.8)] z-20 flex justify-center"
+        className="absolute left-0 right-0 h-[2px] bg-violet-400 shadow-[0_0_30px_8px_rgba(139,92,246,0.8)] z-20 flex justify-center"
       >
         <div className="w-1/2 h-full bg-white shadow-[0_0_10px_2px_white]" />
       </motion.div>
 
       {/* Scanning Grid Overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.1)_1px,transparent_1px)] bg-[size:60px_60px] z-10" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.1)_1px,transparent_1px)] bg-[size:60px_60px] z-10" />
 
       {/* Target Reticles (Corners) */}
-      <div className="absolute top-[20%] left-[20%] w-16 h-16 border-l-2 border-t-2 border-cyan-500/50 z-10" />
-      <div className="absolute top-[20%] right-[20%] w-16 h-16 border-r-2 border-t-2 border-cyan-500/50 z-10" />
-      <div className="absolute bottom-[20%] left-[20%] w-16 h-16 border-l-2 border-b-2 border-cyan-500/50 z-10" />
-      <div className="absolute bottom-[20%] right-[20%] w-16 h-16 border-r-2 border-b-2 border-cyan-500/50 z-10" />
+      <div className="absolute top-[20%] left-[20%] w-16 h-16 border-l-2 border-t-2 border-violet-500/50 z-10" />
+      <div className="absolute top-[20%] right-[20%] w-16 h-16 border-r-2 border-t-2 border-violet-500/50 z-10" />
+      <div className="absolute bottom-[20%] left-[20%] w-16 h-16 border-l-2 border-b-2 border-violet-500/50 z-10" />
+      <div className="absolute bottom-[20%] right-[20%] w-16 h-16 border-r-2 border-b-2 border-violet-500/50 z-10" />
 
       {/* Dynamic Mask Overlay - Fades in as it shrinks */}
       <motion.div
@@ -149,7 +142,7 @@ const FrameworkBackground = () => (
         transition={{ duration: 1.5, delay: 3, ease: "easeInOut" }}
         className="absolute inset-0 bg-gradient-to-b from-transparent via-black/80 to-black z-30"
       />
-    </motion.div>
+    </div>
   </div>
 );
 
@@ -162,7 +155,7 @@ const ModernFeatureCard = ({ icon: Icon, title, desc, tag, imagePath, delay = 0 
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: false, margin: "-50px" }}
     transition={{ duration: 0.5, delay }}
-    className="group flex flex-col bg-[#050505] border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-500/30 transition-all duration-300 shadow-xl"
+    className="group flex flex-col bg-[#0d0714] border border-white/10 rounded-2xl overflow-hidden hover:border-violet-500/30 transition-all duration-300 shadow-xl"
   >
     {/* Cover Image Section */}
     <div className="h-48 w-full relative overflow-hidden border-b border-white/5 bg-slate-900">
@@ -171,9 +164,9 @@ const ModernFeatureCard = ({ icon: Icon, title, desc, tag, imagePath, delay = 0 
         alt={title}
         className="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#050505] to-transparent opacity-80" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0714] to-transparent opacity-80" />
       <div className="absolute bottom-4 left-4">
-        <span className="px-2.5 py-1 text-[10px] font-mono font-medium tracking-widest text-cyan-300 bg-cyan-950/80 border border-cyan-800 rounded-md backdrop-blur-md uppercase">
+        <span className="px-2.5 py-1 text-[10px] font-mono font-medium tracking-widest text-violet-300 bg-violet-950/80 border border-violet-800 rounded-md backdrop-blur-md uppercase">
           {tag}
         </span>
       </div>
@@ -182,7 +175,7 @@ const ModernFeatureCard = ({ icon: Icon, title, desc, tag, imagePath, delay = 0 
     {/* Content Section */}
     <div className="p-6 flex-1 flex flex-col">
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 group-hover:text-cyan-400 group-hover:bg-cyan-950/30 transition-colors">
+        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 group-hover:text-violet-400 group-hover:bg-violet-950/30 transition-colors">
           <Icon className="w-4 h-4" />
         </div>
         <h3 className="text-xl font-bold text-slate-100 tracking-tight">{title}</h3>
@@ -201,16 +194,16 @@ const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: false, margin: "-50px" }}
     transition={{ duration: 0.7, delay }}
-    className="group flex flex-col relative rounded-3xl overflow-hidden bg-slate-900/60 backdrop-blur-md border border-white/5 hover:border-cyan-500/40 transition-all duration-700 w-full h-[500px] md:h-[600px] shadow-2xl hover:shadow-[0_0_50px_rgba(34,211,238,0.15)] hover:-translate-y-2"
+    className="group flex flex-col relative rounded-3xl overflow-hidden bg-slate-900/60 backdrop-blur-md border border-white/5 hover:border-violet-500/40 transition-all duration-700 w-full h-[500px] md:h-[600px] shadow-2xl hover:shadow-[0_0_50px_rgba(139,92,246,0.15)] hover:-translate-y-2"
   >
     {/* Animated Background Tech Grid */}
-    <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.03)_1px,transparent_1px)] bg-[size:20px_20px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0 pointer-events-none" />
+    <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:20px_20px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0 pointer-events-none" />
 
     {/* Holographic Scanning Line */}
     <motion.div
       animate={{ y: ["-10px", "650px"] }}
       transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
-      className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_20px_2px_#22d3ee] z-20 opacity-0 group-hover:opacity-100 mix-blend-screen"
+      className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-violet-400 to-transparent shadow-[0_0_20px_2px_#8b5cf6] z-20 opacity-0 group-hover:opacity-100 mix-blend-screen"
     />
 
     {/* Image Container (Portrait Format) */}
@@ -222,8 +215,8 @@ const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0
         onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=050505&color=22D3EE&bold=true&size=512`; }}
       />
       {/* Vignet & Gradients */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0714] via-[#0d0714]/80 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0d0714]/60 to-transparent" />
     </div>
 
     {/* Content Overlay */}
@@ -231,17 +224,17 @@ const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0
 
       {/* Top Header Row */}
       <div className="flex justify-between items-start">
-        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-cyan-400 font-mono text-[10px] uppercase tracking-widest shadow-lg">
-          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_5px_#22d3ee]" /> System Active
+        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-violet-400 font-mono text-[10px] uppercase tracking-widest shadow-lg">
+          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse shadow-[0_0_5px_#8b5cf6]" /> System Active
         </span>
-        <div className="w-12 h-12 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-slate-400 group-hover:text-cyan-400 group-hover:border-cyan-400/50 group-hover:shadow-[0_0_15px_rgba(34,211,238,0.2)] transition-all duration-500">
+        <div className="w-12 h-12 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 flex items-center justify-center text-slate-400 group-hover:text-violet-400 group-hover:border-violet-400/50 group-hover:shadow-[0_0_15px_rgba(139,92,246,0.2)] transition-all duration-500">
           <Icon className="w-6 h-6" />
         </div>
       </div>
 
       {/* Text Details (Slides up on hover) */}
       <div className="transform translate-y-16 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-        <h4 className="text-[11px] md:text-xs font-mono text-cyan-400 tracking-[0.3em] uppercase mb-3 drop-shadow-md">{role}</h4>
+        <h4 className="text-[11px] md:text-xs font-mono text-violet-400 tracking-[0.3em] uppercase mb-3 drop-shadow-md">{role}</h4>
         <h3 className="text-3xl md:text-4xl font-black text-white mb-6 tracking-tight uppercase drop-shadow-lg leading-none">{name}</h3>
 
         {/* Hidden on default, appears gracefully on hover */}
@@ -251,7 +244,7 @@ const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0
               initial={{ x: "-100%" }}
               whileInView={{ x: "200%" }}
               transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
-              className="absolute left-0 top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-cyan-400 to-transparent"
+              className="absolute left-0 top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-violet-400 to-transparent"
             />
           </div>
           <p className="text-slate-300 text-sm leading-relaxed font-light line-clamp-4">{desc}</p>
@@ -277,7 +270,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
     <>
       <Head title="ERP Infrastructure - PT Solusi Mitra Mandiri" />
       <SciFiScannerAudio />
-      <div className="min-h-screen bg-transparent text-slate-100 font-sans antialiased selection:bg-cyan-500/30 selection:text-white relative overflow-x-hidden">
+      <div className="min-h-screen bg-transparent text-slate-100 font-sans antialiased selection:bg-violet-500/30 selection:text-white relative overflow-x-hidden">
         <FrameworkBackground />
 
         {/* --- TOP NAVIGATION BAR --- */}
@@ -286,12 +279,12 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="bg-white/100 rounded-xl md:rounded-2xl overflow-hidden shadow-[0_0_25px_rgba(34,211,238,0.5)] border border-cyan-500/30 flex items-center justify-center p-1"
+            className="bg-transparent flex items-center justify-center"
           >
             <img 
               src="/images/logo.png" 
               alt="PT Solusi Mitra Mandiri Logo" 
-              className="h-16 md:h-24 w-auto object-contain"
+              className="h-20 md:h-28 w-auto object-contain"
             />
           </motion.div>
         </div>
@@ -304,15 +297,27 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
           className="relative max-w-7xl mx-auto px-4 pt-48 pb-24 text-center z-10 flex flex-col items-center min-h-screen justify-center md:min-h-0 md:justify-start"
         >
           <a href="#" className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors mb-8 text-xs font-medium text-slate-300">
-            <span className="w-2 h-2 rounded-full bg-cyan-500 shadow-[0_0_8px_#06b6d4] animate-pulse"></span>
+            <span className="w-2 h-2 rounded-full bg-violet-500 shadow-[0_0_8px_#8b5cf6] animate-pulse"></span>
             Memperkenalkan Infrastruktur FitOS 2.0
             <ChevronRight className="w-3 h-3 text-slate-500" />
           </a>
 
+          {/* Hero Video inserted above the title */}
+          <div className="w-full max-w-4xl mx-auto mb-10 rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_40px_rgba(139,92,246,0.2)]">
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              className="w-full h-auto aspect-video object-cover"
+            >
+              <source src="/videos/IMG_3125.mp4" type="video/mp4" />
+            </video>
+          </div>
+
           <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight max-w-5xl mx-auto mb-6 leading-[1.1]">
-            Arsitektur Perangkat Lunak untuk <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-cyan-500">
-              Operasional Mega-Gym
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-violet-100 to-violet-500">
+              One Integrated Management System
             </span>
           </h1>
 
@@ -342,26 +347,26 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Nama Perusahaan</label>
-                    <input type="text" required value={data.company_name} onChange={e => setData('company_name', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all" />
+                    <input type="text" required value={data.company_name} onChange={e => setData('company_name', e.target.value)} className="w-full bg-[#120b1c] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none text-white transition-all" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Penanggung Jawab</label>
-                    <input type="text" required value={data.pic_name} onChange={e => setData('pic_name', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all" />
+                    <input type="text" required value={data.pic_name} onChange={e => setData('pic_name', e.target.value)} className="w-full bg-[#120b1c] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none text-white transition-all" />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Nomor Telepon / WA</label>
-                    <input type="text" required value={data.phone_number} onChange={e => setData('phone_number', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all" />
+                    <input type="text" required value={data.phone_number} onChange={e => setData('phone_number', e.target.value)} className="w-full bg-[#120b1c] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none text-white transition-all" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Alamat Email</label>
-                    <input type="email" required value={data.email} onChange={e => setData('email', e.target.value)} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all" />
+                    <input type="email" required value={data.email} onChange={e => setData('email', e.target.value)} className="w-full bg-[#120b1c] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none text-white transition-all" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">Catatan Tambahan</label>
-                  <textarea value={data.notes} onChange={e => setData('notes', e.target.value)} rows={3} className="w-full bg-[#111] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none text-white transition-all"></textarea>
+                  <textarea value={data.notes} onChange={e => setData('notes', e.target.value)} rows={3} className="w-full bg-[#120b1c] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none text-white transition-all"></textarea>
                 </div>
                 <div className="pt-2">
                   <button type="submit" disabled={processing} className="w-full py-2.5 bg-white text-black font-semibold rounded-lg hover:bg-slate-200 transition-colors text-sm">
@@ -376,7 +381,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
         {/* --- 2. EXECUTIVE LEADERSHIP (HOLOGRAPHIC PROFILES) --- */}
         <section className="max-w-7xl mx-auto px-4 py-32 relative z-10">
           <div className="flex flex-col items-center mb-20 text-center">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-xs uppercase tracking-widest mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 font-mono text-xs uppercase tracking-widest mb-6">
               <Users className="w-4 h-4" /> The Architects
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Kepemimpinan Eksekutif</h2>
@@ -385,7 +390,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <HolographicTeamCard icon={Layers} role="Director of Product" name="Andi Adellia" imageUrl="/images/founders/founder-1-hd.png" desc="Memimpin visi strategis dan peta jalan pengembangan ekosistem ERP yang holistik." delay={0.1} />
             <HolographicTeamCard icon={Cpu} role="Chief Technology Officer" name="Jonathan Immanuel Alexander" imageUrl="/images/founders/founder-2.jpg" desc="Arsitek utama di balik integrasi mutakhir infrastruktur berbasis kecerdasan buatan." delay={0.2} />
-            <HolographicTeamCard icon={Terminal} role="Head of Software" name="Founder Engineer" imageUrl="/images/founders/founder-engineering.png" desc="Pakar rekayasa perangkat lunak yang memimpin optimasi performa inti aplikasi." delay={0.3} />
+            <HolographicTeamCard icon={Terminal} role="Head of Software" name="Rizki Algipari" imageUrl="/images/founders/founder3-hd.png" desc="Pakar rekayasa perangkat lunak yang memimpin optimasi performa inti aplikasi." delay={0.3} />
           </div>
         </section>
 
@@ -394,7 +399,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
         {/* --- 3. THE DATA PIPELINE (CYBER-TIMELINE) --- */}
         <section className="max-w-6xl mx-auto px-4 py-32 relative z-10">
           <div className="text-center mb-24">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 font-mono text-xs uppercase tracking-widest mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 font-mono text-xs uppercase tracking-widest mb-6">
               <Activity className="w-4 h-4" /> System Architecture
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Pipeline Otomatisasi Member</h2>
@@ -411,7 +416,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                 transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                 className="absolute -top-[200px] bottom-0 w-full"
                 style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='50' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 25 0 C 50 30, 50 70, 25 100 C 0 130, 0 170, 25 200' stroke='rgb(34,211,238)' fill='none' stroke-width='2' opacity='0.8' /%3E%3Cpath d='M 25 0 C 40 10, 40 40, 25 50 C 10 60, 10 90, 25 100 C 40 110, 40 140, 25 150 C 10 160, 10 190, 25 200' stroke='rgb(59,130,246)' fill='none' stroke-width='1.5' opacity='0.5' /%3E%3Cpath d='M 25 0 C 35 5, 35 20, 25 25 C 15 30, 15 45, 25 50 C 35 55, 35 70, 25 75 C 15 80, 15 95, 25 100 C 35 105, 35 120, 25 125 C 15 130, 15 145, 25 150 C 35 155, 35 170, 25 175 C 15 180, 15 195, 25 200' stroke='rgb(255,255,255)' fill='none' stroke-width='0.5' opacity='0.3' /%3E%3Cline x1='25' y1='0' x2='25' y2='200' stroke='rgb(34,211,238)' stroke-width='1' opacity='0.2' /%3E%3C/svg%3E")`,
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='50' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 25 0 C 50 30, 50 70, 25 100 C 0 130, 0 170, 25 200' stroke='rgb(139,92,246)' fill='none' stroke-width='2' opacity='0.8' /%3E%3Cpath d='M 25 0 C 40 10, 40 40, 25 50 C 10 60, 10 90, 25 100 C 40 110, 40 140, 25 150 C 10 160, 10 190, 25 200' stroke='rgb(168,85,247)' fill='none' stroke-width='1.5' opacity='0.5' /%3E%3Cpath d='M 25 0 C 35 5, 35 20, 25 25 C 15 30, 15 45, 25 50 C 35 55, 35 70, 25 75 C 15 80, 15 95, 25 100 C 35 105, 35 120, 25 125 C 15 130, 15 145, 25 150 C 35 155, 35 170, 25 175 C 15 180, 15 195, 25 200' stroke='rgb(255,255,255)' fill='none' stroke-width='0.5' opacity='0.3' /%3E%3Cline x1='25' y1='0' x2='25' y2='200' stroke='rgb(139,92,246)' stroke-width='1' opacity='0.2' /%3E%3C/svg%3E")`,
                   backgroundRepeat: 'repeat-y',
                   backgroundSize: '100% 200px',
                   backgroundPosition: 'center top'
@@ -422,7 +427,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
               <motion.div
                 animate={{ y: ["-200%", "8000%"] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                className="absolute top-0 w-full h-64 bg-gradient-to-b from-transparent via-cyan-400/30 to-transparent shadow-[0_0_20px_2px_#22d3ee] mix-blend-screen"
+                className="absolute top-0 w-full h-64 bg-gradient-to-b from-transparent via-violet-400/30 to-transparent shadow-[0_0_20px_2px_#8b5cf6] mix-blend-screen"
               />
             </div>
 
@@ -446,29 +451,29 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                   <div className={`hidden md:block w-1/2 ${index % 2 === 0 ? 'md:order-3' : 'md:order-1'}`} />
 
                   {/* HUGE Center Cyber Node */}
-                  <div className={`absolute top-0 md:top-auto left-0 md:left-1/2 md:-translate-x-1/2 w-20 h-20 md:w-40 md:h-40 shrink-0 rounded-[2rem] md:rounded-[3rem] bg-slate-900 border-4 md:border-8 border-slate-950 flex items-center justify-center z-10 overflow-hidden group-hover:border-cyan-500/50 transition-colors duration-500 shadow-[0_0_0_2px_rgba(255,255,255,0.05)] md:shadow-[0_0_0_4px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_40px_rgba(34,211,238,0.5)]`}>
+                  <div className={`absolute top-0 md:top-auto left-0 md:left-1/2 md:-translate-x-1/2 w-20 h-20 md:w-40 md:h-40 shrink-0 rounded-[2rem] md:rounded-[3rem] bg-slate-900 border-4 md:border-8 border-slate-950 flex items-center justify-center z-10 overflow-hidden group-hover:border-violet-500/50 transition-colors duration-500 shadow-[0_0_0_2px_rgba(255,255,255,0.05)] md:shadow-[0_0_0_4px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_40px_rgba(139,92,246,0.5)]`}>
                     <img src={item.icon} alt={item.title} className="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
-                    <div className="absolute inset-0 bg-cyan-500/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-violet-500/20 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
 
                   {/* Holographic Content Box */}
                   <div className={`w-full md:w-1/2 flex pl-28 md:pl-0 ${index % 2 === 0 ? 'md:justify-end md:pr-28 md:order-1' : 'md:justify-start md:pl-28 md:order-3'}`}>
-                    <div className="p-8 rounded-3xl bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 group-hover:border-cyan-500/30 transition-all duration-500 relative overflow-hidden backdrop-blur-sm w-full max-w-[420px] group-hover:shadow-[0_10px_40px_-10px_rgba(34,211,238,0.15)] group-hover:-translate-y-1">
+                    <div className="p-8 rounded-3xl bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 group-hover:border-violet-500/30 transition-all duration-500 relative overflow-hidden backdrop-blur-sm w-full max-w-[420px] group-hover:shadow-[0_10px_40px_-10px_rgba(139,92,246,0.15)] group-hover:-translate-y-1">
 
                       {/* Cyber Glow Line */}
-                      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-violet-400/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
                       {/* Background Tech Grid */}
                       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
 
                       <div className="relative z-10">
                         <div className="flex items-center justify-between mb-6">
-                          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#000] border border-cyan-500/20 text-cyan-400 font-mono text-[10px] uppercase tracking-widest shadow-inner">
-                            <Zap className="w-3 h-3 text-cyan-400" /> {item.step}
+                          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#000] border border-violet-500/20 text-violet-400 font-mono text-[10px] uppercase tracking-widest shadow-inner">
+                            <Zap className="w-3 h-3 text-violet-400" /> {item.step}
                           </span>
-                          <span className="text-white/10 font-mono text-2xl font-black group-hover:text-cyan-500/10 transition-colors">0{index + 1}</span>
+                          <span className="text-white/10 font-mono text-2xl font-black group-hover:text-violet-500/10 transition-colors">0{index + 1}</span>
                         </div>
-                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-cyan-50 transition-colors">{item.title}</h3>
+                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-violet-50 transition-colors">{item.title}</h3>
                         <p className="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">{item.desc}</p>
                       </div>
                     </div>
@@ -528,15 +533,15 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                     transition={{ duration: 0.5, delay: idx * 0.1 }}
                     className={`
                       bg-gradient-to-br from-slate-900/80 to-slate-950/80 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden
-                      hover:border-cyan-500/30 transition-all duration-500 group relative p-8 shadow-2xl
-                      hover:shadow-[0_10px_40px_-10px_rgba(34,211,238,0.15)] hover:-translate-y-1
+                      hover:border-violet-500/30 transition-all duration-500 group relative p-8 shadow-2xl
+                      hover:shadow-[0_10px_40px_-10px_rgba(139,92,246,0.15)] hover:-translate-y-1
                       ${isTall ? 'md:col-span-2 lg:col-span-1 lg:row-span-2 flex flex-col' : ''}
                       ${isWide ? 'md:col-span-2 lg:col-span-2 lg:row-span-1 flex flex-col md:flex-row items-center gap-8' : ''}
                       ${isSquare ? 'col-span-1 flex flex-col' : ''}
                     `}
                   >
                     {/* Background decoration */}
-                    <div className="absolute -right-20 -top-20 w-48 h-48 bg-cyan-500/5 blur-[80px] rounded-full group-hover:bg-cyan-500/20 transition-colors duration-700" />
+                    <div className="absolute -right-20 -top-20 w-48 h-48 bg-violet-500/5 blur-[80px] rounded-full group-hover:bg-violet-500/20 transition-colors duration-700" />
 
                     {/* Tech Background Pattern */}
                     <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiLz48L3N2Zz4=')] opacity-50 mix-blend-overlay pointer-events-none" />
@@ -544,11 +549,11 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                     {/* Image container */}
                     <div className={`
                       shrink-0 rounded-2xl overflow-hidden bg-black border border-white/5 
-                      shadow-[0_0_20px_rgba(0,0,0,0.5)] group-hover:border-cyan-500/50 group-hover:shadow-[0_0_30px_rgba(34,211,238,0.2)]
+                      shadow-[0_0_20px_rgba(0,0,0,0.5)] group-hover:border-violet-500/50 group-hover:shadow-[0_0_30px_rgba(139,92,246,0.2)]
                       transition-all duration-500 z-10 relative
                       ${isTall ? 'w-full aspect-[4/3] mb-8' : ''}
                       ${isWide ? 'w-full md:w-[40%] aspect-[4/3] md:aspect-square mb-6 md:mb-0 md:order-2' : ''}
-                      ${isSquare ? 'w-16 h-16 mb-8 border-cyan-500/20 p-1' : ''}
+                      ${isSquare ? 'w-16 h-16 mb-8 border-violet-500/20 p-1' : ''}
                     `}>
                       <img src={role.icon} alt={role.role} className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100 ${isSquare ? 'rounded-xl' : ''}`} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -558,20 +563,20 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                     <div className={`relative z-10 flex-1 flex flex-col ${isWide ? 'md:order-1' : ''}`}>
                       {isTall && (
                         <div className="mb-4">
-                          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-cyan-950 border border-cyan-800 shadow-[0_0_15px_rgba(34,211,238,0.2)] text-cyan-400">
+                          <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-violet-950 border border-violet-800 shadow-[0_0_15px_rgba(139,92,246,0.2)] text-violet-400">
                             <Shield className="w-5 h-5" />
                           </span>
                         </div>
                       )}
 
-                      <h3 className={`font-bold text-white mb-3 group-hover:text-cyan-50 transition-colors ${isTall ? 'text-2xl' : 'text-xl'}`}>{role.role}</h3>
+                      <h3 className={`font-bold text-white mb-3 group-hover:text-violet-50 transition-colors ${isTall ? 'text-2xl' : 'text-xl'}`}>{role.role}</h3>
                       <p className="text-slate-400 text-sm leading-relaxed group-hover:text-slate-300 transition-colors">{role.desc}</p>
 
                       {/* Button / Indicator for Admin */}
                       {isTall && (
                         <div className="mt-auto pt-8">
                           <div className="w-full h-px bg-gradient-to-r from-white/10 via-white/5 to-transparent mb-6" />
-                          <span className="inline-flex items-center gap-2 text-cyan-400 text-[10px] font-mono uppercase tracking-widest bg-cyan-950/30 px-3 py-1.5 rounded-md border border-cyan-800/30">
+                          <span className="inline-flex items-center gap-2 text-violet-400 text-[10px] font-mono uppercase tracking-widest bg-violet-950/30 px-3 py-1.5 rounded-md border border-violet-800/30">
                             <Database className="w-3 h-3" /> System Root Auth
                           </span>
                         </div>
@@ -588,7 +593,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
         <section className="max-w-7xl mx-auto px-4 py-24 relative z-10 overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, margin: "-50px" }} transition={{ duration: 0.6 }}>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-mono tracking-widest uppercase mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-[10px] font-mono tracking-widest uppercase mb-6">
                 <Activity className="w-3 h-3" /> System Architecture
               </div>
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Kecerdasan Buatan Terdistribusi</h2>
@@ -604,12 +609,12 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
                 ].map((item, idx) => (
                   <div key={idx} className="flex gap-4 group">
                     <div className="mt-1">
-                      <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 group-hover:text-cyan-400 group-hover:border-cyan-500/30 transition-colors">
+                      <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 group-hover:text-violet-400 group-hover:border-violet-500/30 transition-colors">
                         <item.icon className="w-4 h-4" />
                       </div>
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-white mb-1 group-hover:text-cyan-100 transition-colors">{item.title}</h4>
+                      <h4 className="text-sm font-bold text-white mb-1 group-hover:text-violet-100 transition-colors">{item.title}</h4>
                       <p className="text-slate-400 text-xs font-light leading-relaxed max-w-md">{item.desc}</p>
                     </div>
                   </div>
@@ -618,26 +623,26 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
             </motion.div>
 
             {/* Elegant Tech Image Container */}
-            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, margin: "-50px" }} transition={{ duration: 0.6 }} className="relative h-[350px] md:h-[500px] w-full rounded-2xl overflow-hidden border border-white/10 bg-slate-900/50 backdrop-blur-md shadow-[0_0_50px_rgba(34,211,238,0.1)] p-2 group mt-12 lg:mt-0">
-              <motion.div animate={{ y: [-10, 10, -10] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-2 z-0 overflow-hidden rounded-xl border border-cyan-500/20">
-                <div className="absolute inset-0 bg-gradient-to-tr from-cyan-900/40 to-blue-900/20 z-10" />
+            <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false, margin: "-50px" }} transition={{ duration: 0.6 }} className="relative h-[350px] md:h-[500px] w-full rounded-2xl overflow-hidden border border-white/10 bg-slate-900/50 backdrop-blur-md shadow-[0_0_50px_rgba(139,92,246,0.1)] p-2 group mt-12 lg:mt-0">
+              <motion.div animate={{ y: [-10, 10, -10] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-2 z-0 overflow-hidden rounded-xl border border-violet-500/20">
+                <div className="absolute inset-0 bg-gradient-to-tr from-violet-900/40 to-purple-900/30 z-10" />
                 <img src="/images/ai-assets/feature-ai-posture.png" alt="Architecture" className="w-full h-full object-cover opacity-70 mix-blend-screen grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" />
 
                 {/* Tech Grid Overlay */}
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(34,211,238,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.15)_1px,transparent_1px)] bg-[size:40px_40px] z-10 pointer-events-none mix-blend-overlay" />
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.15)_1px,transparent_1px)] bg-[size:40px_40px] z-10 pointer-events-none mix-blend-overlay" />
 
                 {/* Holographic Scanning Laser */}
                 <motion.div
                   animate={{ top: ["-10%", "110%"] }}
                   transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                  className="absolute left-0 right-0 h-[2px] bg-cyan-400 shadow-[0_0_30px_8px_rgba(34,211,238,0.8)] z-20 flex justify-center"
+                  className="absolute left-0 right-0 h-[2px] bg-violet-400 shadow-[0_0_30px_8px_rgba(139,92,246,0.8)] z-20 flex justify-center"
                 >
                   <div className="w-1/2 h-full bg-white shadow-[0_0_10px_2px_white]" />
                 </motion.div>
 
                 {/* Scanning Reticles */}
-                <div className="absolute top-[10%] left-[10%] w-10 h-10 border-l-2 border-t-2 border-cyan-400/70 z-20" />
-                <div className="absolute bottom-[10%] right-[10%] w-10 h-10 border-r-2 border-b-2 border-cyan-400/70 z-20" />
+                <div className="absolute top-[10%] left-[10%] w-10 h-10 border-l-2 border-t-2 border-violet-400/70 z-20" />
+                <div className="absolute bottom-[10%] right-[10%] w-10 h-10 border-r-2 border-b-2 border-violet-400/70 z-20" />
               </motion.div>
             </motion.div>
           </div>
@@ -650,7 +655,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">Direktori Modul Fungsional</h2>
               <p className="text-slate-400 text-sm max-w-xl font-light">Enam pilar utama yang menjadi pondasi ekosistem operasional PT Solusi Mitra Mandiri.</p>
             </div>
-            <button className="text-sm font-medium text-white hover:text-cyan-400 transition-colors flex items-center gap-2">
+            <button className="text-sm font-medium text-white hover:text-violet-400 transition-colors flex items-center gap-2">
               Lihat Spesifikasi Lengkap <ArrowRight className="w-4 h-4" />
             </button>
           </div>
