@@ -257,7 +257,13 @@ const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0
 // ==========================================
 // 4. MAIN COMPONENT: FRAMEWORK SAAS LANDING PAGE
 // ==========================================
-export default function LandingPage({ founders = [] }: { founders: any[] }) {
+type GymPartner = {
+  id: number;
+  name: string;
+  logo_url: string;
+};
+
+export default function LandingPage({ founders = [], gymPartners = [] }: { founders: any[]; gymPartners: GymPartner[] }) {
   const { data, setData, post, processing, errors, wasSuccessful } = useForm({ company_name: '', pic_name: '', phone_number: '', email: '', notes: '' });
   const [showForm, setShowForm] = useState(false);
 
@@ -274,7 +280,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
         <FrameworkBackground />
 
         {/* --- TOP NAVIGATION BAR --- */}
-        <div className="absolute top-0 left-0 w-full z-50 p-6 md:p-8 flex justify-start items-center">
+        <div className="absolute top-0 left-0 w-full z-50 p-6 md:p-8 flex justify-between items-center">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -287,6 +293,17 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
               className="h-20 md:h-28 w-auto object-contain"
             />
           </motion.div>
+          <div className="flex items-center gap-3">
+            <a href="#mitra-gym" className="hidden sm:inline-flex px-5 py-3 rounded-xl text-base font-semibold text-violet-100 hover:text-white hover:bg-white/10 transition-colors">
+              Mitra Gym
+            </a>
+            <a
+              href="/admin/gym-partners"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-500/15 border border-violet-400/30 text-violet-100 hover:bg-violet-500/25 hover:border-violet-300/50 transition-all text-sm font-semibold backdrop-blur-md"
+            >
+              Admin
+            </a>
+          </div>
         </div>
 
         {/* --- 1. HERO SECTION (CLEAN TYPOGRAPHY) --- */}
@@ -378,6 +395,31 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
           </div>
         )}
 
+        <section id="mitra-gym" className="relative z-10 max-w-7xl mx-auto px-4 py-24 scroll-mt-8">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 font-mono text-xs uppercase tracking-widest mb-5">
+              Trusted Partners
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Gym yang Bekerja Sama dengan Kami</h2>
+            <p className="max-w-2xl mx-auto text-slate-400">Kolaborasi bersama partner gym untuk menghadirkan operasional yang lebih terintegrasi, efisien, dan terukur.</p>
+          </div>
+
+          {gymPartners.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+              {gymPartners.map((partner) => (
+                <div key={partner.id} className="group min-h-52 rounded-2xl border border-white/10 bg-white/[0.04] p-6 flex flex-col items-center justify-center gap-5 backdrop-blur-md hover:border-violet-400/40 hover:bg-violet-500/[0.08] transition-all">
+                  <img src={partner.logo_url} alt={`Logo ${partner.name}`} className="h-28 md:h-36 w-full object-contain group-hover:scale-105 transition-transform" />
+                  <p className="text-center text-base font-semibold text-slate-200">{partner.name}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-violet-400/25 bg-violet-500/[0.05] px-6 py-12 text-center">
+              <p className="text-slate-300">Belum ada logo gym partner yang ditampilkan.</p>
+            </div>
+          )}
+        </section>
+
         {/* --- 2. EXECUTIVE LEADERSHIP (HOLOGRAPHIC PROFILES) --- */}
         <section className="max-w-7xl mx-auto px-4 py-32 relative z-10">
           <div className="flex flex-col items-center mb-20 text-center">
@@ -389,7 +431,7 @@ export default function LandingPage({ founders = [] }: { founders: any[] }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <HolographicTeamCard icon={Layers} role="Director of Product" name="Andi Adellia" imageUrl="/images/founders/founder-1-hd.png" desc="Memimpin visi strategis dan peta jalan pengembangan ekosistem ERP yang holistik." delay={0.1} />
-            <HolographicTeamCard icon={Cpu} role="Chief Technology Officer" name="Jonathan Immanuel Alexander" imageUrl="/images/founders/founder-2.jpg" desc="Arsitek utama di balik integrasi mutakhir infrastruktur berbasis kecerdasan buatan." delay={0.2} />
+            <HolographicTeamCard icon={Cpu} role="Chief Technology Officer" name="Jonathan Immanuel Alexander" imageUrl="/images/founders/founder-2-hd.png" desc="Arsitek utama di balik integrasi mutakhir infrastruktur berbasis kecerdasan buatan." delay={0.2} />
             <HolographicTeamCard icon={Terminal} role="Head of Software" name="Rizki Algipari" imageUrl="/images/founders/founder3-hd.png" desc="Pakar rekayasa perangkat lunak yang memimpin optimasi performa inti aplikasi." delay={0.3} />
           </div>
         </section>

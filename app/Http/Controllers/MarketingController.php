@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class MarketingController extends Controller
@@ -16,8 +17,19 @@ class MarketingController extends Controller
             ->orderBy('order_position', 'asc')
             ->get();
 
+        $gymPartners = DB::table('gym_partners')
+            ->where('is_active', true)
+            ->latest()
+            ->get()
+            ->map(fn ($partner) => [
+                'id' => $partner->id,
+                'name' => $partner->name,
+                'logo_url' => Storage::url($partner->logo_path),
+            ]);
+
         return Inertia::render('marketing/LandingPage', [
-            'founders' => $founders
+            'founders' => $founders,
+            'gymPartners' => $gymPartners,
         ]);
     }
 
@@ -42,4 +54,5 @@ class MarketingController extends Controller
             'success' => 'Permintaan demo berhasil dikirim! Tim sales PT Solusi Mitra Mandiri akan segera menghubungi Anda.'
         ]);
     }
+
 }
