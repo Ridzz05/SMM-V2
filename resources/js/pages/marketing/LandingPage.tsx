@@ -432,7 +432,7 @@ export default function LandingPage({ founders = [], gymPartners = [] }: { found
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <HolographicTeamCard icon={Layers} role="Director of Product" name="Andi Adellia" imageUrl="/images/founders/founder-1-hd.png" desc="Memimpin visi strategis dan peta jalan pengembangan ekosistem ERP yang holistik." delay={0.1} />
             <HolographicTeamCard icon={Cpu} role="Chief Technology Officer" name="Jonathan Immanuel Alexander" imageUrl="/images/founders/founder-2-hd.png" desc="Arsitek utama di balik integrasi mutakhir infrastruktur berbasis kecerdasan buatan." delay={0.2} />
-            <HolographicTeamCard icon={Terminal} role="Head of Software" name="Rizki Algipari" imageUrl="/images/founders/founder3-hd.png" desc="Pakar rekayasa perangkat lunak yang memimpin optimasi performa inti aplikasi." delay={0.3} />
+            <HolographicTeamCard icon={Terminal} role="Fullstack Engineer" name="Rizki Algipari" imageUrl="/images/founders/founder3-hd.png" desc="Fullstack engineer dan Cloud Architect" delay={0.3} />
           </div>
         </section>
 
