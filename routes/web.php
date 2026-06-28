@@ -13,7 +13,7 @@ Route::post('/request-demo', [MarketingController::class, 'requestDemo'])->name(
 Route::middleware('guest')->group(function () {
     Route::get('/admin/login', [AdminAuthController::class, 'create'])->name('admin.login');
     Route::post('/admin/login', [AdminAuthController::class, 'store'])
-        ->middleware('throttle:5,1')
+        ->middleware('throttle:20,1')
         ->name('admin.login.store');
 });
 

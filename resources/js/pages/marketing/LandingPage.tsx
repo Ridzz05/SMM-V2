@@ -294,7 +294,13 @@ export default function LandingPage({ founders = [], gymPartners = [] }: { found
             />
           </motion.div>
           <div className="flex items-center gap-3">
-            <a href="#mitra-gym" className="hidden sm:inline-flex px-5 py-3 rounded-xl text-base font-semibold text-violet-100 hover:text-white hover:bg-white/10 transition-colors">
+            <a href="#visi-solusi" className="hidden md:inline-flex px-4 py-2 rounded-xl text-sm font-semibold text-violet-100 hover:text-white hover:bg-white/10 transition-colors">
+              Problem & Solusi
+            </a>
+            <a href="#video-explainer" className="hidden md:inline-flex px-4 py-2 rounded-xl text-sm font-semibold text-violet-100 hover:text-white hover:bg-white/10 transition-colors">
+              Penjelasan Video
+            </a>
+            <a href="#mitra-gym" className="hidden sm:inline-flex px-4 py-2 rounded-xl text-sm font-semibold text-violet-100 hover:text-white hover:bg-white/10 transition-colors">
               Mitra Gym
             </a>
             <a
@@ -394,6 +400,231 @@ export default function LandingPage({ founders = [], gymPartners = [] }: { found
             </motion.div>
           </div>
         )}
+
+        {/* --- 1.5. VIDEO EXPLAINER (HERO SECTION 2) --- */}
+        <section id="video-explainer" className="relative z-10 max-w-7xl mx-auto px-4 py-24 scroll-mt-20 border-b border-white/5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.8 }}
+            >
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 font-mono text-xs uppercase tracking-widest mb-6">
+                Web Video Tour
+              </span>
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                Melihat Lebih Dekat <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">Cara Kerja Kami</span>
+              </h2>
+              <p className="text-slate-400 text-lg leading-relaxed mb-8">
+                Video di atas mendemonstrasikan bagaimana platform kami terintegrasi secara mulus. Dari manajemen pelanggan hingga analisis data real-time, saksikan bagaimana arsitektur kami membantu operasional gym Anda berjalan dengan otomatisasi penuh.
+              </p>
+              <ul className="space-y-4">
+                {['Antarmuka intuitif untuk staff', 'Dashboard analitik real-time', 'Sistem keamanan biometrik', 'Integrasi POS & CRM'].map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-3 text-slate-300">
+                    <CheckCircle className="w-5 h-5 text-violet-500" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="absolute inset-0 bg-gradient-to-tr from-violet-500/20 to-cyan-500/20 blur-3xl rounded-full" />
+              <div className="relative rounded-2xl border border-white/10 bg-black/50 backdrop-blur-sm p-2 shadow-2xl">
+                <div className="aspect-video bg-slate-900 rounded-xl overflow-hidden border border-white/5 relative group flex items-center justify-center">
+                  {/* Video Player */}
+                  <video 
+                    autoPlay 
+                    loop 
+                    muted 
+                    controls
+                    playsInline 
+                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+                  >
+                    {/* Ganti 'demo-web.mp4' dengan nama file video Anda yang ditaruh di folder public/videos/ */}
+                    <source src="/videos/demo-web.mp4" type="video/mp4" />
+                  </video>
+                  
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6 pointer-events-none">
+                     <p className="text-sm text-violet-300 font-mono flex items-center gap-2">
+                       <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></span>
+                       Status: System Online & Monitoring
+                     </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* --- 1.6. TANTANGAN & SOLUSI SECTION --- */}
+        <section id="visi-solusi" className="relative z-10 max-w-7xl mx-auto px-4 py-24 scroll-mt-20 border-b border-white/5">
+          <div className="text-center mb-16">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 font-mono text-xs uppercase tracking-widest mb-5">
+              Identifikasi Masalah
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Masalah yang <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-500">Sering Terjadi di Gym</span></h2>
+            <p className="text-slate-400 max-w-3xl mx-auto text-lg leading-relaxed">
+              Gym modern tidak cukup hanya ramai. Data yang tidak terkontrol akan menjadi <strong>kebocoran bisnis</strong>. 
+              Sistem yang terpisah mengakibatkan data tidak sinkron, pekerjaan berulang, dan keputusan yang terlambat.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 mb-20">
+            {/* Tantangan Owner */}
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-gradient-to-b from-red-500/5 to-transparent border border-red-500/10 rounded-3xl p-8 md:p-10 relative overflow-hidden group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400 mb-6">
+                <Activity className="w-6 h-6" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-6">Tantangan Owner Gym Saat Ini</h3>
+              <ul className="space-y-4">
+                {[
+                  "Owner tidak tahu kondisi sales hari ini",
+                  "Target dan actual baru diketahui di akhir bulan",
+                  "Lead banyak, tetapi follow-up tidak jelas",
+                  "Staf bisa titip absen atau data tidak rapi",
+                  "Payroll masih dihitung manual",
+                  "Trainer sulit dimonitor kualitas servicenya",
+                  "Laporan lambat, keputusan juga terlambat"
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-3">
+                    <div className="mt-1 w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center border border-red-500/30 flex-shrink-0">
+                      <div className="w-2 h-2 rounded-full bg-red-400" />
+                    </div>
+                    <span className="text-slate-300 text-sm md:text-base">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Dampak Sistem Terpisah */}
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="bg-gradient-to-b from-orange-500/5 to-transparent border border-orange-500/10 rounded-3xl p-8 md:p-10 relative overflow-hidden group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center text-orange-400 mb-6">
+                <Terminal className="w-6 h-6" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">Dampak Sistem yang Terpisah</h3>
+              <p className="text-slate-400 text-sm mb-6">Ketika semua divisi menggunakan cara sendiri-sendiri (Sales pakai spreadsheet, CS manual, HR fingerprint terpisah, dll).</p>
+              
+              <div className="bg-black/30 rounded-xl p-6 border border-white/5 mb-6">
+                <h4 className="text-red-400 font-semibold mb-3 flex items-center gap-2">
+                  <Shield className="w-4 h-4" /> Akibatnya (ERROR):
+                </h4>
+                <ul className="space-y-3">
+                  {[
+                    "Data tidak sinkron & pekerjaan berulang",
+                    "Risiko salah input sangat tinggi",
+                    "Sulit mencari sumber masalah",
+                    "Owner tidak punya kontrol real-time"
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <div className="mt-1 w-5 h-5 rounded-full bg-orange-500/20 flex items-center justify-center border border-orange-500/30 flex-shrink-0">
+                        <div className="w-2 h-2 rounded-full bg-orange-400" />
+                      </div>
+                      <span className="text-slate-300 text-sm">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <blockquote className="border-l-4 border-orange-500 pl-4 py-2 text-slate-300 italic font-medium">
+                "Masalah terbesar bukan kurang data, tetapi data tidak terhubung."
+              </blockquote>
+            </motion.div>
+          </div>
+
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-20" />
+
+          {/* SOLUSI UTAMA */}
+          <div className="text-center mb-16">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 font-mono text-xs uppercase tracking-widest mb-5">
+              The Answer
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Solusi Utama: <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">Satu Platform Terintegrasi</span></h2>
+            <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+              PT Solusi Mitra Mandiri menyediakan sistem gym terintegrasi (One Integrated Management System) untuk mengendalikan bisnis gym Anda dengan cerdas & real-time.
+            </p>
+          </div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto bg-gradient-to-tr from-violet-500/10 via-slate-900 to-cyan-500/10 rounded-3xl p-1 relative overflow-hidden shadow-2xl"
+          >
+            <div className="bg-[#0A0A0A] rounded-[22px] p-8 md:p-12 h-full w-full relative z-10 border border-white/5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-6">Satu Sistem Untuk Semua:</h3>
+                  <ul className="space-y-4">
+                    {[
+                      { role: "Owner & Manager", icon: Users },
+                      { role: "Membership Consultant / Sales", icon: BarChart3 },
+                      { role: "Customer Service", icon: Terminal },
+                      { role: "Personal Trainer", icon: Activity },
+                      { role: "HR & Payroll", icon: Fingerprint },
+                      { role: "Finance", icon: Database },
+                      { role: "Member", icon: UserCheck }
+                    ].map((item, idx) => (
+                      <li key={idx} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10">
+                        <div className="w-10 h-10 rounded-lg bg-violet-500/20 flex items-center justify-center text-violet-400">
+                          <item.icon className="w-5 h-5" />
+                        </div>
+                        <span className="text-slate-200 font-medium">{item.role}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="flex flex-col items-center justify-center gap-6">
+                  <div className="w-full relative aspect-square max-w-[300px] flex items-center justify-center">
+                    {/* Abstract Representation of the Cycle */}
+                    <div className="absolute inset-0 rounded-full border-4 border-dashed border-violet-500/30 animate-[spin_20s_linear_infinite]" />
+                    <div className="absolute inset-4 rounded-full border-2 border-cyan-500/20 animate-[spin_15s_linear_infinite_reverse]" />
+                    <div className="absolute inset-12 bg-gradient-to-tr from-violet-500/20 to-cyan-500/20 rounded-full blur-2xl" />
+                    
+                    <div className="relative z-10 text-center">
+                      <h4 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-400 tracking-tighter mb-2">ONE</h4>
+                      <p className="text-xs font-mono text-violet-300 uppercase tracking-widest leading-relaxed">Integrated<br/>Management<br/>System</p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center gap-6 w-full text-center mt-6">
+                     <div>
+                       <Database className="w-6 h-6 text-violet-400 mx-auto mb-2" />
+                       <span className="block text-xs font-bold text-white uppercase">Satu Data</span>
+                       <span className="text-[10px] text-slate-400">Terkoneksi & Akurat</span>
+                     </div>
+                     <div>
+                       <Cpu className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
+                       <span className="block text-xs font-bold text-white uppercase">Satu Proses</span>
+                       <span className="text-[10px] text-slate-400">Terintegrasi & Efisien</span>
+                     </div>
+                     <div>
+                       <CheckCircle className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
+                       <span className="block text-xs font-bold text-white uppercase">Satu Keputusan</span>
+                       <span className="text-[10px] text-slate-400">Cepat & Tepat</span>
+                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </section>
 
         <section id="mitra-gym" className="relative z-10 max-w-7xl mx-auto px-4 py-24 scroll-mt-8">
           <div className="text-center mb-12">
