@@ -10,12 +10,12 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => env('ADMIN_EMAIL', 'admin@solusimitramandiri.id')],
+            ['email' => env('ADMIN_EMAIL', 'admin@solusimitramandiri.com')],
             [
                 'name' => 'Platform Admin',
-                'password' => env('ADMIN_PASSWORD', 'Admin123!'),
+                'password' => env('ADMIN_PASSWORD', 'admin123'),
                 'is_admin' => true,
             ],
         );
-    }
+    }   
 }
