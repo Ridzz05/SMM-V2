@@ -3,7 +3,7 @@ import { Head, useForm } from '@inertiajs/react';
 import {
   Layers, Cpu, Terminal, Users, QrCode, BarChart3, Shield,
   ArrowRight, CheckCircle, Database, BrainCircuit, Fingerprint,
-  CalendarDays, LineChart, Zap, UserCheck, Stethoscope, ChevronRight, Activity, VolumeX
+  Zap, UserCheck, ChevronRight, Activity, VolumeX, X, type LucideIcon
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -149,7 +149,7 @@ const FrameworkBackground = () => (
 // ==========================================
 // 2. SUB-KOMPONEN: MODERN FRAMEWORK FEATURE CARD
 // ==========================================
-const ModernFeatureCard = ({ icon: Icon, title, desc, tag, imagePath, delay = 0 }: { icon: any, title: string, desc: string, tag: string, imagePath: string, delay?: number }) => (
+const ModernFeatureCard = ({ icon: Icon, title, desc, tag, imagePath, delay = 0 }: { icon: LucideIcon, title: string, desc: string, tag: string, imagePath: string, delay?: number }) => (
   <motion.div
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -188,7 +188,7 @@ const ModernFeatureCard = ({ icon: Icon, title, desc, tag, imagePath, delay = 0 
 // ==========================================
 // 3. SUB-KOMPONEN: HOLOGRAPHIC FOUNDER CARD
 // ==========================================
-const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0 }: { icon: any, role: string, name: string, imageUrl: string, desc: string, delay?: number }) => (
+const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0 }: { icon: LucideIcon, role: string, name: string, imageUrl: string, desc: string, delay?: number }) => (
   <motion.div
     initial={{ opacity: 0, y: 50 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -201,7 +201,7 @@ const HolographicTeamCard = ({ icon: Icon, role, name, imageUrl, desc, delay = 0
 
     {/* Holographic Scanning Line */}
     <motion.div
-      animate={{ y: ["-10px", "650px"] }}
+      animate={{ y: ["0%", "100%"] }}
       transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
       className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-violet-400 to-transparent shadow-[0_0_20px_2px_#8b5cf6] z-20 opacity-0 group-hover:opacity-100 mix-blend-screen"
     />
@@ -263,13 +263,18 @@ type GymPartner = {
   logo_url: string;
 };
 
-export default function LandingPage({ founders = [], gymPartners = [] }: { founders: any[]; gymPartners: GymPartner[] }) {
-  const { data, setData, post, processing, errors, wasSuccessful } = useForm({ company_name: '', pic_name: '', phone_number: '', email: '', notes: '' });
+export default function LandingPage({ gymPartners = [] }: { gymPartners: GymPartner[] }) {
+  const { data, setData, post, processing, errors } = useForm({ company_name: '', pic_name: '', phone_number: '', email: '', notes: '' });
   const [showForm, setShowForm] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    post('/request-demo', { onSuccess: () => { if (!errors) { alert('Request demo berhasil terkirim!'); setShowForm(false); } } });
+    post('/request-demo', {
+      onSuccess: () => {
+        alert('Request demo berhasil terkirim!');
+        setShowForm(false);
+      },
+    });
   };
 
   return (
@@ -319,7 +324,7 @@ export default function LandingPage({ founders = [], gymPartners = [] }: { found
           transition={{ duration: 1.2, delay: 3.5, ease: "easeOut" }}
           className="relative max-w-7xl mx-auto px-4 pt-48 pb-24 text-center z-10 flex flex-col items-center min-h-screen justify-center md:min-h-0 md:justify-start"
         >
-          <a href="#" className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors mb-8 text-xs font-medium text-slate-300">
+          <a href="#video-explainer" onClick={(e) => { e.preventDefault(); document.getElementById('video-explainer')?.scrollIntoView({ behavior: 'smooth' }); }} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors mb-8 text-xs font-medium text-slate-300">
             <span className="w-2 h-2 rounded-full bg-violet-500 shadow-[0_0_8px_#8b5cf6] animate-pulse"></span>
             Memperkenalkan Infrastruktur FitOS 2.0
             <ChevronRight className="w-3 h-3 text-slate-500" />
@@ -362,7 +367,9 @@ export default function LandingPage({ founders = [], gymPartners = [] }: { found
         {showForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#0A0A0A] border border-white/10 rounded-2xl p-8 max-w-xl w-full shadow-2xl relative">
-              <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 text-slate-500 hover:text-white p-2">X</button>
+              <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 text-slate-500 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors" aria-label="Close modal">
+                <X className="w-5 h-5" />
+              </button>
               <h3 className="text-xl font-bold text-white mb-2">Request Deployment</h3>
               <p className="text-slate-400 text-sm mb-6">Konsultasikan kebutuhan spesifik infrastruktur PT Solusi Mitra Mandiri Anda.</p>
 
@@ -371,25 +378,30 @@ export default function LandingPage({ founders = [], gymPartners = [] }: { found
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Nama Perusahaan</label>
                     <input type="text" required value={data.company_name} onChange={e => setData('company_name', e.target.value)} className="w-full bg-[#120b1c] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none text-white transition-all" />
+                    {errors.company_name && <p className="text-red-400 text-xs mt-1">{errors.company_name}</p>}
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Penanggung Jawab</label>
                     <input type="text" required value={data.pic_name} onChange={e => setData('pic_name', e.target.value)} className="w-full bg-[#120b1c] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none text-white transition-all" />
+                    {errors.pic_name && <p className="text-red-400 text-xs mt-1">{errors.pic_name}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Nomor Telepon / WA</label>
                     <input type="text" required value={data.phone_number} onChange={e => setData('phone_number', e.target.value)} className="w-full bg-[#120b1c] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none text-white transition-all" />
+                    {errors.phone_number && <p className="text-red-400 text-xs mt-1">{errors.phone_number}</p>}
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-slate-300 mb-1.5">Alamat Email</label>
                     <input type="email" required value={data.email} onChange={e => setData('email', e.target.value)} className="w-full bg-[#120b1c] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none text-white transition-all" />
+                    {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">Catatan Tambahan</label>
                   <textarea value={data.notes} onChange={e => setData('notes', e.target.value)} rows={3} className="w-full bg-[#120b1c] border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none text-white transition-all"></textarea>
+                  {errors.notes && <p className="text-red-400 text-xs mt-1">{errors.notes}</p>}
                 </div>
                 <div className="pt-2">
                   <button type="submit" disabled={processing} className="w-full py-2.5 bg-white text-black font-semibold rounded-lg hover:bg-slate-200 transition-colors text-sm">
@@ -660,10 +672,9 @@ export default function LandingPage({ founders = [], gymPartners = [] }: { found
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight">Kepemimpinan Eksekutif</h2>
             <p className="text-slate-400 text-base md:text-lg max-w-2xl">Memadukan keahlian rekayasa perangkat lunak tingkat tinggi, sains data, dan tata kelola bisnis korporasi dalam satu pilar arsitektur yang solid.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <HolographicTeamCard icon={Layers} role="Director of Product" name="Andi Adellia" imageUrl="/images/founders/founder-1-hd.png" desc="Memimpin visi strategis dan peta jalan pengembangan ekosistem ERP yang holistik." delay={0.1} />
             <HolographicTeamCard icon={Cpu} role="Chief Technology Officer" name="Jonathan Immanuel Alexander" imageUrl="/images/founders/founder-2-hd.png" desc="Arsitek utama di balik integrasi mutakhir infrastruktur berbasis kecerdasan buatan." delay={0.2} />
-            <HolographicTeamCard icon={Terminal} role="Fullstack Engineer" name="Rizki Algipari" imageUrl="/images/founders/founder3-hd.png" desc="Fullstack engineer dan Cloud Architect" delay={0.3} />
           </div>
         </section>
 
@@ -698,8 +709,8 @@ export default function LandingPage({ founders = [], gymPartners = [] }: { found
 
               {/* Glowing Scanner overlaying the wave */}
               <motion.div
-                animate={{ y: ["-200%", "8000%"] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                animate={{ y: ["-100%", "500%"] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
                 className="absolute top-0 w-full h-64 bg-gradient-to-b from-transparent via-violet-400/30 to-transparent shadow-[0_0_20px_2px_#8b5cf6] mix-blend-screen"
               />
             </div>
