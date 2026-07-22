@@ -1,84 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import {
   Layers, Cpu, Terminal, Users, QrCode, BarChart3, Shield,
   ArrowRight, CheckCircle, Database, BrainCircuit, Fingerprint,
-  Zap, UserCheck, ChevronRight, Activity, VolumeX, X, type LucideIcon
+  Zap, UserCheck, ChevronRight, Activity, X, type LucideIcon
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-// ==========================================
-// 0. SUB-KOMPONEN: AUDIO SYNTHESIZER
-// ==========================================
-const SciFiScannerAudio = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const hasAutoPlayed = useRef(false);
-
-  const toggleAudio = () => {
-    if (!iframeRef.current) return;
-    
-    if (isPlaying) {
-      iframeRef.current.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-    } else {
-      iframeRef.current.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-    }
-    setIsPlaying(!isPlaying);
-  };
-
-  useEffect(() => {
-    const handleInteraction = () => {
-      if (!hasAutoPlayed.current && !isPlaying) {
-        hasAutoPlayed.current = true;
-        toggleAudio();
-        ['click', 'scroll', 'touchstart', 'mousemove'].forEach(e =>
-          window.removeEventListener(e, handleInteraction)
-        );
-      }
-    };
-
-    ['click', 'scroll', 'touchstart', 'mousemove'].forEach(e =>
-      window.addEventListener(e, handleInteraction, { passive: true })
-    );
-
-    return () => {
-      ['click', 'scroll', 'touchstart', 'mousemove'].forEach(e =>
-        window.removeEventListener(e, handleInteraction)
-      );
-    };
-  }, [isPlaying]);
-
-  return (
-    <>
-      <iframe
-        ref={iframeRef}
-        src="https://www.youtube.com/embed/RgKAFK5djSk?enablejsapi=1&autoplay=0&loop=1&playlist=RgKAFK5djSk"
-        allow="autoplay"
-        style={{ display: 'none' }}
-      />
-      <button
-        onClick={toggleAudio}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-full bg-black/80 border border-violet-500/50 text-violet-400 hover:bg-violet-900/50 hover:scale-105 backdrop-blur-md transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)] group"
-      >
-        {isPlaying ? (
-        <>
-          <div className="flex items-center gap-1 h-4">
-            <span className="w-1 h-2/3 bg-violet-400 animate-[pulse_0.5s_infinite]" />
-            <span className="w-1 h-full bg-violet-400 animate-[pulse_0.3s_infinite]" />
-            <span className="w-1 h-1/2 bg-violet-400 animate-[pulse_0.7s_infinite]" />
-          </div>
-          <span className="text-[10px] font-mono tracking-widest font-bold">SCANNER AUDIO ON</span>
-        </>
-      ) : (
-        <>
-          <VolumeX className="w-4 h-4 text-slate-400 group-hover:text-violet-400" />
-          <span className="text-[10px] font-mono tracking-widest text-slate-400 group-hover:text-violet-400">ENABLE SCANNER AUDIO</span>
-        </>
-        )}
-      </button>
-    </>
-  );
-};
 
 // ==========================================
 // 1. SUB-KOMPONEN: FRAMEWORK STYLE BACKGROUND
@@ -280,7 +207,6 @@ export default function LandingPage({ gymPartners = [] }: { gymPartners: GymPart
   return (
     <>
       <Head title="ERP Infrastructure - PT Solusi Mitra Mandiri" />
-      <SciFiScannerAudio />
       <div className="min-h-screen bg-transparent text-slate-100 font-sans antialiased selection:bg-violet-500/30 selection:text-white relative overflow-x-hidden">
         <FrameworkBackground />
 
