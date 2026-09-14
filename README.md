@@ -1,58 +1,177 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# PT Solusi Mitra Mandiri — AIO
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Situs publik dan portal admin untuk **AIO**, sistem manajemen gym berbasis AI yang
+dikembangkan PT Solusi Mitra Mandiri. Fitur dan ambang batasnya diturunkan dari basis
+kode gym **FitDay** sebagai referensi implementasi.
 
-## About Laravel
+Arsitektur saat ini terdiri dari dua proses:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Lapisan | Teknologi | Peran |
+| --- | --- | --- |
+| API | Go 1.27 · chi · GORM · SQLite | Seluruh data, autentikasi, dan penyimpanan berkas |
+| Web | Next.js 16 · React 19 · TypeScript | Semua halaman yang dilihat pengguna |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Server Go tidak merender HTML sama sekali; ia hanya menyajikan JSON dan berkas statis.
+Next.js mem-proxy `/api/*`, `/uploads/*`, `/images/*`, dan `/videos/*` ke Go sehingga
+browser selalu berjalan pada satu origin.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Menjalankan
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Butuh Go 1.27+ dan Node.js 24+.
 
 ```bash
-composer require laravel/boost --dev
+# Terminal 1 — API Go pada :8080
+go run ./cmd/server
 
-php artisan boost:install
+# Terminal 2 — frontend Next.js pada :3000
+cd web
+npm install
+npm run dev
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Buka <http://localhost:3000>. Portal admin ada di <http://localhost:3000/admin/login>.
 
-## Contributing
+Untuk menjalankan versi produksi, bangun dulu frontend dengan `API_ORIGIN` yang
+benar (lihat [Konfigurasi](#konfigurasi)), lalu jalankan `next start`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cd web
+API_ORIGIN=http://localhost:8080 npm run build
+npx next start -p 3000
+```
 
-## Code of Conduct
+## Konfigurasi
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Seluruh nilai berikut dibaca dari variabel lingkungan dan punya nilai bawaan untuk
+pengembangan lokal.
 
-## Security Vulnerabilities
+### Server Go
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Variabel | Bawaan | Keterangan |
+| --- | --- | --- |
+| `PORT` | `8080` | Port API |
+| `DB_PATH` | `database.sqlite` | Berkas SQLite |
+| `UPLOAD_DIR` | `uploads` | Direktori logo mitra |
+| `SESSION_SECRET` | nilai pengembangan | Kunci penandatanganan cookie sesi |
+| `ADMIN_EMAIL` | `admin@solusimitramandiri.com` | Akun admin yang di-seed |
+| `ADMIN_PASSWORD` | `admin123` | Kata sandi admin yang di-seed |
+| `PUBLIC_SITE_URL` | `http://localhost:3000` | Tujuan pengalihan `/` |
+| `ALLOWED_ORIGINS` | `http://localhost:3000` | Origin yang diizinkan CORS, dipisah koma |
 
-## License
+`SESSION_SECRET`, `ADMIN_EMAIL`, dan `ADMIN_PASSWORD` **wajib** diganti sebelum
+deployment; nilai bawaannya hanya untuk pengembangan.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Frontend Next.js
+
+| Variabel | Bawaan | Dibaca saat | Keterangan |
+| --- | --- | --- | --- |
+| `API_ORIGIN` | `http://localhost:8080` | **build** | Alamat server Go yang di-proxy |
+| `NEXT_PUBLIC_GA_ID` | `G-TFKE3G9D2K` | build | Properti GA4; isi kosong untuk mematikan pelacakan |
+
+`API_ORIGIN` **harus** ditetapkan sebelum `npm run build`, dan hanya dibaca saat
+build. Next membekukan tujuan `rewrites()` ke `.next/routes-manifest.json`, dan
+permintaan SSR pun diarahkan ke origin permintaan sehingga ikut melewati rewrite
+yang sama. Origin yang salah tidak memunculkan galat: permintaan hanya dijawab
+`200` tanpa isi, sehingga halaman tampak termuat tetapi tanpa data.
+
+```bash
+API_ORIGIN=http://localhost:8080 npm run build
+```
+
+## Endpoint API
+
+| Metode | Jalur | Akses | Keterangan |
+| --- | --- | --- | --- |
+| `GET` | `/api/health` | publik | Pemeriksaan status |
+| `GET` | `/api/landing` | publik | Founder aktif dan mitra aktif |
+| `POST` | `/api/demo-requests` | publik | Pengajuan demo dari formulir publik |
+| `POST` | `/api/admin/login` | publik | Membuat sesi admin |
+| `POST` | `/api/admin/logout` | publik | Mengakhiri sesi admin |
+| `GET` | `/api/admin/me` | admin | Identitas admin dari sesi aktif |
+| `GET` | `/api/admin/partners` | admin | Daftar mitra dan permintaan demo |
+| `POST` | `/api/admin/partners` | admin | Unggah logo mitra (multipart) |
+| `DELETE` | `/api/admin/partners/{id}` | admin | Hapus mitra beserta berkas logonya |
+
+Kegagalan validasi menghasilkan `422` dengan bentuk:
+
+```json
+{ "error": "Mohon lengkapi data yang ditandai.",
+  "fields": { "email": "Format alamat email tidak valid." } }
+```
+
+Berkas statis `/images` dan `/videos` dilayani dari `public/`, sedangkan `/uploads`
+dari `UPLOAD_DIR`. Unggahan logo divalidasi berdasarkan isi berkas, bukan ekstensi
+namanya, dan dibatasi 5 MB.
+
+## Basis data
+
+SQLite dibuat otomatis saat pertama dijalankan, termasuk skema dan data awal
+(akun admin dan dua founder). Untuk memulai ulang dari nol, hapus `database.sqlite`
+lalu jalankan ulang server.
+
+## Struktur
+
+```
+cmd/server/         entrypoint API Go
+internal/config/    pembacaan konfigurasi
+internal/database/  koneksi GORM dan seeder
+internal/handlers/  handler HTTP
+internal/middleware/ middleware autentikasi admin
+internal/models/    model GORM
+public/             aset media yang dilayani Go (gambar, video)
+uploads/            berkas unggahan pengguna
+web/                aplikasi Next.js (app router)
+web/app/atelier.css sistem desain Atelier Zero
+web/scripts/        skrip aset merek (dijalankan manual, butuh `sharp`)
+```
+
+## Catatan
+
+- Situs publik menjelaskan **AIO** sebagai produk PT Solusi Mitra Mandiri: dua belas modul
+  domain di atas satu basis data. Gym **FitDay** dipakai sebagai referensi implementasi,
+  bukan sebagai nama produk. Angka rekayasa (jumlah modul, model, rute, migrasi, halaman,
+  tes) tidak ditampilkan di halaman muka. Yang tersisa hanya peran akses di hero
+  (`web/app/page.tsx`) dan ambang operasional di ticker (`web/components/Marquee.tsx`),
+  keduanya diambil dari basis kode FitDay, bukan estimasi pemasaran. Ubah keduanya bila
+  kode sumber berubah.
+- Bagian `#domain` menampilkan sembilan kartu domain sebagai **tumpukan**: tiap kartu
+  dipaku (`position: sticky`) pada offset bertingkat dari `--stack-top` + `--i` ×
+  `--stack-step`, jadi kartu berikutnya menutupi kartu sebelumnya dan menyisakan tepi
+  atasnya. Tingginya diatur di `.card-stack` (`web/app/atelier.css`); elemen semu
+  `::after` setinggi delapan langkah adalah ruang lepas agar tumpukan bertahan utuh
+  selama satu layar gulir — batas paku sebuah elemen sticky adalah kotak konten
+  wadahnya, bukan paddingnya. Animasi masuk dipasang di wadah, bukan per kartu: kartu
+  yang sudah tertutup tidak pernah mencapai ambang 12% milik `SiteChrome`. Di bawah
+  768 px tumpukan diratakan menjadi daftar satu kolom karena tinggi `vh` berubah-ubah
+  saat bilah peramban seluler muncul dan hilang.
+- Formulir permintaan demo mengirim pengajuan ke `POST /api/demo-requests` sehingga tetap
+  tercatat di portal admin, lalu memindahkan percakapan ke WhatsApp sales — nomornya di
+  `WHATSAPP_NUMBER` (`web/lib/site.ts`). Isian formulir disalin apa adanya ke badan pesan;
+  kalau tab baru diblokir, halaman yang sama yang berpindah ke WhatsApp.
+- Aset merek di `public/images/brand/` dan ikon aplikasi (`web/app/icon.png`,
+  `web/app/apple-icon.png`) dihasilkan dari `assets/solusimitramandiri-logo.png`
+  oleh `web/scripts/brand-assets.mjs` — dijalankan manual dengan
+  `node web/scripts/brand-assets.mjs`, hasilnya deterministik. Skrip memangkas
+  margin transparan master, menyisakan 4% ruang napas, lalu mengemit hanya ukuran
+  yang dipakai (96/192/384 px untuk header, footer, dan tampilan besar). Jalankan
+  ulang bila logo master berubah.
+- Aset media dikompresi ke WebP: poster hero (`ai-gym-hero.webp`) dan avatar
+  founder 216 px, yaitu tiga kali lipat kotak 72 px di `.work-card .portrait`.
+  Berkas PNG/JPG asli tetap ada di riwayat git bila sewaktu-waktu dibutuhkan.
+- Media hero memakai rasio **16:9** (`.hero-art`), sama dengan film
+  `public/videos/IMG_3125.mp4` (1280x720). Poster adalah potongan 16:9 yang
+  ditambatkan ke bawah dari citra persegi aslinya agar subjek dan alas mesin
+  latihan tetap utuh. Mengubah kontainer ke rasio potret akan memotong sekitar
+  55% lebar frame film.
+- Logo mitra di `public/images/partners/` sudah dinormalkan: dipangkas ke batas
+  kontennya, dipusatkan pada kanvas persegi 512 px, lalu dikodekan WebP (8–24 KB).
+  Karena itu `.partner-plate img` memakai `object-fit: cover` tanpa pemotongan.
+  Master beresolusi penuh ada di `assets/`, bukan di `public/`, supaya tidak
+  ikut ter-deploy.
+  Lima mitra placeholder di-seed dari `internal/database/seeders.go` hanya saat
+  tabel `gym_partners` kosong; setelah itu pengelolaannya lewat portal admin.
+- `summarize.md` adalah dokumen warisan yang mendeskripsikan basis kode **FitDay**
+  (Laravel 13 + Inertia + React 19), bukan aplikasi Go/Next.js di repositori ini.
+  Bagian Tech Stack-nya karena itu akurat untuk subjeknya dan sengaja tidak diubah;
+  yang dipertahankan adalah konteks bisnisnya (`Lead`, `User`, alur CRM, tanggung
+  jawab modul PT/CS/POS). Lingkup ini juga dinyatakan di kepala berkas tersebut.

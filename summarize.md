@@ -1,6 +1,8 @@
   # Ringkasan Menyeluruh Project Loyal Fitness ERP
 
-  Dokumen ini merangkum kondisi project **Loyal Fitness ERP** di workspace saat ini. Tujuannya adalah membantu owner, developer, atau agent berikutnya memahami konteks bisnis, arsitektur teknis, modul utama, data flow, dan titik penting yang perlu dijaga saat melakukan perubahan.
+Dokumen ini merangkum kondisi project **Loyal Fitness ERP** di workspace saat ini. Tujuannya adalah membantu owner, developer, atau agent berikutnya memahami konteks bisnis, arsitektur teknis, modul utama, data flow, dan titik penting yang perlu dijaga saat melakukan perubahan.
+
+> **Lingkup dokumen.** Seluruh isi berkas ini — termasuk bagian Tech Stack, arsitektur, dan struktur direktori — mendeskripsikan basis kode **FitDay** (Loyal Fitness ERP): PHP 8.3, Laravel 13, Inertia, React 19. Dokumen ini disimpan di repositori ini semata sebagai konteks bisnis dan rujukan angka untuk halaman muka. Stack repositori ini sendiri berbeda: **Go** (chi + GORM + SQLite) untuk API dan **Next.js 16 + React 19** untuk situs publik.
 
   ## 1. Gambaran Umum Project
 
