@@ -21,6 +21,8 @@ Butuh Go 1.27+ dan Node.js 24+.
 
 ```bash
 # Terminal 1 — API Go pada :8080
+export SESSION_SECRET="$(openssl rand -base64 48)"
+export ADMIN_PASSWORD="kata-sandi-pilihan-anda"
 go run ./cmd/server
 
 # Terminal 2 — frontend Next.js pada :3000
@@ -42,8 +44,8 @@ npx next start -p 3000
 
 ## Konfigurasi
 
-Seluruh nilai berikut dibaca dari variabel lingkungan dan punya nilai bawaan untuk
-pengembangan lokal.
+Seluruh nilai berikut dibaca dari variabel lingkungan. Dua di antaranya tidak
+punya nilai bawaan karena menentukan keamanan akses admin.
 
 ### Server Go
 
@@ -52,14 +54,24 @@ pengembangan lokal.
 | `PORT` | `8080` | Port API |
 | `DB_PATH` | `database.sqlite` | Berkas SQLite |
 | `UPLOAD_DIR` | `uploads` | Direktori logo mitra |
-| `SESSION_SECRET` | nilai pengembangan | Kunci penandatanganan cookie sesi |
+| `SESSION_SECRET` | **wajib, tanpa bawaan** | Kunci penandatanganan cookie sesi |
 | `ADMIN_EMAIL` | `admin@solusimitramandiri.com` | Akun admin yang di-seed |
-| `ADMIN_PASSWORD` | `admin123` | Kata sandi admin yang di-seed |
+| `ADMIN_PASSWORD` | **wajib untuk seeding, tanpa bawaan** | Kata sandi admin yang di-seed |
 | `PUBLIC_SITE_URL` | `http://localhost:3000` | Tujuan pengalihan `/` |
 | `ALLOWED_ORIGINS` | `http://localhost:3000` | Origin yang diizinkan CORS, dipisah koma |
 
-`SESSION_SECRET`, `ADMIN_EMAIL`, dan `ADMIN_PASSWORD` **wajib** diganti sebelum
-deployment; nilai bawaannya hanya untuk pengembangan.
+Tanpa `SESSION_SECRET` server menolak start. Bangkitkan kuncinya sekali per
+lingkungan dan simpan di manajer rahasia:
+
+```bash
+export SESSION_SECRET="$(openssl rand -base64 48)"
+```
+
+`ADMIN_PASSWORD` hanya dipakai saat akun `ADMIN_EMAIL` belum ada di basis data.
+Bila variabel ini kosong, seeding akun admin dilewati dan server tetap jalan
+tanpa akun admin. Untuk mengganti kata sandi admin yang sudah ada, ubah lewat
+portal admin atau hapus barisnya dari tabel `users` lalu jalankan ulang server
+dengan `ADMIN_PASSWORD` baru.
 
 ### Frontend Next.js
 

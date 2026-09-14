@@ -12,24 +12,30 @@ import (
 )
 
 func SeedDefaults(db *gorm.DB, cfg *config.Config) {
-	// 1. Seed Admin User
-	var count int64
-	db.Model(&models.User{}).Where("email = ?", cfg.AdminEmail).Count(&count)
-	if count == 0 {
-		hash, err := bcrypt.GenerateFromPassword([]byte(cfg.AdminPassword), bcrypt.DefaultCost)
-		if err != nil {
-			log.Printf("Peringatan: Gagal hash password admin: %v", err)
-		} else {
-			admin := models.User{
-				Name:         "Platform Administrator",
-				Email:        cfg.AdminEmail,
-				PasswordHash: string(hash),
-				IsAdmin:      true,
-			}
-			if err := db.Create(&admin).Error; err != nil {
-				log.Printf("Gagal membuat user admin default: %v", err)
+	// 1. Seed Admin User. Dilewati bila operator tidak menyetel ADMIN_PASSWORD:
+	// lebih baik tanpa akun admin daripada akun dengan kata sandi yang tertulis
+	// di repositori.
+	if cfg.AdminPassword == "" {
+		log.Println("ADMIN_PASSWORD tidak disetel - seeding akun admin dilewati.")
+	} else {
+		var count int64
+		db.Model(&models.User{}).Where("email = ?", cfg.AdminEmail).Count(&count)
+		if count == 0 {
+			hash, err := bcrypt.GenerateFromPassword([]byte(cfg.AdminPassword), bcrypt.DefaultCost)
+			if err != nil {
+				log.Printf("Peringatan: Gagal hash password admin: %v", err)
 			} else {
-				log.Printf("Admin default berhasil dibuat: %s", cfg.AdminEmail)
+				admin := models.User{
+					Name:         "Platform Administrator",
+					Email:        cfg.AdminEmail,
+					PasswordHash: string(hash),
+					IsAdmin:      true,
+				}
+				if err := db.Create(&admin).Error; err != nil {
+					log.Printf("Gagal membuat user admin default: %v", err)
+				} else {
+					log.Printf("Admin default berhasil dibuat: %s", cfg.AdminEmail)
+				}
 			}
 		}
 	}

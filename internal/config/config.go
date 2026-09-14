@@ -1,6 +1,7 @@
 package config
 
 import (
+	"log"
 	"os"
 	"strings"
 )
@@ -25,13 +26,23 @@ func LoadConfig() *Config {
 		port = ":" + port
 	}
 
+	// Cookie sesi ditandatangani dengan kunci ini. Nilai bawaan yang ikut
+	// ter-commit membuat siapa pun yang membaca repositori bisa menempa cookie
+	// admin, jadi server menolak start tanpa kunci yang diberikan operator.
+	sessionSecret := os.Getenv("SESSION_SECRET")
+	if sessionSecret == "" {
+		log.Fatal("SESSION_SECRET belum disetel. Bangkitkan dengan `openssl rand -base64 48` lalu ekspor sebelum menjalankan server.")
+	}
+
 	return &Config{
 		Port:          port,
 		DatabasePath:  envOr("DB_PATH", "database.sqlite"),
 		UploadDir:     envOr("UPLOAD_DIR", "uploads"),
-		SessionSecret: envOr("SESSION_SECRET", "smm-secret-key-fitos-enterprise-2026"),
+		SessionSecret: sessionSecret,
 		AdminEmail:    envOr("ADMIN_EMAIL", "admin@solusimitramandiri.com"),
-		AdminPassword: envOr("ADMIN_PASSWORD", "admin123"),
+		// Sengaja tanpa nilai bawaan: akun admin hanya di-seed bila operator
+		// menyetel kata sandinya sendiri.
+		AdminPassword: os.Getenv("ADMIN_PASSWORD"),
 		// Frontend Next.js adalah satu-satunya pintu masuk pengunjung; root API
 		// mengarahkan ke sana agar tidak ada dua halaman publik yang berbeda.
 		PublicSiteURL:  envOr("PUBLIC_SITE_URL", "http://localhost:3000"),
