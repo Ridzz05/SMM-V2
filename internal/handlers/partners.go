@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -199,6 +200,65 @@ func (h *PartnersHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+type UpdateDemoRequestInput struct {
+	Status string `json:"status"`
+	Notes  string `json:"notes"`
+}
+
+func (h *PartnersHandler) UpdateDemoRequest(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseUint(chi.URLParam(r, "id"), 10, 32)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "ID permintaan demo tidak valid.")
+		return
+	}
+
+	var req models.B2BDemoRequest
+	if err := h.DB.First(&req, uint(id)).Error; err != nil {
+		writeError(w, http.StatusNotFound, "Permintaan demo tidak ditemukan.")
+		return
+	}
+
+	var input UpdateDemoRequestInput
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		writeError(w, http.StatusBadRequest, "Format JSON tidak valid.")
+		return
+	}
+
+	updates := map[string]interface{}{}
+	if input.Status != "" {
+		allowedStatuses := map[string]bool{
+			"pending":   true,
+			"contacted": true,
+			"scheduled": true,
+			"completed": true,
+			"cancelled": true,
+		}
+		if !allowedStatuses[input.Status] {
+			writeError(w, http.StatusBadRequest, "Status tidak valid. Pilihan: pending, contacted, scheduled, completed, cancelled.")
+			return
+		}
+		updates["status"] = input.Status
+		req.Status = input.Status
+	}
+
+	if input.Notes != "" {
+		updates["notes"] = input.Notes
+		req.Notes = input.Notes
+	}
+
+	if len(updates) > 0 {
+		if err := h.DB.Model(&req).Updates(updates).Error; err != nil {
+			log.Printf("Gagal memperbarui status permintaan demo: %v", err)
+			writeError(w, http.StatusInternalServerError, "Gagal memperbarui data di database.")
+			return
+		}
+	}
+
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"message":     "Permintaan demo berhasil diperbarui.",
+		"demoRequest": req,
+	})
+}
 // detectContentType membungkus http.DetectContentType agar teks biasa yang
 // dikirim tanpa header tetap tertolak alih-alih dianggap gambar.
 func detectContentType(head []byte) string {

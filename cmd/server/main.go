@@ -55,7 +55,7 @@ func main() {
 	// berada pada origin yang sama; CORS hanya diperlukan untuk pemakaian langsung.
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   cfg.AllowedOrigins,
-		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTIONS"},
+		AllowedMethods:   []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Content-Type"},
 		AllowCredentials: true,
 		MaxAge:           300,
@@ -91,6 +91,7 @@ func main() {
 			admin.Get("/admin/partners", partnersHandler.Index)
 			admin.Post("/admin/partners", partnersHandler.Create)
 			admin.Delete("/admin/partners/{id}", partnersHandler.Delete)
+			admin.Patch("/admin/demo-requests/{id}", partnersHandler.UpdateDemoRequest)
 		})
 	})
 
