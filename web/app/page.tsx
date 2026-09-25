@@ -1,8 +1,8 @@
 import { fetchLanding } from '@/lib/server-api';
 import DemoForm from '@/components/DemoForm';
 import HeroVideo from '@/components/HeroVideo';
+import Navbar from '@/components/Navbar';
 import { CONTACT_EMAIL, mailtoLink } from '@/lib/site';
-
 export const dynamic = 'force-dynamic';
 
 const BRAND_MARK = {
@@ -131,45 +131,7 @@ export default async function HomePage() {
   return (
     <div className="shell">
       {/* Navigasi Utama */}
-      <header className="nav">
-        <div className="container wide">
-          <div className="nav-inner">
-            <a className="brand" href="#top">
-              {BRAND_MARK_IMG}
-              <span className="brand-name">Solusi Mitra Mandiri</span>
-            </a>
-
-            <nav aria-label="Navigasi utama">
-              <ul className="nav-links">
-                <li>
-                  <a href="#masalah">Masalah</a>
-                </li>
-                <li>
-                  <a href="#domain">Fitur &amp; Modul</a>
-                </li>
-                <li>
-                  <a href="#kontrol">Kontrol Server</a>
-                </li>
-                <li>
-                  <a href="#mitra">Mitra Gym</a>
-                </li>
-                <li>
-                  <a href="#team">Tim</a>
-                </li>
-              </ul>
-            </nav>
-
-            <div className="nav-actions">
-              <a className="nav-link-ghost" href="/admin/login">
-                Portal Admin
-              </a>
-              <a className="btn btn-primary" href="#demo">
-                Jadwalkan Demo
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar brandMarkImg={BRAND_MARK_IMG} />
 
       <main id="main">
         {/* I. HERO */}

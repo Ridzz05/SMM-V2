@@ -2,11 +2,12 @@
  * Design System Inspired by Flat (AIO Edition)
  * Category: Modern & Minimal
  *
- * Gaya minimalis 2D murni:
+ * Gaya minimalis 2D murni & mobile-first reflow:
  * - Tanpa efek 3D (tanpa drop-shadows, tanpa translasi melayang).
  * - Warna sistem aktif: Navy (#07111F, #0B1626, #101A28), Biru (#3BA1E1), Oranye (#E45C37).
- * - Tipografi bersih & ritme ruang konsisten.
- * - Transisi 2D singkat dan bertujuan (150ms–200ms).
+ * - Target sentuh minimum 44px x 44px di mobile.
+ * - Input 16px di mobile untuk mencegah auto-zoom iOS.
+ * - Transisi 2D singkat (150ms).
  */
 
 :root {
@@ -114,29 +115,37 @@ body {
   align-items: center;
   justify-content: space-between;
   height: 68px;
-  gap: 24px;
+  gap: 20px;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   text-decoration: none;
   color: var(--ink);
+  min-height: 44px;
 }
 
 .brand-mark {
-  height: 34px;
+  height: 32px;
   width: auto;
   display: block;
+  flex-shrink: 0;
 }
 
 .brand-name {
   font-family: var(--sans);
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--ink);
+  white-space: nowrap;
+}
+
+.nav-desktop {
+  display: flex;
+  align-items: center;
 }
 
 .nav-links {
@@ -153,6 +162,9 @@ body {
   color: var(--ink-mute);
   text-decoration: none;
   transition: color 150ms ease;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .nav-links a:hover {
@@ -174,10 +186,124 @@ body {
   padding: 8px 14px;
   border-radius: var(--radius-sm);
   transition: opacity 150ms ease;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .nav-link-ghost:hover {
   opacity: 0.8;
+}
+
+.nav-mobile-toggle-wrap {
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-cta-compact {
+  padding: 6px 12px;
+  font-size: 12px;
+  min-height: 36px;
+}
+
+.nav-mobile-btn {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--ink);
+  padding: 0;
+}
+
+.nav-hamburger {
+  position: relative;
+  width: 18px;
+  height: 2px;
+  background: var(--ink);
+  transition: background 150ms ease;
+}
+
+.nav-hamburger::before,
+.nav-hamburger::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 18px;
+  height: 2px;
+  background: var(--ink);
+  transition: transform 150ms ease, top 150ms ease;
+}
+
+.nav-hamburger::before {
+  top: -6px;
+}
+
+.nav-hamburger::after {
+  top: 6px;
+}
+
+.nav-hamburger.is-open {
+  background: transparent;
+}
+
+.nav-hamburger.is-open::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.nav-hamburger.is-open::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+.nav-mobile-panel {
+  display: none;
+  padding: 16px 0 24px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-1);
+}
+
+.nav-mobile-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-mobile-links a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 8px;
+  font-family: var(--sans);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-faint);
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.nav-mobile-links a:hover,
+.nav-mobile-links a:active {
+  color: var(--brand-blue);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.nav-mobile-actions {
+  margin-top: 18px;
+  padding-top: 4px;
+}
+
+.btn-mobile-full {
+  width: 100%;
+  min-height: 46px;
+  justify-content: center;
 }
 
 /* Tombol 2D Flat */
@@ -828,8 +954,11 @@ footer {
   color: var(--brand-amber);
 }
 
-/* Responsif */
+/* Responsif: Tablet (1024px) */
 @media (max-width: 1024px) {
+  .container {
+    padding: 0 24px;
+  }
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 36px;
@@ -846,36 +975,218 @@ footer {
   }
 }
 
+/* Responsif: Mobile & Small Screen (<=768px) */
 @media (max-width: 768px) {
-  .container {
-    padding: 0 18px;
-  }
-  .nav-links {
+  .nav-desktop,
+  .nav-desktop-actions {
     display: none;
   }
+  .nav-mobile-toggle-wrap {
+    display: flex;
+  }
+  .nav-mobile-panel {
+    display: block;
+  }
+  .brand-name {
+    font-size: 13.5px;
+  }
+  .container {
+    padding: 0 16px;
+  }
   .section {
-    padding: 56px 0;
+    padding: 48px 0;
+  }
+  .section.hero {
+    padding: 38px 0 32px;
+  }
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .hero-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    line-height: 1.4;
+    white-space: normal;
+    text-align: left;
+    margin-bottom: 14px;
+  }
+  .hero-headline {
+    font-size: clamp(24px, 6.8vw, 32px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .hero-desc {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .hero-actions .btn {
+    width: 100%;
+    min-height: 46px;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .hero-meta {
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 14px;
+  }
+  .hero-meta-item {
+    font-size: 12px;
+  }
+  .section-header {
+    margin-bottom: 26px;
+  }
+  .section-title {
+    font-size: clamp(20px, 5.2vw, 25px);
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+  .section-desc {
+    font-size: 13.5px;
+    line-height: 1.55;
   }
   .problems-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .problem-card {
+    padding: 20px 16px;
+    border-radius: var(--radius-sm);
+  }
+  .problem-card h3 {
+    font-size: 16.5px;
+    margin-bottom: 6px;
+  }
+  .problem-card p {
+    font-size: 13.5px;
+    line-height: 1.55;
   }
   .domains-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .domain-card {
+    padding: 18px 16px;
+    border-radius: var(--radius-sm);
+  }
+  .domain-card h3 {
+    font-size: 15.5px;
+    margin-bottom: 6px;
+  }
+  .domain-card p {
+    font-size: 13px;
+    line-height: 1.5;
   }
   .controls-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .control-card {
+    padding: 18px 16px;
+    border-radius: var(--radius-sm);
+  }
+  .control-card h4 {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .control-card p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .partners-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .partner-plate span {
+    font-size: 10px;
+    padding: 8px 4px;
   }
   .founders-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .founder-card {
+    padding: 20px 16px;
+  }
+  .founder-portrait {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 12px;
+  }
+  .founder-card h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+  .founder-card p {
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .demo-card {
+    padding: 24px 16px;
+    border-radius: var(--radius-md);
   }
   .cta-form {
     grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 18px;
   }
-  .demo-card {
-    padding: 32px 18px;
+  .form-input,
+  .form-textarea {
+    font-size: 16px; /* Mencegah auto-zoom Safari iOS */
+    min-height: 46px;
+    padding: 12px 14px;
+  }
+  .form-textarea {
+    min-height: 90px;
+  }
+  .form-group.full button {
+    width: 100%;
+    min-height: 48px;
+  }
+  footer {
+    padding: 44px 0 24px;
   }
   .foot-grid {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+  .foot-col li {
+    margin-bottom: 8px;
+  }
+  .foot-col a {
+    display: inline-block;
+    padding: 4px 0;
+    min-height: 40px;
+    line-height: 32px;
+    font-size: 13.5px;
+  }
+  .foot-bottom {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+    font-size: 11px;
+  }
+}
+
+/* Layar Ekstra Sempit (<=360px) */
+@media (max-width: 360px) {
+  .brand-name {
+    font-size: 12px;
+  }
+  .container {
+    padding: 0 12px;
+  }
+  .partners-grid {
+    grid-template-columns: 1fr;
   }
 }
