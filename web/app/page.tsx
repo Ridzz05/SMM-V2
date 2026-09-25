@@ -1,16 +1,10 @@
-import type { CSSProperties } from 'react';
-
 import { fetchLanding } from '@/lib/server-api';
 import DemoForm from '@/components/DemoForm';
 import HeroVideo from '@/components/HeroVideo';
-import Marquee from '@/components/Marquee';
-import SiteChrome from '@/components/SiteChrome';
 import { CONTACT_EMAIL, mailtoLink } from '@/lib/site';
 
 export const dynamic = 'force-dynamic';
 
-/* Mark resmi. Rasio asli 720:840, jadi berkas 96 px setara 82x96.
-   Lebar/tinggi intrinsik diberikan agar tata letak tidak bergeser saat dimuat. */
 const BRAND_MARK = {
   src: '/images/brand/logo-mark-96.webp',
   srcSet:
@@ -27,107 +21,107 @@ const BRAND_MARK_IMG = (
     srcSet={BRAND_MARK.srcSet}
     width={BRAND_MARK.width}
     height={BRAND_MARK.height}
-    alt=""
+    alt="Logo PT Solusi Mitra Mandiri"
     decoding="async"
   />
 );
 
 const LEAKS = [
   {
-    title: 'Sesi PT Tanpa Bukti',
-    body: 'Kuota member terpotong, tetapi tidak ada catatan latihan, tanda tangan, maupun persetujuan manajer. Komisi tetap terbayar atas sesi yang tidak pernah tercatat.',
+    title: 'Klaim Sesi PT Fiktif & Pemotongan Tanpa Bukti',
+    body: 'Kuota member terpotong dan komisi trainer terbayar atas sesi yang tidak pernah terlaksana di lapangan. AIO mewajibkan verifikasi wajah dua arah di kiosk, tanda tangan digital ganda, serta otorisasi manajer untuk sesi pembuka.',
   },
   {
-    title: 'Void Transaksi & Selisih Stok',
-    body: 'Transaksi dihapus dari riwayat, stok tidak dikembalikan, dan kas harian tidak pernah cocok — tanpa nama operator yang bisa ditelusuri.',
+    title: 'Void Kasir Ilegal & Selisih Stok Ritel',
+    body: 'Kasir membatalkan nota transaksi tanpa jejak dan stok barang tidak kembali ke gudang. AIO mengunci hak tombol Void khusus untuk level manajer dengan catatan alasan tertulis, perlindungan stok negatif, dan audit trail otomatis.',
   },
   {
-    title: 'Prospek yang Berhenti di Chat Pribadi',
-    body: 'Lead dari iklan berakhir di ponsel staf, tidak masuk basis data, lalu hilang tanpa status maupun bukti tindak lanjut.',
+    title: 'Prospek Menguap di Ponsel Pribadi Sales',
+    body: 'Leads dari iklan berbayar (TikTok, IG Ads) hilang di percakapan WhatsApp pribadi staf tanpa riwayat follow-up. AIO mewajibkan unggah bukti screenshot untuk status gagal dihubungi serta mengotomasi Service Call retensi berkala.',
   },
   {
-    title: 'Dokumen Keanggotaan Tercecer',
-    body: 'Kuesioner kesehatan, perjanjian, dan program latihan ditandatangani di atas kertas, lalu tidak ditemukan saat dibutuhkan sebagai bukti.',
+    title: 'Dokumen Perjanjian & Kuesioner Medis Tercecer',
+    body: 'Formulir kesehatan PAR-Q, kontak darurat, dan PT Agreement ditandatangani di atas kertas fisik yang rawan hilang saat terjadi sengketa hukum atau cedera. AIO menyimpan tanda tangan kanvas digital member dan manajer per dokumen.',
   },
 ];
 
 const DOMAINS = [
   {
     num: '01',
-    tag: 'CRM_ACQUISITION',
-    title: 'CRM & Akuisisi',
-    body: 'Basis data prospek dari iklan, kunjungan langsung, dan referral. Antrean follow-up harian, janji temu, status funnel, hingga konversi menjadi member — lengkap dengan bukti tindak lanjut.',
+    tag: 'CRM & Prospek',
+    title: 'CRM & Membership Consultant (MC)',
+    body: 'Pelacakan efektivitas kanal promosi (TikTok, Ads, Walk-In), antrean follow-up harian wajib bukti foto/chat, formulir tamu walk-in kilat, serta Service Call retensi berkala (Day 7, 14, 21) untuk mencegah churn member baru.',
   },
   {
     num: '02',
-    tag: 'MEMBER_LIFECYCLE',
-    title: 'Keanggotaan & Front Office',
-    body: 'Registrasi member dengan perhitungan prorate, biaya administrasi dari master paket, kuesioner kesehatan bertanda tangan digital, cicilan, cuti beku berbayar, sampai perpanjangan yang menyambung tanpa jeda.',
+    tag: 'Front Desk',
+    title: 'Operasional & Customer Service (CS)',
+    body: 'Pendaftaran keanggotaan dengan kalkulasi prorate, biaya admin dinamis, kontak darurat wajib, penerbitan kontrak resmi PT Agreement, pembayaran cicilan tagihan bertahap, dan rekapitulasi kehadiran kelas studio.',
   },
   {
     num: '03',
-    tag: 'PERSONAL_TRAINING',
-    title: 'Personal Training',
-    body: 'Direktori klien per trainer, log sesi dengan detail latihan dan tanda tangan ganda, kuota sesi, persetujuan manajer berjenjang, penilaian postur, serta papan peringkat konversi trainer.',
+    tag: 'Personal Training',
+    title: 'Personal Training (PT) Management',
+    body: 'Pemisahan klien aktif vs riwayat, log harian latihan (beban kg, repetisi, notes) bertanda tangan ganda, otorisasi sesi 1 & 2 oleh manajer, Gym Orientation gratis, jadwal kalender TAS, serta AI Workout & Meal Planner.',
   },
   {
     num: '04',
-    tag: 'POS_INVENTORY',
-    title: 'Kasir & Inventaris',
-    body: 'Penjualan paket, produk ritel, dan day-pass dari satu terminal. Pencegahan stok negatif dijalankan server, stok masuk dari distributor mencatat harga pokok, dan pembatalan transaksi mengembalikan stok secara otomatis.',
+    tag: 'Direktori Member',
+    title: 'Member Directory & Dokumen Kontrak',
+    body: 'Database anggota terpusat dengan profil 360 derajat, pembekuan cuti/freeze granular (gym saja, PT saja, atau keduanya) dengan perpanjangan masa aktif otomatis, renewal instan, dan cetak ulang arsip PAR-Q digital.',
   },
   {
     num: '05',
-    tag: 'FINANCE_PAYROLL',
-    title: 'Keuangan & Payroll',
-    body: 'Tiga pilar pendapatan, buku pengeluaran dengan foto nota, laba rugi bulanan, dan payroll komisi yang barisnya terkunci permanen begitu ditandai dibayar.',
+    tag: 'Kasir & Stok',
+    title: 'Kasir POS & Inventaris Ritel Toko',
+    body: 'Terminal kasir cepat untuk suplemen, minuman, merchandise, dan tiket harian barcode. Dilengkapi pencegahan stok negatif di level database, pencatatan stok masuk inbound dengan HPP distributor, dan void terkunci izin manajer.',
   },
   {
     num: '06',
-    tag: 'CLASS_SCHEDULE',
-    title: 'Jadwal Kelas & Booking',
-    body: 'Kalender kelas studio dengan kapasitas per ruangan dan deteksi bentrok jadwal instruktur. Kehadiran peserta langsung mengalir ke komisi pengajar tanpa rekap terpisah.',
+    tag: 'Finance & Gaji',
+    title: 'Finance, Payroll & Laporan Eksekutif',
+    body: 'Executive summary pendapatan 3 pilar (Membership, PT, POS), pemisahan pajak NJM/PPN, kalkulator payroll otomatis untuk komisi sesi PT dan bonus renewal CS, buku pengeluaran kas dengan foto nota, serta neraca P&L bulanan.',
   },
   {
     num: '07',
-    tag: 'KIOSK_BIOMETRIC',
-    title: 'Kiosk & Biometrik',
-    body: 'Terminal kehadiran mandiri dengan wajah, kode QR, kartu, dan sidik jari. Verifikasi tetap berjalan saat koneksi putus, lalu antrean kehadirannya disinkronkan ulang setelah tersambung.',
+    tag: 'Kelas Studio',
+    title: 'Jadwal Kelas Studio & Reservasi Booking',
+    body: 'Kalender mingguan interaktif kelas studio (Yoga, Zumba, Pilates, Spinning) dengan deteksi bentrok instruktur/ruangan, sistem kuota booking member, wewenang override tarif tiket harian oleh CS, dan rekap honor instruktur.',
   },
   {
     num: '08',
-    tag: 'AI_POSTURE',
-    title: 'Pemindai Postur AI',
-    body: 'Pemindaian postur tiga dimensi dari tiga jepretan foto, mendeteksi forward head, asimetri bahu, kemiringan panggul, dan kelengkungan tulang belakang — lalu menyusun latihan korektif yang mengalir ke program latihan klien.',
+    tag: 'Kiosk & AI',
+    title: 'Kiosk Mandiri, Turnstile & AI Scanner',
+    body: 'Aplikasi terminal mandiri dengan engine IndexedDB offline-first (respons sub-5ms) dan proteksi anti-passback. Sesi privat PT wajib verifikasi biometrik wajah 2-arah (barcode ditolak), serta pemindaian postur tubuh 3D MediaPipe.',
   },
   {
     num: '09',
-    tag: 'MASTER_AUDIT',
-    title: 'Data Master & Audit',
-    body: 'Paket, produk, promo, dan akun staf dengan delapan peran yang kewenangannya dipisah. Perubahan pada data prospek dan member tercatat pada riwayat aktivitas beserta identitas pelakunya.',
+    tag: 'Master & Audit',
+    title: 'Data Master & Konfigurasi Sistem',
+    body: 'Pengaturan paket langganan dan biaya admin fleksibel, manajemen karyawan 8 tingkat peran tanpa akun bersama (shared login), presensi mandiri geofence GPS staf, dan log aktivitas sistem immutable write-only.',
   },
 ];
 
 const CONTROLS = [
   {
-    num: 'I',
-    title: 'Persetujuan Berjenjang',
-    body: 'Sesi personal training pertama dan kedua wajib disetujui manajer. Izinnya terikat pada kombinasi member, paket, dan nomor sesi, sehingga tidak bisa dipakai ulang untuk sesi lain.',
+    num: '01',
+    title: 'Otorisasi Manajer Sesi Pembuka',
+    body: 'Sesi PT pertama dan kedua wajib diverifikasi checklist kelayakannya oleh manajer di sistem. Sesi lanjutan diblokir otomatis oleh server jika formulir kesehatan PAR-Q dan program latihan belum ditandatangani digital.',
   },
   {
-    num: 'II',
-    title: 'Tanda Tangan Ganda',
-    body: 'Sesi baru dihitung ke kuota dan komisi setelah detail latihan, tanda tangan trainer, dan tanda tangan member lengkap. Dokumen keanggotaan mengikuti alur yang sama.',
+    num: '02',
+    title: 'Tanda Tangan Kanvas Digital Resmi',
+    body: 'Setiap perjanjian keanggotaan, formulir medis PAR-Q, dan persetujuan program latihan mewajibkan tanda tangan digital kanvas member dan manajer yang tersimpan permanen di database tanpa celah dokumen tercecer.',
   },
   {
-    num: 'III',
-    title: 'Bukti Sekali Pakai',
-    body: 'Setiap verifikasi wajah menerbitkan token bukti berumur 30 detik yang terikat pada satu identitas dan langsung hangus saat dipakai. Hasil verifikasi tidak bisa diputar ulang.',
+    num: '03',
+    title: 'Verifikasi Biometrik Wajah Dua Arah',
+    body: 'Terminal kiosk menolak kartu barcode untuk sesi PT. Trainer dan member wajib memindai wajah langsung di depan kamera secara bergiliran guna memastikan sesi latihan tatap muka benar-benar terjadi di gym.',
   },
   {
-    num: 'IV',
-    title: 'Atribusi & Riwayat',
-    body: 'Setiap prospek dan member menyimpan riwayat aktivitasnya: operator, peran, jenis aksi, dan deskripsi lengkapnya — bisa disaring per tanggal dan diekspor. Penghapusan bersifat lunak, jadi data yang dihapus tetap bisa ditelusuri.',
+    num: '04',
+    title: 'Wewenang Terkunci & Audit Trail Permanen',
+    body: 'Pembatalan transaksi kasir (Void) hanya dapat dieksekusi dengan otorisasi manajer. Staf sales wajib melampirkan screenshot untuk status prospek gagal, dan setiap mutasi terekam pada log sistem yang tidak dapat diubah.',
   },
 ];
 
@@ -136,92 +130,40 @@ export default async function HomePage() {
 
   return (
     <div className="shell">
-      <SiteChrome />
-
-      <div className="side-rail left" aria-hidden="true">
-        <span className="rail-text">SMM · AIO · 2026</span>
-      </div>
-      <div className="side-rail right" aria-hidden="true">
-        <span className="rail-text">AI Gym Management</span>
-      </div>
-
-      <div className="topbar">
-        <div className="container wide">
-          <div className="topbar-inner">
-            <span>
-              <b>PT Solusi Mitra Mandiri</b> · Divisi Sistem Kebugaran
-            </span>
-            <span className="mid">
-              <span>
-                <b className="coral">AIO</b> Platform
-              </span>
-            </span>
-            <span className="right">
-              <span className="right-status">
-                <span className="pulse" aria-hidden="true" />
-                Sistem Berjalan
-              </span>
-              <a className="topbar-link" href={`mailto:${CONTACT_EMAIL}`}>
-                {CONTACT_EMAIL}
-              </a>
-            </span>
-          </div>
-        </div>
-      </div>
-
+      {/* Navigasi Utama */}
       <header className="nav">
         <div className="container wide">
           <div className="nav-inner">
             <a className="brand" href="#top">
               {BRAND_MARK_IMG}
               <span className="brand-name">Solusi Mitra Mandiri</span>
-              <span className="brand-meta">
-                <b>AIO</b>
-                AI Gym Management
-              </span>
             </a>
 
             <nav aria-label="Navigasi utama">
               <ul className="nav-links">
                 <li>
-                  <a href="#masalah">
-                    Masalah<span className="num">01</span>
-                  </a>
+                  <a href="#masalah">Masalah</a>
                 </li>
                 <li>
-                  <a href="#domain">
-                    Domain<span className="num">02</span>
-                  </a>
+                  <a href="#domain">Fitur &amp; Modul</a>
                 </li>
                 <li>
-                  <a href="#kontrol">
-                    Kontrol<span className="num">03</span>
-                  </a>
+                  <a href="#kontrol">Kontrol Server</a>
                 </li>
                 <li>
-                  <a href="#arsitektur">
-                    Arsitektur<span className="num">04</span>
-                  </a>
+                  <a href="#mitra">Mitra Gym</a>
                 </li>
                 <li>
-                  <a href="#mitra">
-                    Mitra<span className="num">05</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="#team">
-                    Tim<span className="num">06</span>
-                  </a>
+                  <a href="#team">Tim</a>
                 </li>
               </ul>
             </nav>
 
-            <div className="nav-side">
-              <span className="status-dot" aria-hidden="true" />
-              <a className="nav-cta ghost" href="/admin/login">
+            <div className="nav-actions">
+              <a className="nav-link-ghost" href="/admin/login">
                 Portal Admin
               </a>
-              <a className="nav-cta" href="#demo">
+              <a className="btn btn-primary" href="#demo">
                 Jadwalkan Demo
               </a>
             </div>
@@ -231,325 +173,190 @@ export default async function HomePage() {
 
       <main id="main">
         {/* I. HERO */}
-        <section className="hero" id="top">
+        <section className="section hero" id="top">
           <div className="container wide">
-            <div className="sec-rule">
-              <span className="roman">I.</span>
-              <span className="meta-grp">
-                <span>Manajemen Gym Berbasis AI</span>
-                <span className="dot-mark">001 / 008</span>
-              </span>
-            </div>
-          </div>
-
-          <div className="container wide hero-grid">
-            <div className="hero-copy">
-              <span className="label">
-                AIO Platform<span className="ix">/ AI Gym Management</span>
-              </span>
-              <h1 className="display">
-                Dari prospek pertama sampai slip gaji trainer, dalam <em>satu</em> sistem
-                <span className="dot">.</span>
-              </h1>
-              <p className="lead">
-                AIO adalah sistem manajemen gym berbasis AI yang kami bangun untuk gym di Indonesia: akuisisi
-                prospek, keanggotaan, kasir dan inventaris, jadwal kelas, sesi personal training, absensi
-                biometrik, payroll komisi, dan laporan keuangan. Semuanya membaca basis data yang sama.
-              </p>
-
-              <div className="hero-actions">
-                <a className="btn btn-primary" href="#demo">
-                  Jadwalkan Demo
-                  <span className="arrow" aria-hidden="true">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M5 12h14M13 6l6 6-6 6" />
-                    </svg>
-                  </span>
-                </a>
-                <a
-                  className="btn btn-ghost"
-                  href={mailtoLink('Konsultasi teknis AIO — sistem manajemen gym')}
-                >
-                  Konsultasi Teknis
-                </a>
-              </div>
-
-              <div className="hero-stats">
-                <span className="stat">
-                  <span className="ring coral" aria-hidden="true">
-                    8
-                  </span>
-                  <span className="stat-label">
-                    <b>Peran Akses</b>
-                    Kewenangan dipisah
-                  </span>
-                </span>
-              </div>
-            </div>
-
-            <div className="hero-art">
-              <span className="corner tl" aria-hidden="true" />
-              <span className="corner tr" aria-hidden="true" />
-              <span className="corner bl" aria-hidden="true" />
-              <span className="corner br" aria-hidden="true" />
-              <span className="annot annot-tl">Animasi Identitas AIO</span>
-              <span className="annot annot-br coord">2.98°S 104.75°E</span>
-              <HeroVideo />
-            </div>
-          </div>
-
-          <div className="container wide">
-            <div className="hero-foot">
-              <span className="meta">
-                Produk berjalan di gym mitra · Basis data tunggal
-              </span>
-              <span className="meta">
-                Riwayat aktivitas per member · Tanda tangan digital tersimpan per dokumen
-              </span>
-            </div>
-          </div>
-        </section>
-
-        <Marquee />
-
-        {/* II. MASALAH */}
-        <section id="masalah">
-          <div className="container">
-            <div className="sec-rule">
-              <span className="roman">II.</span>
-              <span className="meta-grp">
-                <span>Diagnosa Kebocoran Operasional</span>
-                <span className="dot-mark">002 / 008</span>
-              </span>
-            </div>
-
-            <div className="about-grid">
-              <div className="about">
-                <span className="label">
-                  Akar Masalah<span className="ix">/ Analisis</span>
-                </span>
-                <h2 className="display">
-                  Kebocoran operasional jarang muncul sebagai satu baris kerugian
-                  <span className="dot">.</span>
-                </h2>
-                <p className="lead">
-                  Ia muncul sebagai selisih kecil yang berulang setiap hari: kuota sesi yang terpotong tanpa
-                  catatan, transaksi yang dibatalkan tanpa jejak, prospek yang berhenti di ponsel pribadi staf.
-                  AIO dibangun untuk menutup keempat titik itu dengan aturan yang dijalankan server, bukan
-                  dengan disiplin manual.
+            <div className="hero-grid">
+              <div className="hero-copy">
+                <span className="hero-badge">Sistem Operasi Gym Enterprise · PT Solusi Mitra Mandiri</span>
+                <h1 className="hero-headline">
+                  Satu sistem operasi untuk <em>seluruh</em> alur bisnis gym Anda.
+                </h1>
+                <p className="hero-desc">
+                  AIO adalah platform manajemen gym enterprise yang menghubungkan meja resepsionis,
+                  konsultan keanggotaan (MC), personal trainer, kasir POS, turnstile gate biometrik, dan
+                  akuntansi dalam satu basis data terintegrasi, dengan penegakan 35 standar operasional (SOP)
+                  langsung dari sisi server.
                 </p>
-                <div className="footer-row">
-                  <span className="mark" aria-hidden="true">
-                    A
+
+                <div className="hero-actions">
+                  <a className="btn btn-primary" href="#demo">
+                    Jadwalkan Demo
+                  </a>
+                  <a
+                    className="btn btn-ghost"
+                    href={mailtoLink('Konsultasi teknis AIO: sistem manajemen gym')}
+                  >
+                    Konsultasi Teknis
+                  </a>
+                </div>
+
+                <div className="hero-meta">
+                  <span className="hero-meta-item">
+                    <span className="hero-meta-dot" />
+                    Turnstile gate sub-5ms offline-first
                   </span>
-                  <span>Empat titik kebocoran yang kami tangani</span>
-                  <span className="stamp">
-                    <span>Penegakan aturan</span>
-                    <span>Di sisi server</span>
+                  <span className="hero-meta-item">
+                    <span className="hero-meta-dot" />
+                    Biometrik wajah 2-arah sesi PT
+                  </span>
+                  <span className="hero-meta-item">
+                    <span className="hero-meta-dot" />
+                    Tanda tangan kanvas digital per dokumen
+                  </span>
+                  <span className="hero-meta-item">
+                    <span className="hero-meta-dot" />
+                    Payroll komisi otomatis satu klik
                   </span>
                 </div>
               </div>
 
-              <div className="cards" style={{ gridTemplateColumns: '1fr', marginTop: 0 }}>
-                {LEAKS.map((leak) => (
-                  <article className="card" key={leak.title} data-reveal="">
-                    <h3>{leak.title}</h3>
-                    <p>{leak.body}</p>
-                    <div className="card-foot">
-                      <span className="meta">Titik Kebocoran</span>
-                      <span className="arrow-mark" aria-hidden="true">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                          <path d="M5 12h14M13 6l6 6-6 6" />
-                        </svg>
-                      </span>
-                    </div>
-                  </article>
-                ))}
+              <div className="hero-art">
+                <HeroVideo />
               </div>
             </div>
           </div>
         </section>
 
-        {/* III. DOMAIN */}
-        <section id="domain">
+        {/* II. MASALAH OPERASIONAL */}
+        <section className="section" id="masalah">
           <div className="container">
-            <div className="sec-rule">
-              <span className="roman">III.</span>
-              <span className="meta-grp">
-                <span>Sembilan Domain Operasional</span>
-                <span className="dot-mark">003 / 008</span>
-              </span>
-            </div>
-
             <div className="section-header">
-              <span className="label">
-                Kapabilitas<span className="ix">/ Sembilan Domain</span>
-              </span>
-              <h2 className="display">
-                Setiap peran di gym punya satu tempat kerja di sistem yang sama
-                <span className="dot">.</span>
-              </h2>
-              <p className="lead">
-                AIO disusun sebagai monolit modular: dua belas modul domain di balik satu basis data, dengan
-                hak akses yang dipisah per peran dan riwayat aktivitas yang menempel pada tiap prospek maupun
-                member.
+              <span className="section-tag">Diagnosa Lapangan</span>
+              <h2 className="section-title">Menutup 4 Titik Kebocoran Finansial &amp; Operasional Gym.</h2>
+              <p className="section-desc">
+                Kebocoran operasional gym paling sering terjadi pada celah pencatatan manual dan ketiadaan validasi
+                sistem. AIO mengunci celah tersebut melalui aturan backend yang tidak bisa dilewati staf di lapangan.
               </p>
             </div>
 
-            {/* Tumpukan kartu: tiap kartu dipaku pada offset bertingkat, jadi
-                kartu berikutnya menutupi kartu sebelumnya dan menyisakan tepi
-                atasnya. --i dipakai CSS untuk menghitung offset dan langkah.
-                Reveal hanya dipasang di wadah: kartu yang sudah tertutup tidak
-                lagi mencapai ambang 12% tinggi elemen milik SiteChrome, jadi
-                reveal per kartu akan meninggalkannya transparan. */}
-            <div className="card-stack" data-reveal="">
-              {DOMAINS.map((domain, index) => (
-                <article
-                  className="card card-stack-item"
-                  key={domain.tag}
-                  style={{ '--i': index } as CSSProperties}
-                >
-                  <div className="num">
-                    {domain.num}
-                    <span className="tag">{domain.tag}</span>
-                  </div>
-                  <h3>{domain.title}</h3>
-                  <p>{domain.body}</p>
-                  <div className="card-foot">
-                    <span className="meta">Modul Aktif</span>
-                    <span className="arrow-mark" aria-hidden="true">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-                        <path d="M5 12h14M13 6l6 6-6 6" />
-                      </svg>
-                    </span>
-                  </div>
+            <div className="problems-grid">
+              {LEAKS.map((leak, idx) => (
+                <article className="problem-card" key={leak.title}>
+                  <span className="problem-num">0{idx + 1} / Celah Operasional</span>
+                  <h3>{leak.title}</h3>
+                  <p>{leak.body}</p>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        {/* IV. KONTROL */}
-        <section id="kontrol">
+        {/* III. DOMAIN / FITUR OPERASIONAL */}
+        <section className="section" id="domain">
           <div className="container">
-            <div className="sec-rule">
-              <span className="roman">IV.</span>
-              <span className="meta-grp">
-                <span>Mekanisme Penegakan</span>
-                <span className="dot-mark">004 / 008</span>
-              </span>
-            </div>
-
             <div className="section-header">
-              <span className="label">
-                Kontrol<span className="ix">/ Empat Lapis</span>
-              </span>
-              <h2 className="display">
-                Aturan yang dijalankan server, bukan imbauan di grup chat
-                <span className="dot">.</span>
-              </h2>
-              <p className="lead">
-                Empat mekanisme berikut yang membedakan pencatatan biasa dari pengendalian. Semuanya berjalan di
-                sisi backend — staf tidak bisa melewatinya lewat antarmuka.
+              <span className="section-tag blue">Katalog Fitur Lengkap</span>
+              <h2 className="section-title">9 Pilar Domain Operasional Tanpa Silo Data.</h2>
+              <p className="section-desc">
+                Arsitektur modular monolith dengan basis data relasional tunggal. Seluruh divisi bekerja pada data
+                yang sama secara real-time tanpa perlu sinkronisasi berkas manual.
               </p>
             </div>
 
-            <div className="method-grid">
-              {CONTROLS.map((step) => (
-                <div className="method-step" key={step.num} data-reveal="">
-                  <div className="num">{step.num}</div>
-                  <h4>{step.title}</h4>
-                  <p>{step.body}</p>
+            <div className="domains-grid">
+              {DOMAINS.map((domain) => (
+                <article className="domain-card" key={domain.num}>
+                  <div className="domain-top">
+                    <span className="domain-num">{domain.num}</span>
+                    <span className="domain-badge">{domain.tag}</span>
+                  </div>
+                  <h3>{domain.title}</h3>
+                  <p>{domain.body}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* IV. KONTROL & INTEGRITAS */}
+        <section className="section" id="kontrol">
+          <div className="container">
+            <div className="section-header">
+              <span className="section-tag">Validasi Sisi Server</span>
+              <h2 className="section-title">Aturan Bisnis yang Ditegakkan Sistem, Bukan Imbauan.</h2>
+              <p className="section-desc">
+                Pencatatan manual mudah dimanipulasi. AIO menanamkan 35 Standar Operasional Prosedur (SOP) langsung
+                ke dalam logika transaksi server guna memastikan integritas pendapatan dan data member.
+              </p>
+            </div>
+
+            <div className="controls-grid">
+              {CONTROLS.map((ctrl) => (
+                <div className="control-card" key={ctrl.num}>
+                  <div className="control-num">{ctrl.num}</div>
+                  <h4>{ctrl.title}</h4>
+                  <p>{ctrl.body}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* V. ARSITEKTUR */}
-        <section id="arsitektur">
+        {/* V. JARINGAN MITRA GYM */}
+        <section className="section" id="mitra">
           <div className="container">
-            <div className="sec-rule">
-              <span className="roman">V.</span>
-              <span className="meta-grp">
-                <span>Arsitektur &amp; Rekayasa</span>
-                <span className="dot-mark">005 / 008</span>
-              </span>
-            </div>
-
-            <div className="section-header">
-              <span className="label">
-                Arsitektur<span className="ix">/ Monolit Modular</span>
-              </span>
-              <h2 className="display">
-                Dibangun untuk dirawat bertahun-tahun, bukan untuk demo
-                <span className="dot">.</span>
-              </h2>
-              <p className="lead">
-                Satu basis data relasional, satu aplikasi web, satu aplikasi kiosk. Tidak ada layanan mikro yang
-                harus dijaga terpisah, sehingga instalasi di lokasi klien tetap bisa dikelola tim kecil. Seluruh
-                domain dibungkus tes otomatis dan migrasi skema yang bisa dijalankan ulang.
+            <div className="section-header center">
+              <span className="section-tag blue">Jaringan Operasional</span>
+              <h2 className="section-title">Dipercaya oleh Studio &amp; Pusat Kebugaran Mitra.</h2>
+              <p className="section-desc">
+                Sistem AIO telah beroperasi melayani manajemen harian pada jaringan gym dan studio kebugaran mitra
+                di Indonesia.
               </p>
-            </div>
-          </div>
-        </section>
-
-        {/* VI. MITRA */}
-        <section id="mitra">
-          <div className="container">
-            <div className="sec-rule">
-              <span className="roman">VI.</span>
-              <span className="meta-grp">
-                <span>Jaringan Mitra</span>
-                <span className="dot-mark">006 / 008</span>
-              </span>
             </div>
 
             {partners.length > 0 ? (
-              <div className="partners-block">
-                <h2 className="label">
-                  Mitra Gym<span className="ix">/ Terpasang</span>
-                </h2>
-                <div className="partners-grid">
-                  {partners.map((partner) => (
-                    <div className="partner-plate" key={partner.id}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={partner.logo_path} alt={`Logo ${partner.name}`} loading="lazy" />
-                      <span>{partner.name}</span>
-                    </div>
-                  ))}
-                </div>
+              <div className="partners-grid">
+                {partners.map((partner) => (
+                  <div className="partner-plate" key={partner.id}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={partner.logo_path} alt={`Logo ${partner.name}`} loading="lazy" />
+                    <span>{partner.name}</span>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="empty-state">
-                <p>
-                  Belum ada logo mitra yang diterbitkan. Unggah logo dari portal admin, lalu segarkan halaman ini.
-                </p>
-                <a className="btn btn-ghost btn-sm" href="/admin/login" style={{ marginTop: 18 }}>
-                  Buka Portal Admin
-                </a>
+                <p>Belum ada logo mitra yang diterbitkan.</p>
               </div>
             )}
           </div>
         </section>
 
-        {/* VII. TEAM */}
-        <section className="tight" id="team">
-          <div className="work">
-            <div className="work-rule">
-              <span className="roman">VII.</span>
-              <span>Kepemimpinan · Tim Produk &amp; Teknologi</span>
-              <span>007 / 008</span>
+        {/* VI. TIM FOUNDER */}
+        <section className="section" id="team">
+          <div className="container">
+            <div className="section-header center">
+              <span className="section-tag">Kepemimpinan</span>
+              <h2 className="section-title">Tim Produk &amp; Rekayasa Sistem.</h2>
+              <p className="section-desc">
+                PT Solusi Mitra Mandiri didirikan oleh praktisi rekayasa perangkat lunak dan manajemen kebugaran
+                yang merancang sistem dari kebutuhan lapangan nyata.
+              </p>
             </div>
 
-            <div className="work-grid">
+            <div className="founders-grid">
               {founders.map((founder) => (
-                <article className="work-card" key={founder.id} data-reveal="">
+                <article className="founder-card" key={founder.id}>
                   {founder.image_path ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
-                    <img className="portrait" src={founder.image_path} alt={founder.name} loading="lazy" />
+                    <img
+                      className="founder-portrait"
+                      src={founder.image_path}
+                      alt={founder.name}
+                      loading="lazy"
+                    />
                   ) : null}
-                  <span className="role-badge">{founder.role}</span>
+                  <span className="founder-role">{founder.role}</span>
                   <h3>{founder.name}</h3>
                   <p>{founder.description}</p>
                 </article>
@@ -558,29 +365,18 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* VIII. DEMO */}
-        <section id="demo">
-          <div className="container">
-            <div className="sec-rule">
-              <span className="roman">VIII.</span>
-              <span className="meta-grp">
-                <span>Permintaan Demo</span>
-                <span className="dot-mark">008 / 008</span>
-              </span>
-            </div>
-
-            <div className="cta-plate">
-              <span className="label">
-                Langkah Berikutnya<span className="ix">/ 30 Menit</span>
-              </span>
-              <h2 className="display" style={{ fontSize: 'clamp(30px, 3.6vw, 48px)', margin: '20px 0 16px' }}>
-                Lihat AIO berjalan dengan data gym Anda<span className="dot">.</span>
-              </h2>
-              <p className="lead">
-                Sesi demo berlangsung 30 menit bersama tim implementasi. Kami memetakan alur operasional Anda,
-                menunjukkan modul yang paling cepat menutup kebocoran, lalu menyusun rencana migrasi data yang
-                sudah Anda miliki.
-              </p>
+        {/* VII. PERMINTAAN DEMO */}
+        <section className="section" id="demo">
+          <div className="container narrow">
+            <div className="demo-card">
+              <div className="section-header center" style={{ marginBottom: 32 }}>
+                <span className="section-tag">Konsultasi Implementasi</span>
+                <h2 className="section-title">Jadwalkan Konsultasi &amp; Demonstrasi Sistem.</h2>
+                <p className="section-desc">
+                  Sesi 30 menit bersama tim implementasi PT Solusi Mitra Mandiri untuk memetakan alur kerja gym Anda
+                  dan mendemonstrasikan bagaimana 35 SOP diterapkan langsung pada sistem AIO.
+                </p>
+              </div>
 
               <DemoForm />
             </div>
@@ -588,6 +384,7 @@ export default async function HomePage() {
         </section>
       </main>
 
+      {/* FOOTER */}
       <footer>
         <div className="container">
           <div className="foot-grid">
@@ -597,43 +394,43 @@ export default async function HomePage() {
                 <span className="brand-name">Solusi Mitra Mandiri</span>
               </a>
               <p>
-                Perusahaan teknologi yang membangun sistem operasi gym untuk industri kebugaran Indonesia.
-                AIO adalah produknya.
+                PT Solusi Mitra Mandiri adalah perusahaan teknologi pengembang AIO: platform sistem operasi gym,
+                kasir POS, turnstile gate biometrik, dan manajemen kebugaran terpadu di Indonesia.
               </p>
             </div>
 
             <div className="foot-col">
-              <h5>Produk</h5>
+              <h5>Solusi Sistem</h5>
               <ul>
                 <li>
-                  <a href="#domain">Domain Operasional</a>
+                  <a href="#domain">9 Pilar Modul Domain</a>
                 </li>
                 <li>
-                  <a href="#kontrol">Kontrol &amp; Audit</a>
+                  <a href="#kontrol">Penegakan 35 SOP Server</a>
                 </li>
                 <li>
-                  <a href="#arsitektur">Arsitektur</a>
+                  <a href="#masalah">Diagnosa Kebocoran Gym</a>
                 </li>
               </ul>
             </div>
 
             <div className="foot-col">
-              <h5>Perusahaan</h5>
+              <h5>Divisi Utama</h5>
               <ul>
                 <li>
-                  <a href="#masalah">Diagnosa Operasional</a>
+                  <a href="#domain">CRM &amp; Front Desk CS</a>
                 </li>
                 <li>
-                  <a href="#mitra">Mitra Gym</a>
+                  <a href="#domain">Personal Training &amp; Kiosk</a>
                 </li>
                 <li>
-                  <a href="#team">Kepemimpinan</a>
+                  <a href="#domain">Kasir POS &amp; Payroll Gaji</a>
                 </li>
               </ul>
             </div>
 
             <div className="foot-col">
-              <h5>Kontak</h5>
+              <h5>Akses &amp; Kontak</h5>
               <ul>
                 <li>
                   <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
@@ -646,14 +443,8 @@ export default async function HomePage() {
           </div>
 
           <div className="foot-bottom">
-            <span>© 2026 PT Solusi Mitra Mandiri</span>
+            <span>&copy; 2026 PT Solusi Mitra Mandiri. Seluruh hak cipta dilindungi undang-undang.</span>
             <span>Indonesia</span>
-          </div>
-
-          <div className="foot-mega" aria-hidden="true">
-            <div className="word">
-              AI<em> Gym Management.</em>
-            </div>
           </div>
         </div>
       </footer>

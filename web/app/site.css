@@ -57,10 +57,8 @@
 
 .hero-art-toggle {
   position: absolute;
-  /* Kurung sudut .corner.br menempati 8-30 px dari tepi; tombol digeser
-     masuk agar tidak menutupi lengkung penanda bidik. */
-  right: 40px;
-  bottom: 14px;
+  right: 16px;
+  bottom: 16px;
   z-index: 11;
   padding: 8px 16px;
   border-radius: 999px;

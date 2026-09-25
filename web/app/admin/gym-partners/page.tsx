@@ -8,7 +8,7 @@ const MAX_LOGO_BYTES = 5 * 1024 * 1024;
 
 function formatDate(value: string): string {
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '—';
+  if (Number.isNaN(date.getTime())) return '-';
   return new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
 }
 
@@ -328,7 +328,7 @@ export default function GymPartnersDashboard() {
                       <br />
                       {request.email}
                     </td>
-                    <td>{request.notes || '—'}</td>
+                    <td>{request.notes || '-'}</td>
                     <td>
                       <span className={request.status === 'pending' ? 'badge is-pending' : 'badge'}>
                         {request.status}

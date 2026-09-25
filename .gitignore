@@ -32,7 +32,9 @@
 /web/next-env.d.ts
 /web/.turbo
 /web/tsconfig.tsbuildinfo
-
+/web/web/
+/web/AGENTS.md
+/web/CLAUDE.md
 # --- Editor & OS ---
 /.idea
 /.vscode

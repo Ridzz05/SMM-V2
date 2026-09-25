@@ -139,23 +139,12 @@ web/scripts/        skrip aset merek (dijalankan manual, butuh `sharp`)
 
 ## Catatan
 
-- Situs publik menjelaskan **AIO** sebagai produk PT Solusi Mitra Mandiri: dua belas modul
-  domain di atas satu basis data. Gym **FitDay** dipakai sebagai referensi implementasi,
-  bukan sebagai nama produk. Angka rekayasa (jumlah modul, model, rute, migrasi, halaman,
-  tes) tidak ditampilkan di halaman muka. Yang tersisa hanya peran akses di hero
-  (`web/app/page.tsx`) dan ambang operasional di ticker (`web/components/Marquee.tsx`),
-  keduanya diambil dari basis kode FitDay, bukan estimasi pemasaran. Ubah keduanya bila
-  kode sumber berubah.
-- Bagian `#domain` menampilkan sembilan kartu domain sebagai **tumpukan**: tiap kartu
-  dipaku (`position: sticky`) pada offset bertingkat dari `--stack-top` + `--i` ×
-  `--stack-step`, jadi kartu berikutnya menutupi kartu sebelumnya dan menyisakan tepi
-  atasnya. Tingginya diatur di `.card-stack` (`web/app/atelier.css`); elemen semu
-  `::after` setinggi delapan langkah adalah ruang lepas agar tumpukan bertahan utuh
-  selama satu layar gulir — batas paku sebuah elemen sticky adalah kotak konten
-  wadahnya, bukan paddingnya. Animasi masuk dipasang di wadah, bukan per kartu: kartu
-  yang sudah tertutup tidak pernah mencapai ambang 12% milik `SiteChrome`. Di bawah
-  768 px tumpukan diratakan menjadi daftar satu kolom karena tinggi `vh` berubah-ubah
-  saat bilah peramban seluler muncul dan hilang.
+- Situs publik menyajikan **AIO** sebagai sistem manajemen gym PT Solusi Mitra Mandiri
+  dengan tata letak minimalis dan bersih di atas palet navy obsidian, biru sistem, dan oranye aksi.
+  Seluruh ornamen dekoratif kecerdasan buatan seperti blueprint grid, radial orbs, side-rails,
+  dan sticky card stack telah dirombak menjadi struktur grid responsif yang teratur.
+- Bagian `#domain` menampilkan sembilan modul domain dalam grid 3 kolom yang responsif,
+  memudahkan pemindaian tanpa jebakan gulir lengket.
 - Formulir permintaan demo mengirim pengajuan ke `POST /api/demo-requests` sehingga tetap
   tercatat di portal admin, lalu memindahkan percakapan ke WhatsApp sales — nomornya di
   `WHATSAPP_NUMBER` (`web/lib/site.ts`). Isian formulir disalin apa adanya ke badan pesan;
