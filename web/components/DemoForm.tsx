@@ -49,7 +49,7 @@ const FIELDS: Array<{
 function forwardToWhatsApp(values: FormState) {
   const url = whatsappLink(
     [
-      'Permintaan demo AIO: sistem manajemen gym',
+      'Permintaan demo sistem All-In-One: PT Solusi Mitra Mandiri',
       '',
       ...FIELDS.filter((field) => values[field.name].trim() !== '').map(
         (field) => `${field.label}: ${values[field.name]}`,
@@ -159,7 +159,7 @@ export default function DemoForm() {
           </button>
           <a
             className="btn btn-ghost"
-            href={mailtoLink('Permintaan demo AIO: sistem manajemen gym')}
+            href={mailtoLink('Permintaan demo sistem All-In-One: PT Solusi Mitra Mandiri')}
           >
             Konsultasi via Email
           </a>

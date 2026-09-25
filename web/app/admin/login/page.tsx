@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
     <main className="login-wrap">
       <div className="login-card">
         <span className="label">
-          AIO Control System<span className="ix">/ Level 0 Auth</span>
+          All-In-One Control System<span className="ix">/ Level 0 Auth</span>
         </span>
         <h1 className="display">Portal Admin</h1>
         <p className="sub">PT Solusi Mitra Mandiri · Akses Terbatas</p>

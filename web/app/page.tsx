@@ -29,19 +29,19 @@ const BRAND_MARK_IMG = (
 const LEAKS = [
   {
     title: 'Klaim Sesi PT Fiktif & Pemotongan Tanpa Bukti',
-    body: 'Kuota member terpotong dan komisi trainer terbayar atas sesi yang tidak pernah terlaksana di lapangan. AIO mewajibkan verifikasi wajah dua arah di kiosk, tanda tangan digital ganda, serta otorisasi manajer untuk sesi pembuka.',
+    body: 'Kuota member terpotong dan komisi trainer terbayar atas sesi yang tidak pernah terlaksana di lapangan. Sistem All-In-One (AIO) mewajibkan verifikasi wajah dua arah di kiosk, tanda tangan digital ganda, serta otorisasi manajer untuk sesi pembuka.',
   },
   {
     title: 'Void Kasir Ilegal & Selisih Stok Ritel',
-    body: 'Kasir membatalkan nota transaksi tanpa jejak dan stok barang tidak kembali ke gudang. AIO mengunci hak tombol Void khusus untuk level manajer dengan catatan alasan tertulis, perlindungan stok negatif, dan audit trail otomatis.',
+    body: 'Kasir membatalkan nota transaksi tanpa jejak dan stok barang tidak kembali ke gudang. Sistem All-In-One mengunci hak tombol Void khusus untuk level manajer dengan catatan alasan tertulis, perlindungan stok negatif, dan audit trail otomatis.',
   },
   {
     title: 'Prospek Menguap di Ponsel Pribadi Sales',
-    body: 'Leads dari iklan berbayar (TikTok, IG Ads) hilang di percakapan WhatsApp pribadi staf tanpa riwayat follow-up. AIO mewajibkan unggah bukti screenshot untuk status gagal dihubungi serta mengotomasi Service Call retensi berkala.',
+    body: 'Leads dari iklan berbayar (TikTok, IG Ads) hilang di percakapan WhatsApp pribadi staf tanpa riwayat follow-up. Sistem All-In-One mewajibkan unggah bukti screenshot untuk status gagal dihubungi serta mengotomasi Service Call retensi berkala.',
   },
   {
     title: 'Dokumen Perjanjian & Kuesioner Medis Tercecer',
-    body: 'Formulir kesehatan PAR-Q, kontak darurat, dan PT Agreement ditandatangani di atas kertas fisik yang rawan hilang saat terjadi sengketa hukum atau cedera. AIO menyimpan tanda tangan kanvas digital member dan manajer per dokumen.',
+    body: 'Formulir kesehatan PAR-Q, kontak darurat, dan PT Agreement ditandatangani di atas kertas fisik yang rawan hilang saat terjadi sengketa hukum atau cedera. Sistem All-In-One menyimpan tanda tangan kanvas digital member dan manajer per dokumen.',
   },
 ];
 
@@ -177,12 +177,12 @@ export default async function HomePage() {
           <div className="container wide">
             <div className="hero-grid">
               <div className="hero-copy">
-                <span className="hero-badge">Sistem Operasi Gym Enterprise · PT Solusi Mitra Mandiri</span>
+                <span className="hero-badge">Sistem Operasi Gym Enterprise All-In-One (AIO) · PT Solusi Mitra Mandiri</span>
                 <h1 className="hero-headline">
                   Satu sistem operasi untuk <em>seluruh</em> alur bisnis gym Anda.
                 </h1>
                 <p className="hero-desc">
-                  AIO adalah platform manajemen gym enterprise yang menghubungkan meja resepsionis,
+                  Sistem All-In-One (AIO) dari PT Solusi Mitra Mandiri menghubungkan meja resepsionis,
                   konsultan keanggotaan (MC), personal trainer, kasir POS, turnstile gate biometrik, dan
                   akuntansi dalam satu basis data terintegrasi, dengan penegakan 35 standar operasional (SOP)
                   langsung dari sisi server.
@@ -194,7 +194,7 @@ export default async function HomePage() {
                   </a>
                   <a
                     className="btn btn-ghost"
-                    href={mailtoLink('Konsultasi teknis AIO: sistem manajemen gym')}
+                    href={mailtoLink('Konsultasi teknis sistem All-In-One: PT Solusi Mitra Mandiri')}
                   >
                     Konsultasi Teknis
                   </a>
@@ -235,7 +235,7 @@ export default async function HomePage() {
               <h2 className="section-title">Menutup 4 Titik Kebocoran Finansial &amp; Operasional Gym.</h2>
               <p className="section-desc">
                 Kebocoran operasional gym paling sering terjadi pada celah pencatatan manual dan ketiadaan validasi
-                sistem. AIO mengunci celah tersebut melalui aturan backend yang tidak bisa dilewati staf di lapangan.
+                sistem. Sistem All-In-One (AIO) PT Solusi Mitra Mandiri mengunci celah tersebut melalui aturan backend yang tidak bisa dilewati staf di lapangan.
               </p>
             </div>
 
@@ -285,7 +285,7 @@ export default async function HomePage() {
               <span className="section-tag">Validasi Sisi Server</span>
               <h2 className="section-title">Aturan Bisnis yang Ditegakkan Sistem, Bukan Imbauan.</h2>
               <p className="section-desc">
-                Pencatatan manual mudah dimanipulasi. AIO menanamkan 35 Standar Operasional Prosedur (SOP) langsung
+                Pencatatan manual mudah dimanipulasi. Sistem All-In-One (AIO) menanamkan 35 Standar Operasional Prosedur (SOP) langsung
                 ke dalam logika transaksi server guna memastikan integritas pendapatan dan data member.
               </p>
             </div>
@@ -309,7 +309,7 @@ export default async function HomePage() {
               <span className="section-tag blue">Jaringan Operasional</span>
               <h2 className="section-title">Dipercaya oleh Studio &amp; Pusat Kebugaran Mitra.</h2>
               <p className="section-desc">
-                Sistem AIO telah beroperasi melayani manajemen harian pada jaringan gym dan studio kebugaran mitra
+                Sistem All-In-One (AIO) PT Solusi Mitra Mandiri telah beroperasi melayani manajemen harian pada jaringan gym dan studio kebugaran mitra
                 di Indonesia.
               </p>
             </div>
@@ -374,7 +374,7 @@ export default async function HomePage() {
                 <h2 className="section-title">Jadwalkan Konsultasi &amp; Demonstrasi Sistem.</h2>
                 <p className="section-desc">
                   Sesi 30 menit bersama tim implementasi PT Solusi Mitra Mandiri untuk memetakan alur kerja gym Anda
-                  dan mendemonstrasikan bagaimana 35 SOP diterapkan langsung pada sistem AIO.
+                  dan mendemonstrasikan bagaimana 35 SOP diterapkan langsung pada sistem All-In-One (AIO).
                 </p>
               </div>
 
@@ -394,8 +394,8 @@ export default async function HomePage() {
                 <span className="brand-name">Solusi Mitra Mandiri</span>
               </a>
               <p>
-                PT Solusi Mitra Mandiri adalah perusahaan teknologi pengembang AIO: platform sistem operasi gym,
-                kasir POS, turnstile gate biometrik, dan manajemen kebugaran terpadu di Indonesia.
+                PT Solusi Mitra Mandiri adalah perusahaan teknologi pengembang sistem All-In-One (AIO): platform
+                operasional gym terpadu, kasir POS, turnstile gate biometrik, dan akuntansi kebugaran di Indonesia.
               </p>
             </div>
 

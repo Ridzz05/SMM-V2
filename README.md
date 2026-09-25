@@ -1,7 +1,8 @@
-# PT Solusi Mitra Mandiri — AIO
+# PT Solusi Mitra Mandiri: Sistem All-In-One (AIO)
 
-Situs publik dan portal admin untuk **AIO**, sistem manajemen gym berbasis AI yang
-dikembangkan PT Solusi Mitra Mandiri. Fitur dan ambang batasnya diturunkan dari basis
+Situs publik dan portal admin untuk sistem manajemen gym **All-In-One (AIO)** yang
+dikembangkan PT Solusi Mitra Mandiri. AIO adalah sebutan untuk arsitektur All-In-One
+terpadu (bukan nama merek produk mandiri). Fitur dan ambang batasnya diturunkan dari basis
 kode gym **FitDay** sebagai referensi implementasi.
 
 Arsitektur saat ini terdiri dari dua proses:
@@ -139,15 +140,15 @@ web/scripts/        skrip aset merek (dijalankan manual, butuh `sharp`)
 
 ## Catatan
 
-- Situs publik menyajikan **AIO** sebagai sistem manajemen gym PT Solusi Mitra Mandiri
+- Situs publik menyajikan sistem manajemen gym **All-In-One (AIO)** PT Solusi Mitra Mandiri
   dengan tata letak minimalis dan bersih di atas palet navy obsidian, biru sistem, dan oranye aksi.
   Seluruh ornamen dekoratif kecerdasan buatan seperti blueprint grid, radial orbs, side-rails,
   dan sticky card stack telah dirombak menjadi struktur grid responsif yang teratur.
 - Bagian `#domain` menampilkan sembilan modul domain dalam grid 3 kolom yang responsif,
   memudahkan pemindaian tanpa jebakan gulir lengket.
 - Formulir permintaan demo mengirim pengajuan ke `POST /api/demo-requests` sehingga tetap
-  tercatat di portal admin, lalu memindahkan percakapan ke WhatsApp sales — nomornya di
-  `WHATSAPP_NUMBER` (`web/lib/site.ts`). Isian formulir disalin apa adanya ke badan pesan;
+  tercatat di portal admin, lalu memindahkan percakapan ke WhatsApp sales (nomornya di
+  `WHATSAPP_NUMBER` di `web/lib/site.ts`). Isian formulir disalin apa adanya ke badan pesan;
   kalau tab baru diblokir, halaman yang sama yang berpindah ke WhatsApp.
 - Aset merek di `public/images/brand/` dan ikon aplikasi (`web/app/icon.png`,
   `web/app/apple-icon.png`) dihasilkan dari `assets/solusimitramandiri-logo.png`

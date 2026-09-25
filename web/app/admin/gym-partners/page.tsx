@@ -164,7 +164,7 @@ export default function GymPartnersDashboard() {
       <div className="admin-head">
         <div>
           <span className="label">
-            Portal Admin<span className="ix">/ AIO</span>
+            Portal Admin<span className="ix">/ All-In-One</span>
           </span>
           <h1>Dasbor Mitra Gym</h1>
         </div>

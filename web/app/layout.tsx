@@ -4,9 +4,9 @@ import './atelier.css';
 import './site.css';
 
 export const metadata: Metadata = {
-  title: 'AIO: AI Gym Management | PT Solusi Mitra Mandiri',
+  title: 'All-In-One (AIO) Gym Management | PT Solusi Mitra Mandiri',
   description:
-    'AIO oleh PT Solusi Mitra Mandiri: platform manajemen gym terpadu untuk gym di Indonesia. CRM, keanggotaan, kasir, inventaris, jadwal kelas, personal training, absensi biometrik, payroll komisi, dan laporan keuangan dalam satu basis data.',
+    'Sistem manajemen gym All-In-One (AIO) oleh PT Solusi Mitra Mandiri: platform terpadu untuk industri kebugaran Indonesia. CRM, keanggotaan, kasir, inventaris, jadwal kelas, personal training, absensi biometrik, payroll komisi, dan laporan keuangan dalam satu basis data.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
