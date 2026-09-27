@@ -4,9 +4,9 @@ import './atelier.css';
 import './site.css';
 
 export const metadata: Metadata = {
-  title: 'All-In-One (AIO) Gym Management | PT Solusi Mitra Mandiri',
+  title: 'Sistem Manajemen Gym | PT Solusi Mitra Mandiri',
   description:
-    'Sistem manajemen gym All-In-One (AIO) oleh PT Solusi Mitra Mandiri: platform terpadu untuk industri kebugaran Indonesia. CRM, keanggotaan, kasir, inventaris, jadwal kelas, personal training, absensi biometrik, payroll komisi, dan laporan keuangan dalam satu basis data.',
+    'Satu sistem untuk mengurus seluruh operasional gym: pendaftaran member, personal trainer, kasir toko, stok barang, jadwal kelas, pintu masuk, gaji karyawan, dan laporan keuangan. Dibuat oleh PT Solusi Mitra Mandiri untuk gym dan studio kebugaran di Indonesia.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
         />
       </head>
       <body>

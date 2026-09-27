@@ -58,7 +58,7 @@ export default function HeroVideo() {
         playsInline
         preload="none"
         onLoadedData={() => setReady(true)}
-        aria-label="Animasi sistem manajemen gym All-In-One"
+        aria-label="Contoh tampilan sistem manajemen gym"
       />
 
       <button

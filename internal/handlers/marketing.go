@@ -73,33 +73,33 @@ func (h *MarketingHandler) RequestDemo(w http.ResponseWriter, r *http.Request) {
 
 	fields := map[string]string{}
 	if payload.CompanyName == "" {
-		fields["company_name"] = "Nama perusahaan atau gym wajib diisi."
+		fields["company_name"] = "Nama gym atau perusahaan belum diisi."
 	} else if len(payload.CompanyName) > 255 {
-		fields["company_name"] = "Nama perusahaan maksimal 255 karakter."
+		fields["company_name"] = "Nama gym atau perusahaan terlalu panjang (maksimal 255 huruf)."
 	}
 
 	if payload.PicName == "" {
-		fields["pic_name"] = "Nama penanggung jawab wajib diisi."
+		fields["pic_name"] = "Nama Anda belum diisi."
 	} else if len(payload.PicName) > 255 {
-		fields["pic_name"] = "Nama penanggung jawab maksimal 255 karakter."
+		fields["pic_name"] = "Nama terlalu panjang (maksimal 255 huruf)."
 	}
 
 	if payload.PhoneNumber == "" {
-		fields["phone_number"] = "Nomor telepon atau WhatsApp wajib diisi."
+		fields["phone_number"] = "Nomor WhatsApp belum diisi."
 	} else if len(payload.PhoneNumber) > 50 {
-		fields["phone_number"] = "Nomor telepon maksimal 50 karakter."
+		fields["phone_number"] = "Nomor WhatsApp terlalu panjang (maksimal 50 angka)."
 	}
 
 	if payload.Email == "" {
-		fields["email"] = "Alamat email wajib diisi."
+		fields["email"] = "Email belum diisi."
 	} else if len(payload.Email) > 255 {
-		fields["email"] = "Alamat email maksimal 255 karakter."
+		fields["email"] = "Email terlalu panjang (maksimal 255 huruf)."
 	} else if _, err := mail.ParseAddress(payload.Email); err != nil {
-		fields["email"] = "Format alamat email tidak valid."
+		fields["email"] = "Penulisan email belum benar. Contoh yang benar: nama@perusahaan.com"
 	}
 
 	if len(fields) > 0 {
-		writeFieldErrors(w, http.StatusUnprocessableEntity, "Mohon lengkapi data yang ditandai.", fields)
+		writeFieldErrors(w, http.StatusUnprocessableEntity, "Masih ada kolom yang perlu diperbaiki.", fields)
 		return
 	}
 
@@ -114,11 +114,11 @@ func (h *MarketingHandler) RequestDemo(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.DB.Create(&demoReq).Error; err != nil {
 		log.Printf("Gagal menyimpan demo request: %v", err)
-		writeError(w, http.StatusInternalServerError, "Terjadi kesalahan sistem saat menyimpan pengajuan demo.")
+		writeError(w, http.StatusInternalServerError, "Gagal menyimpan permintaan Anda. Silakan coba lagi sebentar lagi.")
 		return
 	}
 
 	writeJSON(w, http.StatusCreated, messageResponse{
-		Message: "Permintaan demo berhasil dikirim! Tim sales PT Solusi Mitra Mandiri akan segera menghubungi Anda.",
+		Message: "Terima kasih! Permintaan Anda sudah masuk, dan tim kami akan menghubungi Anda lewat WhatsApp atau email.",
 	})
 }

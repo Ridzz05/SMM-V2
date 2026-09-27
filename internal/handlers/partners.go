@@ -69,36 +69,36 @@ func (h *PartnersHandler) Create(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxRequestBytes)
 
 	if err := r.ParseMultipartForm(maxRequestBytes); err != nil {
-		writeError(w, http.StatusRequestEntityTooLarge, "Ukuran berkas logo terlalu besar (maksimal 5 MB).")
+		writeError(w, http.StatusRequestEntityTooLarge, "Logo terlalu besar. Maksimal 5 MB — coba perkecil dulu gambarnya.")
 		return
 	}
 
 	name := strings.TrimSpace(r.FormValue("name"))
 	if name == "" {
-		writeFieldErrors(w, http.StatusUnprocessableEntity, "Nama gym mitra wajib diisi.", map[string]string{
-			"name": "Nama gym mitra wajib diisi.",
+		writeFieldErrors(w, http.StatusUnprocessableEntity, "Nama gym mitra belum diisi.", map[string]string{
+			"name": "Isi dulu nama gym mitra.",
 		})
 		return
 	}
 	if len(name) > 120 {
 		writeFieldErrors(w, http.StatusUnprocessableEntity, "Nama gym mitra terlalu panjang.", map[string]string{
-			"name": "Nama gym mitra maksimal 120 karakter.",
+			"name": "Nama gym mitra terlalu panjang (maksimal 120 huruf).",
 		})
 		return
 	}
 
 	file, header, err := r.FormFile("logo")
 	if err != nil {
-		writeFieldErrors(w, http.StatusUnprocessableEntity, "Berkas logo wajib diunggah.", map[string]string{
-			"logo": "Berkas logo wajib diunggah.",
+		writeFieldErrors(w, http.StatusUnprocessableEntity, "Berkas logo belum dipilih.", map[string]string{
+			"logo": "Pilih dulu berkas logo yang mau diunggah.",
 		})
 		return
 	}
 	defer file.Close()
 
 	if header.Size > maxLogoBytes {
-		writeFieldErrors(w, http.StatusRequestEntityTooLarge, "Ukuran berkas logo terlalu besar.", map[string]string{
-			"logo": "Ukuran berkas logo maksimal 5 MB.",
+		writeFieldErrors(w, http.StatusRequestEntityTooLarge, "Ukuran logo melebihi batas.", map[string]string{
+			"logo": "Logo terlalu besar. Maksimal 5 MB — coba perkecil dulu gambarnya.",
 		})
 		return
 	}
@@ -107,15 +107,15 @@ func (h *PartnersHandler) Create(w http.ResponseWriter, r *http.Request) {
 	n, err := io.ReadFull(file, head)
 	if err != nil && err != io.ErrUnexpectedEOF && err != io.EOF {
 		log.Printf("Gagal membaca berkas logo: %v", err)
-		writeError(w, http.StatusInternalServerError, "Gagal membaca berkas logo.")
+		writeError(w, http.StatusInternalServerError, "Berkas logo tidak bisa dibaca. Coba unggah ulang.")
 		return
 	}
 	head = head[:n]
 
 	ext, ok := allowedLogoTypes[detectContentType(head)]
 	if !ok {
-		writeFieldErrors(w, http.StatusUnsupportedMediaType, "Format berkas tidak didukung.", map[string]string{
-			"logo": "Gunakan berkas gambar PNG, JPG, atau WebP yang valid.",
+		writeFieldErrors(w, http.StatusUnsupportedMediaType, "Berkas ini bukan gambar yang didukung.", map[string]string{
+			"logo": "Pakai berkas gambar PNG, JPG, atau WebP.",
 		})
 		return
 	}
@@ -123,7 +123,7 @@ func (h *PartnersHandler) Create(w http.ResponseWriter, r *http.Request) {
 	targetDir := filepath.Join(h.UploadDir, "gym-partners")
 	if err := os.MkdirAll(targetDir, 0o755); err != nil {
 		log.Printf("Gagal membuat direktori upload: %v", err)
-		writeError(w, http.StatusInternalServerError, "Gagal menyiapkan direktori penyimpanan server.")
+		writeError(w, http.StatusInternalServerError, "Gagal menyiapkan tempat penyimpanan logo. Coba lagi.")
 		return
 	}
 
@@ -133,7 +133,7 @@ func (h *PartnersHandler) Create(w http.ResponseWriter, r *http.Request) {
 	dst, err := os.Create(filePath)
 	if err != nil {
 		log.Printf("Gagal menyimpan file logo: %v", err)
-		writeError(w, http.StatusInternalServerError, "Gagal menulis file logo ke server.")
+		writeError(w, http.StatusInternalServerError, "Gagal menyimpan logo. Coba unggah ulang.")
 		return
 	}
 
@@ -141,14 +141,14 @@ func (h *PartnersHandler) Create(w http.ResponseWriter, r *http.Request) {
 		dst.Close()
 		os.Remove(filePath)
 		log.Printf("Gagal copy isi file logo: %v", err)
-		writeError(w, http.StatusInternalServerError, "Gagal mengunggah file.")
+		writeError(w, http.StatusInternalServerError, "Unggahan logo terputus. Periksa koneksi lalu coba lagi.")
 		return
 	}
 
 	if err := dst.Close(); err != nil {
 		os.Remove(filePath)
 		log.Printf("Gagal menutup file logo: %v", err)
-		writeError(w, http.StatusInternalServerError, "Gagal menyimpan file logo.")
+		writeError(w, http.StatusInternalServerError, "Gagal menyimpan logo. Coba unggah ulang.")
 		return
 	}
 
@@ -161,12 +161,12 @@ func (h *PartnersHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if err := h.DB.Create(&partner).Error; err != nil {
 		os.Remove(filePath)
 		log.Printf("Gagal menyimpan data partner ke DB: %v", err)
-		writeError(w, http.StatusInternalServerError, "Gagal mencatat mitra ke database.")
+		writeError(w, http.StatusInternalServerError, "Gagal menyimpan data mitra. Coba unggah ulang.")
 		return
 	}
 
 	writeJSON(w, http.StatusCreated, messageResponse{
-		Message: fmt.Sprintf("Logo mitra '%s' berhasil diterbitkan!", name),
+		Message: fmt.Sprintf("Logo %s sudah tayang di halaman publik.", name),
 	})
 }
 
@@ -185,7 +185,7 @@ func (h *PartnersHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.DB.Delete(&partner).Error; err != nil {
 		log.Printf("Gagal menghapus mitra dari DB: %v", err)
-		writeError(w, http.StatusInternalServerError, "Gagal menghapus mitra dari database.")
+		writeError(w, http.StatusInternalServerError, "Gagal menghapus mitra. Coba lagi.")
 		return
 	}
 
@@ -196,7 +196,7 @@ func (h *PartnersHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeJSON(w, http.StatusOK, messageResponse{
-		Message: fmt.Sprintf("Mitra '%s' berhasil dihapus.", partner.Name),
+		Message: fmt.Sprintf("Mitra %s sudah dihapus dari daftar.", partner.Name),
 	})
 }
 
@@ -249,13 +249,13 @@ func (h *PartnersHandler) UpdateDemoRequest(w http.ResponseWriter, r *http.Reque
 	if len(updates) > 0 {
 		if err := h.DB.Model(&req).Updates(updates).Error; err != nil {
 			log.Printf("Gagal memperbarui status permintaan demo: %v", err)
-			writeError(w, http.StatusInternalServerError, "Gagal memperbarui data di database.")
+			writeError(w, http.StatusInternalServerError, "Gagal menyimpan perubahan. Silakan coba lagi.")
 			return
 		}
 	}
 
 	writeJSON(w, http.StatusOK, map[string]interface{}{
-		"message":     "Permintaan demo berhasil diperbarui.",
+		"message":     "Perubahan sudah disimpan.",
 		"demoRequest": req,
 	})
 }

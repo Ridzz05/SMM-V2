@@ -35,6 +35,10 @@
 /web/web/
 /web/AGENTS.md
 /web/CLAUDE.md
+# Rahasia frontend. Next membaca .env.local sendiri; yang ikut versi hanya contohnya.
+/web/.env
+/web/.env.*
+!/web/.env.example
 # --- Editor & OS ---
 /.idea
 /.vscode
@@ -43,6 +47,10 @@
 .DS_Store
 Thumbs.db
 *.log
+
+# --- Alat bantu lokal ---
+# Pohon kerja sementara milik editor; berisi salinan berkas sumber.
+/.kilo/
 
 # --- Berkas kerja sementara ---
 # Cuplikan layar verifikasi visual dan skrip sekali pakai. Bukan bagian produk;

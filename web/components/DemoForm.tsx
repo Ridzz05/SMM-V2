@@ -27,16 +27,16 @@ const FIELDS: Array<{
   full?: boolean;
   placeholder: string;
 }> = [
-  { name: 'company_name', label: 'Nama Gym / Perusahaan', type: 'text', placeholder: 'Contoh: FitClub Indonesia' },
-  { name: 'pic_name', label: 'Nama Penanggung Jawab', type: 'text', placeholder: 'Contoh: Budi Santoso' },
+  { name: 'company_name', label: 'Nama Gym atau Perusahaan', type: 'text', placeholder: 'Contoh: FitClub Indonesia' },
+  { name: 'pic_name', label: 'Nama Anda', type: 'text', placeholder: 'Contoh: Budi Santoso' },
   { name: 'phone_number', label: 'Nomor WhatsApp', type: 'tel', placeholder: '08xxxxxxxxxx' },
-  { name: 'email', label: 'Email Korporat', type: 'email', placeholder: 'nama@perusahaan.com' },
+  { name: 'email', label: 'Email', type: 'email', placeholder: 'nama@perusahaan.com' },
   {
     name: 'notes',
-    label: 'Kebutuhan & Jumlah Cabang',
+    label: 'Ceritakan Sedikit soal Gym Anda (opsional)',
     type: 'textarea',
     full: true,
-    placeholder: 'Ceritakan jumlah cabang, jumlah member aktif, dan proses operasional yang paling menyita waktu.',
+    placeholder: 'Misalnya: punya 2 cabang, sekitar 800 member aktif, dan laporan bulanan masih dihitung manual di Excel.',
   },
 ];
 
@@ -49,7 +49,7 @@ const FIELDS: Array<{
 function forwardToWhatsApp(values: FormState) {
   const url = whatsappLink(
     [
-      'Permintaan demo sistem All-In-One: PT Solusi Mitra Mandiri',
+      'Halo, saya ingin menjadwalkan demo sistem manajemen gym.',
       '',
       ...FIELDS.filter((field) => values[field.name].trim() !== '').map(
         (field) => `${field.label}: ${values[field.name]}`,
@@ -92,7 +92,7 @@ export default function DemoForm() {
 
       if (res.ok) {
         const body: { message?: string } = await res.json();
-        setStatus({ kind: 'ok', text: body.message ?? 'Permintaan demo berhasil dikirim.' });
+        setStatus({ kind: 'ok', text: body.message ?? 'Terima kasih. Permintaan Anda sudah kami terima.' });
         forwardToWhatsApp(values);
         setValues(EMPTY);
         return;
@@ -104,7 +104,7 @@ export default function DemoForm() {
     } catch {
       setStatus({
         kind: 'error',
-        text: 'Tidak dapat menghubungi server. Periksa koneksi Anda lalu coba lagi.',
+        text: 'Koneksi bermasalah. Periksa internet Anda, lalu coba kirim ulang.',
       });
     } finally {
       setSubmitting(false);
@@ -150,7 +150,7 @@ export default function DemoForm() {
 
         <div className="form-group full" style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
           <button className="btn btn-primary" type="submit" disabled={submitting}>
-            {submitting ? 'Mengirim…' : 'Kirim & Buka WhatsApp'}
+            {submitting ? 'Mengirim…' : 'Kirim & Lanjut ke WhatsApp'}
             <span className="arrow" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <path d="M5 12h14M13 6l6 6-6 6" />
@@ -159,9 +159,9 @@ export default function DemoForm() {
           </button>
           <a
             className="btn btn-ghost"
-            href={mailtoLink('Permintaan demo sistem All-In-One: PT Solusi Mitra Mandiri')}
+            href={mailtoLink('Saya ingin bertanya soal sistem manajemen gym')}
           >
-            Konsultasi via Email
+            Kirim Email Saja
           </a>
         </div>
       </form>

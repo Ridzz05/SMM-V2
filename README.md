@@ -9,8 +9,8 @@ Arsitektur saat ini terdiri dari dua proses:
 
 | Lapisan | Teknologi | Peran |
 | --- | --- | --- |
-| API | Go 1.27 · chi · GORM · SQLite | Seluruh data, autentikasi, dan penyimpanan berkas |
-| Web | Next.js 16 · React 19 · TypeScript | Semua halaman yang dilihat pengguna |
+| API | Go 1.27 · chi · GORM · SQLite | Mesin data: menyimpan seluruh catatan, mengurus login, dan menyimpan berkas unggahan |
+| Web | Next.js 16 · React 19 · TypeScript | Semua halaman yang dilihat pengunjung dan staf |
 
 Server Go tidak merender HTML sama sekali; ia hanya menyajikan JSON dan berkas statis.
 Next.js mem-proxy `/api/*`, `/uploads/*`, `/images/*`, dan `/videos/*` ke Go sehingga
@@ -19,6 +19,11 @@ browser selalu berjalan pada satu origin.
 ## Menjalankan
 
 Butuh Go 1.27+ dan Node.js 24+.
+
+Nilai konfigurasi yang dibutuhkan ada di [`.env.example`](.env.example) (server Go)
+dan [`web/.env.example`](web/.env.example) (frontend). Server Go **tidak** membaca
+berkas `.env` sendiri — salin nilainya ke terminal atau manajer rahasia, lalu setel
+sebelum menjalankan perintah di bawah.
 
 ```bash
 # Terminal 1 — API Go pada :8080
@@ -56,8 +61,8 @@ punya nilai bawaan karena menentukan keamanan akses admin.
 | `DB_PATH` | `database.sqlite` | Berkas SQLite |
 | `UPLOAD_DIR` | `uploads` | Direktori logo mitra |
 | `SESSION_SECRET` | **wajib, tanpa bawaan** | Kunci penandatanganan cookie sesi |
-| `ADMIN_EMAIL` | `admin@solusimitramandiri.com` | Akun admin yang di-seed |
-| `ADMIN_PASSWORD` | **wajib untuk seeding, tanpa bawaan** | Kata sandi admin yang di-seed |
+| `ADMIN_EMAIL` | `admin@solusimitramandiri.com` | Akun admin yang dibuat otomatis |
+| `ADMIN_PASSWORD` | **wajib untuk membuat akun admin, tanpa bawaan** | Kata sandi akun admin tersebut |
 | `PUBLIC_SITE_URL` | `http://localhost:3000` | Tujuan pengalihan `/` |
 | `ALLOWED_ORIGINS` | `http://localhost:3000` | Origin yang diizinkan CORS, dipisah koma |
 
@@ -69,7 +74,7 @@ export SESSION_SECRET="$(openssl rand -base64 48)"
 ```
 
 `ADMIN_PASSWORD` hanya dipakai saat akun `ADMIN_EMAIL` belum ada di basis data.
-Bila variabel ini kosong, seeding akun admin dilewati dan server tetap jalan
+Bila variabel ini kosong, pembuatan akun admin dilewati dan server tetap jalan
 tanpa akun admin. Untuk mengganti kata sandi admin yang sudah ada, ubah lewat
 portal admin atau hapus barisnya dari tabel `users` lalu jalankan ulang server
 dengan `ADMIN_PASSWORD` baru.
@@ -82,10 +87,10 @@ dengan `ADMIN_PASSWORD` baru.
 | `NEXT_PUBLIC_GA_ID` | `G-TFKE3G9D2K` | build | Properti GA4; isi kosong untuk mematikan pelacakan |
 
 `API_ORIGIN` **harus** ditetapkan sebelum `npm run build`, dan hanya dibaca saat
-build. Next membekukan tujuan `rewrites()` ke `.next/routes-manifest.json`, dan
-permintaan SSR pun diarahkan ke origin permintaan sehingga ikut melewati rewrite
-yang sama. Origin yang salah tidak memunculkan galat: permintaan hanya dijawab
-`200` tanpa isi, sehingga halaman tampak termuat tetapi tanpa data.
+build. Next membekukan tujuan pengalihan `/api` ke `.next/routes-manifest.json`,
+dan permintaan yang dirender di server pun ikut melewati pengalihan yang sama.
+Alamat yang salah tidak memunculkan galat: permintaan hanya dijawab `200` tanpa
+isi, sehingga halaman tampak termuat tetapi tanpa data.
 
 ```bash
 API_ORIGIN=http://localhost:8080 npm run build
@@ -108,8 +113,8 @@ API_ORIGIN=http://localhost:8080 npm run build
 Kegagalan validasi menghasilkan `422` dengan bentuk:
 
 ```json
-{ "error": "Mohon lengkapi data yang ditandai.",
-  "fields": { "email": "Format alamat email tidak valid." } }
+{ "error": "Masih ada kolom yang perlu diperbaiki.",
+  "fields": { "email": "Penulisan email belum benar. Contoh yang benar: nama@perusahaan.com" } }
 ```
 
 Berkas statis `/images` dan `/videos` dilayani dari `public/`, sedangkan `/uploads`
@@ -125,23 +130,25 @@ lalu jalankan ulang server.
 ## Struktur
 
 ```
-cmd/server/         entrypoint API Go
+cmd/server/         titik masuk server Go
 internal/config/    pembacaan konfigurasi
-internal/database/  koneksi GORM dan seeder
-internal/handlers/  handler HTTP
-internal/middleware/ middleware autentikasi admin
-internal/models/    model GORM
+internal/database/  koneksi basis data dan pengisian data awal
+internal/handlers/  penangan permintaan HTTP
+internal/middleware/ pemeriksaan akses admin
+internal/models/    model basis data
 public/             aset media yang dilayani Go (gambar, video)
 uploads/            berkas unggahan pengguna
 web/                aplikasi Next.js (app router)
-web/app/atelier.css sistem desain Atelier Zero
+web/app/atelier.css sistem desain aio-flat-minimal (lihat DESIGN.md)
 web/scripts/        skrip aset merek (dijalankan manual, butuh `sharp`)
 ```
 
 ## Catatan
 
 - Situs publik menyajikan sistem manajemen gym **All-In-One (AIO)** PT Solusi Mitra Mandiri
-  dengan tata letak minimalis dan bersih di atas palet navy obsidian, biru sistem, dan oranye aksi.
+  dengan tata letak minimalis dua dimensi: kanvas putih, hierarki monokrom, dan tanpa efek 3D.
+  Satu-satunya warna adalah warna status semantik, dan warna itu tidak pernah menjadi
+  satu-satunya penanda makna. Rinciannya di [DESIGN.md](DESIGN.md).
   Seluruh ornamen dekoratif kecerdasan buatan seperti blueprint grid, radial orbs, side-rails,
   dan sticky card stack telah dirombak menjadi struktur grid responsif yang teratur.
 - Bagian `#domain` menampilkan sembilan modul domain dalam grid 3 kolom yang responsif,
@@ -158,7 +165,7 @@ web/scripts/        skrip aset merek (dijalankan manual, butuh `sharp`)
   yang dipakai (96/192/384 px untuk header, footer, dan tampilan besar). Jalankan
   ulang bila logo master berubah.
 - Aset media dikompresi ke WebP: poster hero (`ai-gym-hero.webp`) dan avatar
-  founder 216 px, yaitu tiga kali lipat kotak 72 px di `.work-card .portrait`.
+  founder 216 px, yaitu tiga kali lipat kotak 72 px di `.founder-portrait`.
   Berkas PNG/JPG asli tetap ada di riwayat git bila sewaktu-waktu dibutuhkan.
 - Media hero memakai rasio **16:9** (`.hero-art`), sama dengan film
   `public/videos/IMG_3125.mp4` (1280x720). Poster adalah potongan 16:9 yang

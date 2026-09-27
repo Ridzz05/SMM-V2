@@ -23,8 +23,8 @@ declare global {
  * Tag di-inject lewat next/script, bukan <script> mentah di <head>, agar
  * urutan eksekusi mengikuti strategi afterInteractive dan tidak memicu
  * peringatan hidrasi. gtag('config') sudah mengirim page_view untuk muat
- * pertama, jadi hanya perpindahan rute berikutnya yang dikirim manual —
- * tanpa itu, navigasi App Router tidak akan pernah tercatat.
+ * pertama, jadi hanya perpindahan rute berikutnya yang dikirim manual.
+ * Tanpa itu, navigasi App Router tidak akan pernah tercatat.
  */
 export default function GoogleAnalytics() {
   const pathname = usePathname();

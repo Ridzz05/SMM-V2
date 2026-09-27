@@ -26,7 +26,7 @@ func SeedDefaults(db *gorm.DB, cfg *config.Config) {
 				log.Printf("Peringatan: Gagal hash password admin: %v", err)
 			} else {
 				admin := models.User{
-					Name:         "Platform Administrator",
+					Name:         "Administrator Platform",
 					Email:        cfg.AdminEmail,
 					PasswordHash: string(hash),
 					IsAdmin:      true,
@@ -47,17 +47,17 @@ func SeedDefaults(db *gorm.DB, cfg *config.Config) {
 		founders := []models.CompanyFounder{
 			{
 				Name:          "Andi Adellia",
-				Role:          "Director of Product Development",
+				Role:          "Pengembangan Produk",
 				ImagePath:     "/images/founders/founder-1.webp",
-				Description:   "Memimpin visi strategis dan peta jalan pengembangan ekosistem ERP yang holistik. Berfokus pada automasi alur kerja operasional fasilitas kebugaran.",
+				Description:   "Menentukan arah pengembangan sistem dan memastikan setiap fitur benar-benar menjawab masalah harian operasional gym.",
 				OrderPosition: 1,
 				IsActive:      true,
 			},
 			{
 				Name:          "Jonathan Immanuel Alexander",
-				Role:          "Chief Technology Officer (CTO)",
+				Role:          "Teknologi",
 				ImagePath:     "/images/founders/founder-2.webp",
-				Description:   "Arsitek utama di balik integrasi mutakhir infrastruktur berbasis kecerdasan buatan, Edge AI Biometrics, dan komputasi awan berkinerja tinggi.",
+				Description:   "Bertanggung jawab atas sisi teknis sistem: kecepatan, keamanan data, dan pemindaian wajah di mesin pintu masuk.",
 				OrderPosition: 2,
 				IsActive:      true,
 			},

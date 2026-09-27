@@ -28,100 +28,100 @@ const BRAND_MARK_IMG = (
 
 const LEAKS = [
   {
-    title: 'Klaim Sesi PT Fiktif & Pemotongan Tanpa Bukti',
-    body: 'Kuota member terpotong dan komisi trainer terbayar atas sesi yang tidak pernah terlaksana di lapangan. Sistem All-In-One (AIO) mewajibkan verifikasi wajah dua arah di kiosk, tanda tangan digital ganda, serta otorisasi manajer untuk sesi pembuka.',
+    title: 'Sesi personal trainer yang tidak pernah terjadi, tapi tetap dibayar',
+    body: 'Kuota member berkurang dan komisi trainer dibayar untuk sesi latihan yang sebenarnya tidak ada di lapangan. Di sistem ini, setiap sesi personal trainer wajib diverifikasi lewat pemindaian wajah trainer dan member di mesin depan pintu, ditandatangani dua pihak, dan sesi pertama harus disetujui manajer.',
   },
   {
-    title: 'Void Kasir Ilegal & Selisih Stok Ritel',
-    body: 'Kasir membatalkan nota transaksi tanpa jejak dan stok barang tidak kembali ke gudang. Sistem All-In-One mengunci hak tombol Void khusus untuk level manajer dengan catatan alasan tertulis, perlindungan stok negatif, dan audit trail otomatis.',
+    title: 'Transaksi dibatalkan sembarangan, stok barang jadi tidak cocok',
+    body: 'Kasir bisa membatalkan nota tanpa jejak, dan barang yang batal tidak kembali ke catatan stok. Sistem ini mengunci tombol batal hanya untuk manajer, mewajibkan alasan tertulis, mencegah stok minus, dan mencatat semua perubahan.',
   },
   {
-    title: 'Prospek Menguap di Ponsel Pribadi Sales',
-    body: 'Leads dari iklan berbayar (TikTok, IG Ads) hilang di percakapan WhatsApp pribadi staf tanpa riwayat follow-up. Sistem All-In-One mewajibkan unggah bukti screenshot untuk status gagal dihubungi serta mengotomasi Service Call retensi berkala.',
+    title: 'Calon member hilang di HP pribadi staf',
+    body: 'Calon member dari iklan TikTok atau Instagram sering hanya disimpan di WhatsApp pribadi staf, lalu terlupakan. Sistem ini mewajibkan bukti screenshot untuk calon member yang tidak bisa dihubungi, dan mengingatkan staf menghubungi ulang di hari ke-7, 14, dan 21.',
   },
   {
-    title: 'Dokumen Perjanjian & Kuesioner Medis Tercecer',
-    body: 'Formulir kesehatan PAR-Q, kontak darurat, dan PT Agreement ditandatangani di atas kertas fisik yang rawan hilang saat terjadi sengketa hukum atau cedera. Sistem All-In-One menyimpan tanda tangan kanvas digital member dan manajer per dokumen.',
+    title: 'Surat perjanjian dan riwayat kesehatan hilang saat dibutuhkan',
+    body: 'Formulir kesehatan, kontak darurat, dan perjanjian personal trainer masih ditandatangani di kertas, sehingga mudah hilang saat ada sengketa atau cedera. Sistem ini menyimpan tanda tangan digital member dan manajer untuk setiap dokumen.',
   },
 ];
 
 const DOMAINS = [
   {
     num: '01',
-    tag: 'CRM & Prospek',
-    title: 'CRM & Membership Consultant (MC)',
-    body: 'Pelacakan efektivitas kanal promosi (TikTok, Ads, Walk-In), antrean follow-up harian wajib bukti foto/chat, formulir tamu walk-in kilat, serta Service Call retensi berkala (Day 7, 14, 21) untuk mencegah churn member baru.',
+    tag: 'Calon Member',
+    title: 'Pencarian & Pendaftaran Member',
+    body: 'Mencatat calon member datang dari mana (TikTok, iklan, atau datang langsung), daftar harian siapa yang harus dihubungi beserta bukti chat, formulir cepat untuk tamu yang datang langsung, dan pengingat menghubungi member baru supaya tidak berhenti berlangganan.',
   },
   {
     num: '02',
-    tag: 'Front Desk',
-    title: 'Operasional & Customer Service (CS)',
-    body: 'Pendaftaran keanggotaan dengan kalkulasi prorate, biaya admin dinamis, kontak darurat wajib, penerbitan kontrak resmi PT Agreement, pembayaran cicilan tagihan bertahap, dan rekapitulasi kehadiran kelas studio.',
+    tag: 'Meja Depan',
+    title: 'Pelayanan Harian di Meja Depan',
+    body: 'Pendaftaran member dengan hitungan harga otomatis, biaya admin yang bisa diatur, kontak darurat wajib diisi, cetak perjanjian resmi, pembayaran cicilan, dan rekap kehadiran kelas.',
   },
   {
     num: '03',
-    tag: 'Personal Training',
-    title: 'Personal Training (PT) Management',
-    body: 'Pemisahan klien aktif vs riwayat, log harian latihan (beban kg, repetisi, notes) bertanda tangan ganda, otorisasi sesi 1 & 2 oleh manajer, Gym Orientation gratis, jadwal kalender TAS, serta AI Workout & Meal Planner.',
+    tag: 'Personal Trainer',
+    title: 'Pengelolaan Sesi Personal Trainer',
+    body: 'Memisahkan member yang masih aktif dari yang sudah selesai, catatan latihan harian (beban, repetisi, catatan) yang ditandatangani dua pihak, sesi pertama dan kedua harus disetujui manajer, sesi perkenalan gratis, jadwal kalender trainer, serta saran latihan dan menu makan.',
   },
   {
     num: '04',
-    tag: 'Direktori Member',
-    title: 'Member Directory & Dokumen Kontrak',
-    body: 'Database anggota terpusat dengan profil 360 derajat, pembekuan cuti/freeze granular (gym saja, PT saja, atau keduanya) dengan perpanjangan masa aktif otomatis, renewal instan, dan cetak ulang arsip PAR-Q digital.',
+    tag: 'Data Member',
+    title: 'Data Lengkap Member & Perjanjian',
+    body: 'Semua data member tersimpan di satu tempat, lengkap dengan riwayatnya. Keanggotaan bisa dihentikan sementara (gym saja, personal trainer saja, atau keduanya), langganan bisa diperpanjang otomatis maupun sekali klik, dan formulir kesehatan bisa dicetak ulang.',
   },
   {
     num: '05',
-    tag: 'Kasir & Stok',
-    title: 'Kasir POS & Inventaris Ritel Toko',
-    body: 'Terminal kasir cepat untuk suplemen, minuman, merchandise, dan tiket harian barcode. Dilengkapi pencegahan stok negatif di level database, pencatatan stok masuk inbound dengan HPP distributor, dan void terkunci izin manajer.',
+    tag: 'Kasir & Barang',
+    title: 'Kasir Toko & Stok Barang',
+    body: 'Kasir cepat untuk suplemen, minuman, peralatan gym, dan tiket harian. Stok tidak bisa minus, pencatatan barang masuk lengkap dengan harga dari distributor, dan pembatalan transaksi hanya bisa dilakukan manajer.',
   },
   {
     num: '06',
-    tag: 'Finance & Gaji',
-    title: 'Finance, Payroll & Laporan Eksekutif',
-    body: 'Executive summary pendapatan 3 pilar (Membership, PT, POS), pemisahan pajak NJM/PPN, kalkulator payroll otomatis untuk komisi sesi PT dan bonus renewal CS, buku pengeluaran kas dengan foto nota, serta neraca P&L bulanan.',
+    tag: 'Keuangan & Gaji',
+    title: 'Laporan Keuangan & Gaji Karyawan',
+    body: 'Ringkasan pemasukan dari tiga sumber (keanggotaan, personal trainer, toko), pajak dihitung terpisah, hitung otomatis komisi trainer dan bonus staf meja depan, catatan pengeluaran dengan foto nota, serta laporan laba rugi bulanan.',
   },
   {
     num: '07',
-    tag: 'Kelas Studio',
-    title: 'Jadwal Kelas Studio & Reservasi Booking',
-    body: 'Kalender mingguan interaktif kelas studio (Yoga, Zumba, Pilates, Spinning) dengan deteksi bentrok instruktur/ruangan, sistem kuota booking member, wewenang override tarif tiket harian oleh CS, dan rekap honor instruktur.',
+    tag: 'Kelas',
+    title: 'Jadwal Kelas & Pemesanan Tempat',
+    body: 'Jadwal kelas mingguan (Yoga, Zumba, Pilates, Spinning) yang otomatis mencegah jadwal bentrok antar instruktur atau ruangan, kuota peserta, harga tiket harian yang bisa diubah staf meja depan, dan rekap honor instruktur.',
   },
   {
     num: '08',
-    tag: 'Kiosk & AI',
-    title: 'Kiosk Mandiri, Turnstile & AI Scanner',
-    body: 'Aplikasi terminal mandiri dengan engine IndexedDB offline-first (respons sub-5ms) dan proteksi anti-passback. Sesi privat PT wajib verifikasi biometrik wajah 2-arah (barcode ditolak), serta pemindaian postur tubuh 3D MediaPipe.',
+    tag: 'Pintu Masuk',
+    title: 'Mesin Masuk Mandiri, Pintu Otomatis & Pemindai',
+    body: 'Layar mandiri di depan pintu yang tetap berfungsi walau internet mati, dan mencegah satu kartu dipakai dua orang. Sesi personal trainer wajib verifikasi wajah trainer dan member, serta pemindaian postur tubuh.',
   },
   {
     num: '09',
-    tag: 'Master & Audit',
-    title: 'Data Master & Konfigurasi Sistem',
-    body: 'Pengaturan paket langganan dan biaya admin fleksibel, manajemen karyawan 8 tingkat peran tanpa akun bersama (shared login), presensi mandiri geofence GPS staf, dan log aktivitas sistem immutable write-only.',
+    tag: 'Pengaturan',
+    title: 'Pengaturan Sistem & Riwayat Aktivitas',
+    body: 'Mengatur paket langganan dan biaya admin, mengelola karyawan dengan 8 tingkat wewenang tanpa akun bersama, absensi staf dengan lokasi GPS, dan catatan semua aktivitas yang tidak bisa dihapus.',
   },
 ];
 
 const CONTROLS = [
   {
     num: '01',
-    title: 'Otorisasi Manajer Sesi Pembuka',
-    body: 'Sesi PT pertama dan kedua wajib diverifikasi checklist kelayakannya oleh manajer di sistem. Sesi lanjutan diblokir otomatis oleh server jika formulir kesehatan PAR-Q dan program latihan belum ditandatangani digital.',
+    title: 'Sesi personal trainer pertama wajib disetujui manajer',
+    body: 'Sesi personal trainer pertama dan kedua harus diperiksa dan disetujui manajer lewat sistem. Sesi berikutnya otomatis diblokir kalau formulir kesehatan dan program latihan belum ditandatangani.',
   },
   {
     num: '02',
-    title: 'Tanda Tangan Kanvas Digital Resmi',
-    body: 'Setiap perjanjian keanggotaan, formulir medis PAR-Q, dan persetujuan program latihan mewajibkan tanda tangan digital kanvas member dan manajer yang tersimpan permanen di database tanpa celah dokumen tercecer.',
+    title: 'Tanda tangan digital yang tersimpan permanen',
+    body: 'Setiap perjanjian keanggotaan, formulir kesehatan, dan persetujuan program latihan wajib ditandatangani member dan manajer di layar. Semuanya tersimpan di sistem, tidak ada lagi berkas kertas yang bisa hilang.',
   },
   {
     num: '03',
-    title: 'Verifikasi Biometrik Wajah Dua Arah',
-    body: 'Terminal kiosk menolak kartu barcode untuk sesi PT. Trainer dan member wajib memindai wajah langsung di depan kamera secara bergiliran guna memastikan sesi latihan tatap muka benar-benar terjadi di gym.',
+    title: 'Sesi personal trainer diverifikasi lewat wajah',
+    body: 'Kartu tidak bisa dipakai untuk sesi personal trainer. Trainer dan member harus memindai wajah di depan kamera secara bergantian, supaya sesi yang tercatat benar-benar terjadi di gym.',
   },
   {
     num: '04',
-    title: 'Wewenang Terkunci & Audit Trail Permanen',
-    body: 'Pembatalan transaksi kasir (Void) hanya dapat dieksekusi dengan otorisasi manajer. Staf sales wajib melampirkan screenshot untuk status prospek gagal, dan setiap mutasi terekam pada log sistem yang tidak dapat diubah.',
+    title: 'Pembatalan hanya oleh manajer, semuanya tercatat',
+    body: 'Transaksi kasir hanya bisa dibatalkan manajer. Staf penjualan wajib melampirkan screenshot untuk calon member yang gagal dihubungi, dan setiap perubahan tercatat di riwayat yang tidak bisa diubah.',
   },
 ];
 
@@ -139,15 +139,14 @@ export default async function HomePage() {
           <div className="container wide">
             <div className="hero-grid">
               <div className="hero-copy">
-                <span className="hero-badge">Sistem Operasi Gym Enterprise All-In-One (AIO) · PT Solusi Mitra Mandiri</span>
                 <h1 className="hero-headline">
-                  Satu sistem operasi untuk <em>seluruh</em> alur bisnis gym Anda.
+                  Semua urusan gym Anda, <em>satu</em> sistem saja.
                 </h1>
                 <p className="hero-desc">
-                  Sistem All-In-One (AIO) dari PT Solusi Mitra Mandiri menghubungkan meja resepsionis,
-                  konsultan keanggotaan (MC), personal trainer, kasir POS, turnstile gate biometrik, dan
-                  akuntansi dalam satu basis data terintegrasi, dengan penegakan 35 standar operasional (SOP)
-                  langsung dari sisi server.
+                  PT Solusi Mitra Mandiri menyatukan semua bagian gym Anda (meja depan, penjualan
+                  keanggotaan, personal trainer, kasir, pintu masuk, sampai laporan keuangan) ke dalam
+                  satu sistem. Semua divisi membaca data yang sama, dan aturan mainnya dijaga otomatis
+                  oleh sistem, bukan bergantung pada kedisiplinan staf.
                 </p>
 
                 <div className="hero-actions">
@@ -156,28 +155,28 @@ export default async function HomePage() {
                   </a>
                   <a
                     className="btn btn-ghost"
-                    href={mailtoLink('Konsultasi teknis sistem All-In-One: PT Solusi Mitra Mandiri')}
+                    href={mailtoLink('Konsultasi sistem manajemen gym: PT Solusi Mitra Mandiri')}
                   >
-                    Konsultasi Teknis
+                    Tanya Dulu
                   </a>
                 </div>
 
                 <div className="hero-meta">
                   <span className="hero-meta-item">
                     <span className="hero-meta-dot" />
-                    Turnstile gate sub-5ms offline-first
+                    Pintu masuk tetap jalan walau internet mati
                   </span>
                   <span className="hero-meta-item">
                     <span className="hero-meta-dot" />
-                    Biometrik wajah 2-arah sesi PT
+                    Sesi personal trainer diverifikasi lewat wajah
                   </span>
                   <span className="hero-meta-item">
                     <span className="hero-meta-dot" />
-                    Tanda tangan kanvas digital per dokumen
+                    Semua perjanjian ditandatangani di layar
                   </span>
                   <span className="hero-meta-item">
                     <span className="hero-meta-dot" />
-                    Payroll komisi otomatis satu klik
+                    Gaji dan komisi dihitung otomatis
                   </span>
                 </div>
               </div>
@@ -193,18 +192,19 @@ export default async function HomePage() {
         <section className="section" id="masalah">
           <div className="container">
             <div className="section-header">
-              <span className="section-tag">Diagnosa Lapangan</span>
-              <h2 className="section-title">Menutup 4 Titik Kebocoran Finansial &amp; Operasional Gym.</h2>
+              <span className="section-tag">Masalah yang Sering Terjadi</span>
+              <h2 className="section-title">Empat kebocoran yang paling sering menguras gym.</h2>
               <p className="section-desc">
-                Kebocoran operasional gym paling sering terjadi pada celah pencatatan manual dan ketiadaan validasi
-                sistem. Sistem All-In-One (AIO) PT Solusi Mitra Mandiri mengunci celah tersebut melalui aturan backend yang tidak bisa dilewati staf di lapangan.
+                Uang dan data paling sering hilang bukan karena staf berniat buruk, tetapi karena pencatatan
+                masih manual dan tidak ada yang memeriksa. Sistem ini menutup celah tersebut dengan aturan
+                yang tidak bisa dilewati staf di lapangan.
               </p>
             </div>
 
             <div className="problems-grid">
               {LEAKS.map((leak, idx) => (
                 <article className="problem-card" key={leak.title}>
-                  <span className="problem-num">0{idx + 1} / Celah Operasional</span>
+                  <span className="problem-num">Masalah 0{idx + 1}</span>
                   <h3>{leak.title}</h3>
                   <p>{leak.body}</p>
                 </article>
@@ -217,11 +217,11 @@ export default async function HomePage() {
         <section className="section" id="domain">
           <div className="container">
             <div className="section-header">
-              <span className="section-tag blue">Katalog Fitur Lengkap</span>
-              <h2 className="section-title">9 Pilar Domain Operasional Tanpa Silo Data.</h2>
+              <span className="section-tag blue">Fitur Lengkap</span>
+              <h2 className="section-title">Sembilan bagian, semuanya tersambung.</h2>
               <p className="section-desc">
-                Arsitektur modular monolith dengan basis data relasional tunggal. Seluruh divisi bekerja pada data
-                yang sama secara real-time tanpa perlu sinkronisasi berkas manual.
+                Setiap divisi di gym Anda punya modulnya sendiri, tetapi semuanya membaca data yang sama.
+                Tidak ada lagi laporan yang harus disalin ulang dari satu aplikasi ke aplikasi lain.
               </p>
             </div>
 
@@ -244,11 +244,11 @@ export default async function HomePage() {
         <section className="section" id="kontrol">
           <div className="container">
             <div className="section-header">
-              <span className="section-tag">Validasi Sisi Server</span>
-              <h2 className="section-title">Aturan Bisnis yang Ditegakkan Sistem, Bukan Imbauan.</h2>
+              <span className="section-tag">Aturan yang Dijaga Sistem</span>
+              <h2 className="section-title">Aturan yang dipaksa sistem, bukan sekadar imbauan.</h2>
               <p className="section-desc">
-                Pencatatan manual mudah dimanipulasi. Sistem All-In-One (AIO) menanamkan 35 Standar Operasional Prosedur (SOP) langsung
-                ke dalam logika transaksi server guna memastikan integritas pendapatan dan data member.
+                Catatan manual gampang diubah orang. Sistem ini menanamkan aturan operasional langsung ke
+                dalam alur transaksinya, supaya pendapatan dan data member tetap utuh tanpa perlu diawasi terus-menerus.
               </p>
             </div>
 
@@ -268,11 +268,11 @@ export default async function HomePage() {
         <section className="section" id="mitra">
           <div className="container">
             <div className="section-header center">
-              <span className="section-tag blue">Jaringan Operasional</span>
-              <h2 className="section-title">Dipercaya oleh Studio &amp; Pusat Kebugaran Mitra.</h2>
+              <span className="section-tag blue">Sudah Dipakai</span>
+              <h2 className="section-title">Sudah dipakai gym dan studio di Indonesia.</h2>
               <p className="section-desc">
-                Sistem All-In-One (AIO) PT Solusi Mitra Mandiri telah beroperasi melayani manajemen harian pada jaringan gym dan studio kebugaran mitra
-                di Indonesia.
+                Sistem ini bukan rancangan di atas kertas. Setiap hari ia dipakai untuk mengurus operasional
+                harian gym dan studio kebugaran mitra kami.
               </p>
             </div>
 
@@ -298,11 +298,11 @@ export default async function HomePage() {
         <section className="section" id="team">
           <div className="container">
             <div className="section-header center">
-              <span className="section-tag">Kepemimpinan</span>
-              <h2 className="section-title">Tim Produk &amp; Rekayasa Sistem.</h2>
+              <span className="section-tag">Tim Kami</span>
+              <h2 className="section-title">Orang-orang di balik sistem ini.</h2>
               <p className="section-desc">
-                PT Solusi Mitra Mandiri didirikan oleh praktisi rekayasa perangkat lunak dan manajemen kebugaran
-                yang merancang sistem dari kebutuhan lapangan nyata.
+                PT Solusi Mitra Mandiri didirikan oleh pengembang perangkat lunak dan praktisi manajemen
+                kebugaran. Sistem ini dibangun dari pengalaman langsung mengurus gym, bukan dari teori.
               </p>
             </div>
 
@@ -332,11 +332,11 @@ export default async function HomePage() {
           <div className="container narrow">
             <div className="demo-card">
               <div className="section-header center" style={{ marginBottom: 32 }}>
-                <span className="section-tag">Konsultasi Implementasi</span>
-                <h2 className="section-title">Jadwalkan Konsultasi &amp; Demonstrasi Sistem.</h2>
+                <span className="section-tag">Coba Dulu</span>
+                <h2 className="section-title">Lihat langsung sistemnya bekerja.</h2>
                 <p className="section-desc">
-                  Sesi 30 menit bersama tim implementasi PT Solusi Mitra Mandiri untuk memetakan alur kerja gym Anda
-                  dan mendemonstrasikan bagaimana 35 SOP diterapkan langsung pada sistem All-In-One (AIO).
+                  Isi formulir di bawah, lalu kami hubungi Anda untuk sesi 30 menit. Kami akan lihat bersama
+                  cara kerja gym Anda sekarang, dan tunjukkan bagian mana yang bisa langsung dibantu sistem ini.
                 </p>
               </div>
 
@@ -356,49 +356,50 @@ export default async function HomePage() {
                 <span className="brand-name">Solusi Mitra Mandiri</span>
               </a>
               <p>
-                PT Solusi Mitra Mandiri adalah perusahaan teknologi pengembang sistem All-In-One (AIO): platform
-                operasional gym terpadu, kasir POS, turnstile gate biometrik, dan akuntansi kebugaran di Indonesia.
+                PT Solusi Mitra Mandiri membuat sistem manajemen gym: satu aplikasi untuk mengurus
+                keanggotaan, jadwal personal trainer, kasir toko, pintu masuk, dan laporan keuangan gym
+                di Indonesia.
               </p>
             </div>
 
             <div className="foot-col">
-              <h5>Solusi Sistem</h5>
+              <h5>Produk</h5>
               <ul>
                 <li>
-                  <a href="#domain">9 Pilar Modul Domain</a>
+                  <a href="#domain">Fitur &amp; Modul</a>
                 </li>
                 <li>
-                  <a href="#kontrol">Penegakan 35 SOP Server</a>
+                  <a href="#kontrol">Aturan yang Dijaga Sistem</a>
                 </li>
                 <li>
-                  <a href="#masalah">Diagnosa Kebocoran Gym</a>
+                  <a href="#masalah">Masalah yang Sering Terjadi</a>
                 </li>
               </ul>
             </div>
 
             <div className="foot-col">
-              <h5>Divisi Utama</h5>
+              <h5>Bagian Gym</h5>
               <ul>
                 <li>
-                  <a href="#domain">CRM &amp; Front Desk CS</a>
+                  <a href="#domain">Meja Depan &amp; Calon Member</a>
                 </li>
                 <li>
-                  <a href="#domain">Personal Training &amp; Kiosk</a>
+                  <a href="#domain">Personal Trainer &amp; Pintu Masuk</a>
                 </li>
                 <li>
-                  <a href="#domain">Kasir POS &amp; Payroll Gaji</a>
+                  <a href="#domain">Kasir &amp; Gaji Karyawan</a>
                 </li>
               </ul>
             </div>
 
             <div className="foot-col">
-              <h5>Akses &amp; Kontak</h5>
+              <h5>Hubungi Kami</h5>
               <ul>
                 <li>
                   <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
                 </li>
                 <li>
-                  <a href="/admin/login">Portal Admin</a>
+                  <a href="/admin/login">Masuk Admin</a>
                 </li>
               </ul>
             </div>

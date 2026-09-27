@@ -34,13 +34,13 @@ export default function Navbar({ brandMarkImg }: NavbarProps) {
                 <a href="#masalah">Masalah</a>
               </li>
               <li>
-                <a href="#domain">Fitur &amp; Modul</a>
+                <a href="#domain">Fitur</a>
               </li>
               <li>
-                <a href="#kontrol">Kontrol Server</a>
+                <a href="#kontrol">Aturan Sistem</a>
               </li>
               <li>
-                <a href="#mitra">Mitra Gym</a>
+                <a href="#mitra">Mitra</a>
               </li>
               <li>
                 <a href="#team">Tim</a>
@@ -51,7 +51,7 @@ export default function Navbar({ brandMarkImg }: NavbarProps) {
           {/* Aksi Desktop */}
           <div className="nav-actions nav-desktop-actions">
             <a className="nav-link-ghost" href="/admin/login">
-              Portal Admin
+              Masuk Admin
             </a>
             <a className="btn btn-primary" href="#demo">
               Jadwalkan Demo
@@ -83,32 +83,32 @@ export default function Navbar({ brandMarkImg }: NavbarProps) {
               <ul className="nav-mobile-links">
                 <li>
                   <a href="#masalah" onClick={() => setOpen(false)}>
-                    Diagnosa Masalah
+                    Masalah yang Sering Terjadi
                   </a>
                 </li>
                 <li>
                   <a href="#domain" onClick={() => setOpen(false)}>
-                    9 Pilar Modul Domain
+                    Fitur &amp; Modul
                   </a>
                 </li>
                 <li>
                   <a href="#kontrol" onClick={() => setOpen(false)}>
-                    Kontrol Validasi Server
+                    Aturan yang Dijaga Sistem
                   </a>
                 </li>
                 <li>
                   <a href="#mitra" onClick={() => setOpen(false)}>
-                    Jaringan Mitra Gym
+                    Gym yang Sudah Pakai
                   </a>
                 </li>
                 <li>
                   <a href="#team" onClick={() => setOpen(false)}>
-                    Tim Pengembang
+                    Tim Kami
                   </a>
                 </li>
                 <li>
                   <a href="/admin/login" onClick={() => setOpen(false)}>
-                    Portal Admin
+                    Masuk Admin
                   </a>
                 </li>
               </ul>
@@ -120,7 +120,7 @@ export default function Navbar({ brandMarkImg }: NavbarProps) {
                 href="#demo"
                 onClick={() => setOpen(false)}
               >
-                Jadwalkan Demo Langsung
+                Jadwalkan Demo
               </a>
             </div>
           </div>

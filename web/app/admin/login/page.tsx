@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
       setFields(fieldErrors);
       setError(message);
     } catch {
-      setError('Tidak dapat menghubungi server. Periksa koneksi Anda lalu coba lagi.');
+      setError('Koneksi bermasalah. Periksa internet Anda, lalu coba lagi.');
     } finally {
       setSubmitting(false);
     }
@@ -43,16 +43,14 @@ export default function AdminLoginPage() {
   return (
     <main className="login-wrap">
       <div className="login-card">
-        <span className="label">
-          All-In-One Control System<span className="ix">/ Level 0 Auth</span>
-        </span>
-        <h1 className="display">Portal Admin</h1>
-        <p className="sub">PT Solusi Mitra Mandiri · Akses Terbatas</p>
+        <span className="eyebrow">Portal Admin</span>
+        <h1>Masuk Admin</h1>
+        <p className="sub">PT Solusi Mitra Mandiri · Khusus Staf</p>
 
         <form onSubmit={onSubmit} noValidate>
           <div className="login-field">
             <label className="form-label" htmlFor="admin-email">
-              Email Admin
+              Email
             </label>
             <input
               id="admin-email"
@@ -95,7 +93,7 @@ export default function AdminLoginPage() {
           </div>
 
           <button className="btn btn-primary" type="submit" disabled={submitting}>
-            {submitting ? 'Memverifikasi…' : 'Masuk ke Dasbor'}
+            {submitting ? 'Sedang masuk…' : 'Masuk'}
           </button>
         </form>
 
@@ -107,9 +105,9 @@ export default function AdminLoginPage() {
         ) : null}
 
         <p className="login-foot">
-          Sesi berakhir otomatis setelah 7 hari tanpa aktivitas.
+          Anda otomatis keluar setelah 7 hari tidak membuka halaman ini.
           <br />
-          <a href="/">← Kembali ke halaman publik</a>
+          <a href="/">← Kembali ke halaman utama</a>
         </p>
       </div>
     </main>

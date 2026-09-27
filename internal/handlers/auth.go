@@ -53,7 +53,7 @@ func (h *AuthHandler) LoginSubmit(w http.ResponseWriter, r *http.Request) {
 
 	var payload loginPayload
 	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-		writeError(w, http.StatusBadRequest, "Format permintaan tidak valid.")
+		writeError(w, http.StatusBadRequest, "Data yang dikirim tidak terbaca. Coba lagi.")
 		return
 	}
 
@@ -62,17 +62,17 @@ func (h *AuthHandler) LoginSubmit(w http.ResponseWriter, r *http.Request) {
 
 	fields := map[string]string{}
 	if email == "" {
-		fields["email"] = "Alamat email wajib diisi."
+		fields["email"] = "Email belum diisi."
 	}
 	if password == "" {
-		fields["password"] = "Kata sandi wajib diisi."
+		fields["password"] = "Kata sandi belum diisi."
 	}
 	if len(fields) > 0 {
-		writeFieldErrors(w, http.StatusUnprocessableEntity, "Email dan kata sandi wajib diisi.", fields)
+		writeFieldErrors(w, http.StatusUnprocessableEntity, "Isi dulu email dan kata sandi.", fields)
 		return
 	}
 
-	const invalidCredentials = "Email atau kata sandi admin tidak sesuai."
+	const invalidCredentials = "Email atau kata sandi salah."
 
 	var user models.User
 	if err := h.DB.Where("email = ? AND is_admin = ?", email, true).First(&user).Error; err != nil {
@@ -97,7 +97,7 @@ func (h *AuthHandler) LoginSubmit(w http.ResponseWriter, r *http.Request) {
 
 	if err := session.Save(r, w); err != nil {
 		log.Printf("Gagal menyimpan sesi admin: %v", err)
-		writeError(w, http.StatusInternalServerError, "Gagal membuat sesi login.")
+		writeError(w, http.StatusInternalServerError, "Gagal login. Silakan coba lagi.")
 		return
 	}
 
@@ -138,5 +138,5 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, messageResponse{Message: "Sesi admin berhasil diakhiri."})
+	writeJSON(w, http.StatusOK, messageResponse{Message: "Anda sudah keluar."})
 }

@@ -20,7 +20,7 @@ function getWhatsAppUrl(phone: string, picName: string, company: string): string
   } else if (clean.startsWith('8')) {
     clean = '62' + clean;
   }
-  const text = `Halo Bapak/Ibu ${picName}, terima kasih telah menghubungi PT Solusi Mitra Mandiri terkait permintaan demo sistem All-In-One (AIO) untuk ${company}. Kapan waktu yang nyaman untuk sesi demonstrasi 30 menit via Google Meet/Zoom?`;
+  const text = `Halo Bapak/Ibu ${picName}, terima kasih sudah menghubungi PT Solusi Mitra Mandiri soal permintaan demo sistem manajemen gym untuk ${company}. Kapan waktu yang nyaman untuk sesi demonstrasi 30 menit lewat Google Meet atau Zoom?`;
   return `https://wa.me/${clean}?text=${encodeURIComponent(text)}`;
 }
 
@@ -88,15 +88,15 @@ export default function AdminPortalDashboard() {
     setFieldErrors({});
 
     if (!name.trim()) {
-      setFieldErrors({ name: 'Nama gym mitra wajib diisi.' });
+      setFieldErrors({ name: 'Isi dulu nama gym mitra.' });
       return;
     }
     if (!file) {
-      setFieldErrors({ logo: 'Pilih berkas logo terlebih dahulu.' });
+      setFieldErrors({ logo: 'Pilih dulu berkas logo yang mau diunggah.' });
       return;
     }
     if (file.size > MAX_LOGO_BYTES) {
-      setFieldErrors({ logo: 'Ukuran berkas logo maksimal 5 MB.' });
+      setFieldErrors({ logo: 'Logo terlalu besar. Maksimal 5 MB. Coba perkecil dulu gambarnya.' });
       return;
     }
 
@@ -121,19 +121,19 @@ export default function AdminPortalDashboard() {
       }
 
       const payload: { message?: string } = await res.json();
-      setStatus({ kind: 'ok', text: payload.message ?? 'Logo mitra berhasil diterbitkan.' });
+      setStatus({ kind: 'ok', text: payload.message ?? 'Logo mitra sudah tayang di halaman publik.' });
       setName('');
       if (input) input.value = '';
       await load();
     } catch {
-      setStatus({ kind: 'error', text: 'Unggahan gagal. Periksa koneksi Anda lalu coba lagi.' });
+      setStatus({ kind: 'error', text: 'Unggahan gagal. Periksa koneksi lalu coba lagi.' });
     } finally {
       setUploading(false);
     }
   }
 
   async function onDelete(id: number, partnerName: string) {
-    if (!window.confirm(`Hapus mitra "${partnerName}"? Logo akan ikut dihapus dari server.`)) {
+    if (!window.confirm(`Hapus mitra "${partnerName}"? Logo juga akan ikut terhapus.`)) {
       return;
     }
 
@@ -155,10 +155,10 @@ export default function AdminPortalDashboard() {
       }
 
       const payload: { message?: string } = await res.json();
-      setStatus({ kind: 'ok', text: payload.message ?? 'Mitra berhasil dihapus.' });
+      setStatus({ kind: 'ok', text: payload.message ?? 'Mitra sudah dihapus dari daftar.' });
       await load();
     } catch {
-      setStatus({ kind: 'error', text: 'Gagal menghapus mitra. Periksa koneksi Anda lalu coba lagi.' });
+      setStatus({ kind: 'error', text: 'Gagal menghapus mitra. Periksa koneksi lalu coba lagi.' });
     } finally {
       setBusyId(null);
     }
@@ -184,15 +184,15 @@ export default function AdminPortalDashboard() {
         return;
       }
 
-      setStatus({ kind: 'ok', text: 'Data prospek berhasil diperbarui di database pusat.' });
+      setStatus({ kind: 'ok', text: 'Perubahan sudah disimpan.' });
       await load();
     } catch {
-      setStatus({ kind: 'error', text: 'Gagal memperbarui status. Periksa koneksi Anda.' });
+      setStatus({ kind: 'error', text: 'Gagal menyimpan perubahan. Periksa koneksi lalu coba lagi.' });
     }
   }
 
   async function onPromptEditNotes(id: number, currentNotes: string) {
-    const newNotes = window.prompt('Perbarui catatan tindak lanjut untuk prospek ini:', currentNotes || '');
+    const newNotes = window.prompt('Tulis atau ubah catatan tindak lanjut untuk permintaan ini:', currentNotes || '');
     if (newNotes !== null && newNotes !== currentNotes) {
       await onUpdateDemoRequest(id, { notes: newNotes });
     }
@@ -227,8 +227,8 @@ export default function AdminPortalDashboard() {
   if (loading) {
     return (
       <main className="container admin-wrap">
-        <p className="meta" style={{ padding: '40px 0', textAlign: 'center' }}>
-          Memuat portal kontrol admin…
+        <p className="hint" style={{ padding: '40px 0', textAlign: 'center' }}>
+          Sedang memuat data…
         </p>
       </main>
     );
@@ -239,10 +239,8 @@ export default function AdminPortalDashboard() {
       {/* Header Utama Admin */}
       <div className="admin-head">
         <div>
-          <span className="label">
-            Portal Admin <span className="ix">/ All-In-One Control System</span>
-          </span>
-          <h1>Pusat Kontrol &amp; Manajemen Data</h1>
+          <span className="eyebrow">Portal Admin</span>
+          <h1>Dasbor Admin</h1>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
           {admin ? <span className="who">{admin.email}</span> : null}
@@ -272,7 +270,7 @@ export default function AdminPortalDashboard() {
           className={activeTab === 'leads' ? 'admin-tab is-active' : 'admin-tab'}
           onClick={() => setActiveTab('leads')}
         >
-          Permintaan Demo &amp; Follow Up ({pendingCount > 0 ? `${pendingCount} Baru` : demoRequests.length})
+          Permintaan Demo ({pendingCount > 0 ? `${pendingCount} baru` : demoRequests.length})
         </button>
         <button
           type="button"
@@ -281,7 +279,7 @@ export default function AdminPortalDashboard() {
           className={activeTab === 'analytics' ? 'admin-tab is-active' : 'admin-tab'}
           onClick={() => setActiveTab('analytics')}
         >
-          Google Analytics &amp; Pengunjung
+          Pengunjung Situs
         </button>
         <button
           type="button"
@@ -290,22 +288,22 @@ export default function AdminPortalDashboard() {
           className={activeTab === 'partners' ? 'admin-tab is-active' : 'admin-tab'}
           onClick={() => setActiveTab('partners')}
         >
-          Mitra Gym Terpasang ({partners.length})
+          Mitra Gym ({partners.length})
         </button>
       </div>
 
       {/* TAB 1: PERMINTAAN DEMO & LEADS FOLLOW UP */}
       {activeTab === 'leads' ? (
-        <section aria-label="Permintaan Demo dan Follow Up">
-          {/* KPI Ringkasan */}
+        <section aria-label="Permintaan demo dan tindak lanjut">
+          {/* Ringkasan angka */}
           <div className="admin-kpi-grid">
             <div className="admin-kpi-card">
               <span className="admin-kpi-num">{demoRequests.length}</span>
-              <span className="admin-kpi-label">Total Pengajuan Form</span>
+              <span className="admin-kpi-label">Total Permintaan</span>
             </div>
             <div className="admin-kpi-card">
               <span className="admin-kpi-num amber">{pendingCount}</span>
-              <span className="admin-kpi-label">Menunggu Follow Up</span>
+              <span className="admin-kpi-label">Belum Dihubungi</span>
             </div>
             <div className="admin-kpi-card">
               <span className="admin-kpi-num blue">{contactedCount}</span>
@@ -313,18 +311,19 @@ export default function AdminPortalDashboard() {
             </div>
             <div className="admin-kpi-card">
               <span className="admin-kpi-num coral">{scheduledCount}</span>
-              <span className="admin-kpi-label">Sesi Demo Terjadwal</span>
+              <span className="admin-kpi-label">Demo Terjadwal</span>
             </div>
             <div className="admin-kpi-card">
               <span className="admin-kpi-num green">{completedCount}</span>
-              <span className="admin-kpi-label">Selesai / Terkonversi</span>
+              <span className="admin-kpi-label">Selesai</span>
             </div>
           </div>
 
           <div className="admin-panel">
-            <h2>Daftar Calon Klien &amp; Antrean Tindak Lanjut</h2>
+            <h2>Daftar Permintaan Demo</h2>
             <p className="hint">
-              Seluruh isian formulir publik tersimpan permanen di database pusat (`b2b_demo_requests`). Gunakan tombol WhatsApp untuk memulai percakapan cepat dengan template resmi.
+              Semua yang mengisi formulir di situs publik masuk ke daftar ini. Tekan tombol WhatsApp untuk
+              langsung membalas dengan pesan yang sudah disiapkan.
             </p>
 
             {/* Filter dan Pencarian */}
@@ -332,7 +331,7 @@ export default function AdminPortalDashboard() {
               <input
                 type="text"
                 className="search-input"
-                placeholder="Cari nama gym, PIC, email, atau nomor HP…"
+                placeholder="Cari nama gym, nama orang, email, atau nomor HP…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -340,13 +339,13 @@ export default function AdminPortalDashboard() {
                 className="filter-select"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                aria-label="Filter status prospek"
+                aria-label="Filter status permintaan"
               >
                 <option value="all">Semua Status ({demoRequests.length})</option>
-                <option value="pending">Menunggu Follow Up ({pendingCount})</option>
+                <option value="pending">Belum Dihubungi ({pendingCount})</option>
                 <option value="contacted">Sudah Dihubungi ({contactedCount})</option>
-                <option value="scheduled">Sesi Terjadwal ({scheduledCount})</option>
-                <option value="completed">Selesai / Terkonversi ({completedCount})</option>
+                <option value="scheduled">Demo Terjadwal ({scheduledCount})</option>
+                <option value="completed">Selesai ({completedCount})</option>
               </select>
             </div>
 
@@ -355,13 +354,13 @@ export default function AdminPortalDashboard() {
                 <table className="data">
                   <thead>
                     <tr>
-                      <th scope="col">Perusahaan / Gym</th>
-                      <th scope="col">Nama PIC</th>
-                      <th scope="col">Kontak (HP &amp; Surel)</th>
-                      <th scope="col">Catatan Tambahan</th>
-                      <th scope="col">Status Prospek</th>
+                      <th scope="col">Gym / Perusahaan</th>
+                      <th scope="col">Nama</th>
+                      <th scope="col">Kontak</th>
+                      <th scope="col">Catatan</th>
+                      <th scope="col">Status</th>
                       <th scope="col">Tanggal Masuk</th>
-                      <th scope="col" style={{ textAlign: 'right' }}>Aksi Tindak Lanjut</th>
+                      <th scope="col" style={{ textAlign: 'right' }}>Tindakan</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -386,10 +385,10 @@ export default function AdminPortalDashboard() {
                             aria-label={`Ubah status untuk ${request.company_name}`}
                             onChange={(e) => onUpdateDemoRequest(request.id, { status: e.target.value })}
                           >
-                            <option value="pending">Pending (Baru)</option>
+                            <option value="pending">Belum Dihubungi</option>
                             <option value="contacted">Sudah Dihubungi</option>
-                            <option value="scheduled">Sesi Terjadwal</option>
-                            <option value="completed">Selesai / Deal</option>
+                            <option value="scheduled">Demo Terjadwal</option>
+                            <option value="completed">Selesai</option>
                             <option value="cancelled">Dibatalkan</option>
                           </select>
                         </td>
@@ -401,16 +400,16 @@ export default function AdminPortalDashboard() {
                               href={getWhatsAppUrl(request.phone_number, request.pic_name, request.company_name)}
                               target="_blank"
                               rel="noopener noreferrer"
-                              title="Buka WhatsApp Chat dengan template resmi"
+                              title="Balas lewat WhatsApp dengan pesan yang sudah disiapkan"
                             >
-                              <span>Follow Up WA</span>
+                              <span>Chat WA</span>
                             </a>
                             <a
                               className="btn-email"
                               href={`mailto:${request.email}?subject=${encodeURIComponent(
-                                `Permintaan Demo Sistem All-In-One: PT Solusi Mitra Mandiri (${request.company_name})`
+                                `Permintaan demo sistem manajemen gym (${request.company_name})`
                               )}`}
-                              title="Kirim surel tindak lanjut"
+                              title="Balas lewat email"
                             >
                               <span>Email</span>
                             </a>
@@ -419,7 +418,7 @@ export default function AdminPortalDashboard() {
                               className="btn btn-ghost btn-sm"
                               style={{ padding: '6px 10px', fontSize: 12 }}
                               onClick={() => onPromptEditNotes(request.id, request.notes)}
-                              title="Tambah atau ubah catatan tindak lanjut"
+                              title="Tulis atau ubah catatan tindak lanjut"
                             >
                               Catatan
                             </button>
@@ -434,8 +433,8 @@ export default function AdminPortalDashboard() {
               <div className="empty-state">
                 <p>
                   {searchQuery || statusFilter !== 'all'
-                    ? 'Tidak ada permintaan demo yang cocok dengan filter pencarian.'
-                    : 'Belum ada permintaan demo yang masuk dari formulir situs publik.'}
+                    ? 'Tidak ada permintaan yang cocok dengan pencarian atau filter ini.'
+                    : 'Belum ada permintaan demo yang masuk.'}
                 </p>
               </div>
             )}
@@ -445,21 +444,23 @@ export default function AdminPortalDashboard() {
 
       {/* TAB 2: ANALISIS PENGUNJUNG & GOOGLE ANALYTICS */}
       {activeTab === 'analytics' ? (
-        <section aria-label="Analisis Pengunjung dan Google Analytics">
+        <section aria-label="Data pengunjung situs">
           <div className="ga-box">
             <div className="ga-status-header">
               <div>
-                <span className="label">Integrasi Pelacakan Trafik</span>
-                <h2 style={{ fontFamily: 'var(--sans)', fontSize: 22, marginTop: 4 }}>Google Analytics 4 (GA4)</h2>
+                <span className="eyebrow">Data Pengunjung</span>
+                <h2 style={{ fontFamily: 'var(--sans)', fontSize: 22, marginTop: 4 }}>Google Analytics</h2>
               </div>
               <div className="ga-pill">
                 <span className="ga-pill-dot" />
-                <span>Terhubung &amp; Mengumpulkan Data</span>
+                <span>Sedang Merekam</span>
               </div>
             </div>
 
             <p style={{ fontFamily: 'var(--body)', fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, maxWidth: 680 }}>
-              Situs publik PT Solusi Mitra Mandiri telah terhubung dengan Google Analytics 4 menggunakan Measurement ID resmi. Seluruh aktivitas kunjungan, sumber referensi (iklan/sosmed), dan rasio konversi form dicatat secara real-time.
+              Situs Anda sudah tersambung ke Google Analytics. Setiap orang yang membuka halaman, dari mana
+              mereka datang (iklan, media sosial, atau pencarian Google), dan berapa yang mengisi formulir,
+              semuanya tercatat otomatis.
             </p>
 
             <div style={{ display: 'flex', gap: 14, marginTop: 20, flexWrap: 'wrap' }}>
@@ -469,7 +470,7 @@ export default function AdminPortalDashboard() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Buka Konsol GA4 ↗
+                Buka Google Analytics ↗
               </a>
               <a
                 className="btn btn-ghost btn-sm"
@@ -477,45 +478,45 @@ export default function AdminPortalDashboard() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Pantau Kunjungan Realtime ↗
+                Lihat Pengunjung Sekarang ↗
               </a>
             </div>
           </div>
 
           <div className="admin-panel">
-            <h2>Konfigurasi &amp; Event Telemetri Terpasang</h2>
+            <h2>Yang Dicatat Sistem</h2>
             <p className="hint">
-              Event-event berikut dikirimkan otomatis oleh antarmuka situs ke Google Analytics untuk mengukur minat pengunjung:
+              Hal-hal berikut dicatat otomatis setiap kali ada pengunjung di situs Anda:
             </p>
 
             <div className="ga-events-grid">
               <div className="ga-event-item">
-                <code>Measurement ID: {GA_TRACKING_ID}</code>
-                <p>Properti Google Analytics 4 aktif yang disematkan di root layout situs publik.</p>
+                <code>Kode properti (Measurement ID): {GA_TRACKING_ID}</code>
+                <p>Kode pengenal akun Google Analytics milik situs ini. Jangan diubah tanpa bantuan tim teknis.</p>
               </div>
               <div className="ga-event-item">
-                <code>page_view</code>
-                <p>Merekam setiap pengunjung yang membuka halaman muka, navigasi modul, dan portal admin.</p>
+                <code>Halaman dibuka (page_view)</code>
+                <p>Setiap kali ada orang membuka halaman situs, termasuk halaman admin.</p>
               </div>
               <div className="ga-event-item">
-                <code>demo_request_submitted</code>
-                <p>Merekam konversi berhasil saat pengunjung men-submit formulir permintaan demo.</p>
+                <code>Formulir demo dikirim (demo_request_submitted)</code>
+                <p>Tercatat saat ada orang selesai mengisi dan mengirim formulir permintaan demo.</p>
               </div>
               <div className="ga-event-item">
-                <code>whatsapp_lead_outbound</code>
-                <p>Merekam pengunjung yang melanjutkan obrolan langsung ke WhatsApp sales resmi.</p>
+                <code>Chat WhatsApp dibuka (whatsapp_lead_outbound)</code>
+                <p>Tercatat saat pengunjung memilih langsung menghubungi kami lewat WhatsApp.</p>
               </div>
             </div>
 
             <div style={{ marginTop: 24, padding: 18, background: 'var(--surface-2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line-faint)' }}>
               <h4 style={{ fontFamily: 'var(--sans)', fontSize: 14, marginBottom: 6, color: 'var(--ink)' }}>
-                Panduan Memeriksa Pengunjung di Google Analytics:
+                Cara melihat data pengunjung:
               </h4>
               <ol style={{ fontFamily: 'var(--body)', fontSize: 13, color: 'var(--ink-mute)', lineHeight: 1.7, paddingLeft: 20 }}>
-                <li>Buka <strong>Konsol GA4</strong> melalui tautan di atas dan login menggunakan akun Google terdaftar.</li>
-                <li>Pilih menu <strong>Laporan (Reports) &rarr; Waktu Nyata (Realtime)</strong> untuk melihat pengunjung yang sedang aktif dalam 30 menit terakhir beserta asal kota/negaranya.</li>
-                <li>Pilih menu <strong>Akuisisi (Acquisition) &rarr; Akuisisi Pengguna</strong> untuk menganalisis dari mana pengunjung datang (apakah dari Instagram Ads, TikTok, pencarian Google, atau tautan langsung).</li>
-                <li>Cocokkan lonjakan trafik pengunjung dengan data pengajuan form yang masuk di tab <strong>Permintaan Demo</strong>.</li>
+                <li>Klik tombol <strong>Buka Google Analytics</strong> di atas, lalu masuk dengan akun Google yang terdaftar.</li>
+                <li>Pilih menu <strong>Laporan → Waktu Nyata</strong> untuk melihat siapa yang sedang membuka situs Anda saat ini, beserta kota asalnya.</li>
+                <li>Pilih menu <strong>Akuisisi → Akuisisi Pengguna</strong> untuk melihat dari mana pengunjung datang: iklan Instagram, TikTok, pencarian Google, atau langsung.</li>
+                <li>Bandingkan jumlah pengunjung yang naik dengan jumlah formulir yang masuk di tab <strong>Permintaan Demo</strong>.</li>
               </ol>
             </div>
           </div>
@@ -524,17 +525,18 @@ export default function AdminPortalDashboard() {
 
       {/* TAB 3: MANAJEMEN MITRA GYM */}
       {activeTab === 'partners' ? (
-        <section aria-label="Manajemen Mitra Gym">
+        <section aria-label="Kelola mitra gym">
           <div className="admin-panel">
-            <h2>Terbitkan Logo Mitra Baru</h2>
+            <h2>Tambah Logo Mitra</h2>
             <p className="hint">
-              Logo yang diterbitkan langsung tampil di seksi &ldquo;Mitra Gym&rdquo; pada halaman publik situs. Format berkas: PNG, JPG, atau WebP (maksimal 5 MB).
+              Logo yang diunggah langsung muncul di bagian &ldquo;Mitra&rdquo; pada halaman publik situs.
+              Pakai berkas gambar PNG, JPG, atau WebP, ukuran maksimal 5 MB.
             </p>
 
             <form className="admin-form" onSubmit={onUpload} noValidate>
               <div>
                 <label className="form-label" htmlFor="partner-name">
-                  Nama Gym Mitra
+                  Nama Gym
                 </label>
                 <input
                   id="partner-name"
@@ -564,7 +566,7 @@ export default function AdminPortalDashboard() {
 
               <div>
                 <label className="form-label" htmlFor="partner-logo">
-                  Berkas Logo Gambar
+                  Berkas Logo
                 </label>
                 <input
                   id="partner-logo"
@@ -583,25 +585,25 @@ export default function AdminPortalDashboard() {
               </div>
 
               <button className="btn btn-primary" type="submit" disabled={uploading} style={{ minHeight: 44 }}>
-                {uploading ? 'Mengunggah…' : 'Terbitkan Logo'}
+                {uploading ? 'Mengunggah…' : 'Unggah Logo'}
               </button>
             </form>
           </div>
 
           <div className="admin-panel">
             <h2>Mitra Gym Terdaftar ({partners.length})</h2>
-            <p className="hint">Daftar logo gym aktif yang sedang dipublikasikan di halaman utama.</p>
+            <p className="hint">Logo yang saat ini tampil di halaman utama situs.</p>
 
             {partners.length > 0 ? (
               <div className="table-wrap">
                 <table className="data">
                   <thead>
                     <tr>
-                      <th scope="col">Pratinjau Logo</th>
+                      <th scope="col">Logo</th>
                       <th scope="col">Nama Gym</th>
                       <th scope="col">Status</th>
-                      <th scope="col">Tanggal Terbit</th>
-                      <th scope="col" style={{ textAlign: 'right' }}>Aksi</th>
+                      <th scope="col">Tanggal Diunggah</th>
+                      <th scope="col" style={{ textAlign: 'right' }}>Tindakan</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -614,7 +616,7 @@ export default function AdminPortalDashboard() {
                         <td className="strong">{partner.name}</td>
                         <td>
                           <span className={partner.is_active ? 'badge is-active' : 'badge'}>
-                            {partner.is_active ? 'Aktif Tayang' : 'Nonaktif'}
+                            {partner.is_active ? 'Tampil' : 'Tidak Tampil'}
                           </span>
                         </td>
                         <td className="mono">{formatDate(partner.created_at)}</td>
@@ -635,7 +637,7 @@ export default function AdminPortalDashboard() {
               </div>
             ) : (
               <div className="empty-state">
-                <p>Belum ada mitra terdaftar. Terbitkan logo pertama lewat formulir di atas.</p>
+                <p>Belum ada mitra terdaftar. Tambahkan logo pertama lewat formulir di atas.</p>
               </div>
             )}
           </div>
