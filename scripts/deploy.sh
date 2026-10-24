@@ -65,7 +65,9 @@ wait_http "web" "$WEB_URL" 30
 # IndexNow memberi tahu Bing, Yandex, Naver, dan Seznam bahwa halaman berubah.
 # Google tidak memakai IndexNow, jadi ini pelengkap, bukan pengganti Search
 # Console. Kegagalan di sini tidak boleh menggagalkan deploy: situs sudah hidup.
-INDEXNOW_KEY_FILE=$(ls web/public/*.txt 2>/dev/null | head -1 || true)
+# Skrip ini berjalan dari dalam web/ setelah build, jadi path kunci dihitung
+# dari APP_DIR, bukan dari direktori kerja saat ini.
+INDEXNOW_KEY_FILE=$(ls "$APP_DIR"/web/public/*.txt 2>/dev/null | head -1 || true)
 if [ -n "$INDEXNOW_KEY_FILE" ]; then
   INDEXNOW_KEY=$(basename "$INDEXNOW_KEY_FILE" .txt)
   echo "==> IndexNow ($INDEXNOW_KEY)"
