@@ -173,6 +173,24 @@ git push origin main
 - `API_ORIGIN` dibaca saat `next build`, bukan `next start`; mengubahnya di
   server tanpa rebuild tidak berpengaruh.
 
+## SEO
+
+- Metadata, canonical, Open Graph, Twitter card, dan robots diatur di
+  `web/app/layout.tsx`; sumber tunggal nama, deskripsi, kontak, dan graf
+  JSON-LD ada di `web/lib/seo.ts`.
+- `/robots.txt` dan `/sitemap.xml` dibuat oleh Next (`app/robots.ts`,
+  `app/sitemap.ts`), jadi daftar sitemap dan host selalu ikut. Portal admin
+  dilarang lewat robots dan diberi `noindex` di `app/admin/layout.tsx`.
+- Kartu pratinjau 1200x630 dirender dari kode di `app/opengraph-image.tsx`
+  memakai dua font di `web/assets/fonts/` (dibaca dari disk, bukan diunduh
+  saat build).
+- Verifikasi Google Search Console memakai tag meta; tokennya ada di
+  `GOOGLE_VERIFICATION` dan bisa ditimpa lewat env `GOOGLE_SITE_VERIFICATION`.
+- Setiap deploy mengirim URL ke IndexNow (Bing, Yandex, Naver, Seznam) lewat
+  `scripts/deploy.sh`, memakai berkas kunci di `web/public/<kunci>.txt`.
+  Google tidak memakai IndexNow; untuk Google, sitemap dan permintaan
+  pengindeksan di Search Console yang berlaku.
+
 ## Catatan
 
 - Situs publik memakai sistem desain **Ledger**: kertas hangat, garis rambut, judul serif,

@@ -13,6 +13,7 @@ NODE_BIN="${NODE_BIN:-/home/loyalfitness/.nvm/versions/node/v24.14.1/bin}"
 API_ORIGIN="${API_ORIGIN:-http://127.0.0.1:8080}"
 API_HEALTH="${API_HEALTH:-http://127.0.0.1:8080/api/health}"
 WEB_URL="${WEB_URL:-http://127.0.0.1:3005/}"
+PUBLIC_SITE_URL="${PUBLIC_SITE_URL:-https://solusimitramandiri.com}"
 
 export PATH="$NODE_BIN:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin"
 export NEXT_TELEMETRY_DISABLED=1
@@ -60,5 +61,18 @@ wait_http() {
 echo "==> health check"
 wait_http "api" "$API_HEALTH" 20
 wait_http "web" "$WEB_URL" 30
+
+# IndexNow memberi tahu Bing, Yandex, Naver, dan Seznam bahwa halaman berubah.
+# Google tidak memakai IndexNow, jadi ini pelengkap, bukan pengganti Search
+# Console. Kegagalan di sini tidak boleh menggagalkan deploy: situs sudah hidup.
+INDEXNOW_KEY_FILE=$(ls web/public/*.txt 2>/dev/null | head -1 || true)
+if [ -n "$INDEXNOW_KEY_FILE" ]; then
+  INDEXNOW_KEY=$(basename "$INDEXNOW_KEY_FILE" .txt)
+  echo "==> IndexNow ($INDEXNOW_KEY)"
+  curl -fsS --max-time 15 -X POST https://api.indexnow.org/indexnow \
+    -H 'Content-Type: application/json; charset=utf-8' \
+    -d "{\"host\":\"$(echo "$PUBLIC_SITE_URL" | sed -E 's#^https?://##')\",\"key\":\"$INDEXNOW_KEY\",\"keyLocation\":\"$PUBLIC_SITE_URL/$INDEXNOW_KEY.txt\",\"urlList\":[\"$PUBLIC_SITE_URL/\"]}" \
+    -o /dev/null && echo "    IndexNow menerima URL" || echo "    IndexNow tidak menerima URL (diabaikan)"
+fi
 
 echo "==> deploy selesai: $(git -C "$APP_DIR" log -1 --format='%h %s')"
