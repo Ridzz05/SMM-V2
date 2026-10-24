@@ -143,6 +143,34 @@ web/app/atelier.css sistem desain aio-flat-minimal (lihat DESIGN.md)
 web/scripts/        skrip aset merek (dijalankan manual, butuh `sharp`)
 ```
 
+## Deploy
+
+Push ke `main` otomatis ter-deploy ke VPS. Tidak ada langkah tarik manual.
+
+```
+git push origin main
+  └─ GitHub Actions (.github/workflows/deploy.yml)
+       └─ SSH loyalfitness@202.10.38.50
+            └─ scripts/deploy.sh
+                 fetch origin/main → git reset --hard → go build bin/aio
+                 → npm ci → next build (API_ORIGIN=http://127.0.0.1:8080)
+                 → pm2 restart aio-api aio-web → health check
+```
+
+- Direktori aplikasi: `/home/loyalfitness/public_html/solusimitramandiri.com`.
+  Apache me-reverse-proxy domain ke Next.js `:3005`, yang meneruskan `/api`,
+  `/uploads`, `/images`, `/videos` ke Go `:8080`.
+- Rahasia repositori yang dipakai workflow: `VPS_HOST`, `VPS_PORT`, `VPS_USER`,
+  `VPS_SSH_KEY` (kunci privat ed25519; publiknya ada di
+  `~loyalfitness/.ssh/authorized_keys`). Kunci ini hanya bisa login sebagai
+  `loyalfitness`, bukan root.
+- Deploy manual di VPS: `bash scripts/deploy.sh`.
+- `database.sqlite`, `uploads/`, dan `.env` tidak tersentuh deploy karena
+  masuk `.gitignore`; `git reset --hard` hanya mengembalikan berkas terlacak.
+  Karena itu `.env` produksi (`/home/loyalfitness/.aio/api.env`) tetap manual.
+- `API_ORIGIN` dibaca saat `next build`, bukan `next start`; mengubahnya di
+  server tanpa rebuild tidak berpengaruh.
+
 ## Catatan
 
 - Situs publik menyajikan sistem manajemen gym **All-In-One (AIO)** PT Solusi Mitra Mandiri
