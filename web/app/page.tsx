@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import { Reveal, RevealGroup } from '@/components/motion/Reveal';
 import { SplitHeadline } from '@/components/motion/SplitHeadline';
 import { CONTACT_EMAIL, mailtoLink } from '@/lib/site';
+import { FAQ, structuredData } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
@@ -125,6 +126,11 @@ export default async function HomePage() {
 
   return (
     <div id="top">
+      {/* Data terstruktur: Organization, WebSite, dan katalog modul. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData()) }}
+      />
       <Navbar brandMark={BRAND_MARK_IMG} />
 
       <main id="main">
@@ -322,6 +328,30 @@ export default async function HomePage() {
           </div>
         </section>
 
+        <section className="section" id="tanya">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="eyebrow">Pertanyaan umum</p>
+                <SplitHeadline as="h2">Yang paling sering ditanyakan pemilik gym.</SplitHeadline>
+              </div>
+              <p className="lede">
+                Lima hal yang muncul sebelum orang memutuskan mencoba. Jawabannya mengacu ke perilaku
+                sistem yang dijelaskan di seksi sebelumnya.
+              </p>
+            </div>
+
+            <RevealGroup as="dl" className="faq" stagger={0.05}>
+              {FAQ.map((item) => (
+                <div className="faq-item" key={item.q} data-reveal>
+                  <dt>{item.q}</dt>
+                  <dd>{item.a}</dd>
+                </div>
+              ))}
+            </RevealGroup>
+          </div>
+        </section>
+
         <section className="section" id="demo">
           <div className="wrap">
             <div className="demo-panel">
@@ -379,6 +409,7 @@ export default async function HomePage() {
               <a href="#aturan">Aturan sistem</a>
               <a href="#mitra">Mitra</a>
               <a href="#tim">Tim</a>
+              <a href="#tanya">Pertanyaan umum</a>
               <a href="#demo">Jadwalkan demo</a>
               <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
               <a href="/admin/login">Masuk admin</a>
