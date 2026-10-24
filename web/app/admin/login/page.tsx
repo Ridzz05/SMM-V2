@@ -1,16 +1,28 @@
 'use client';
 
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { gsap, useGSAP } from '@/lib/motion';
 import { readApiError } from '@/lib/api';
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const formRef = useRef<HTMLFormElement>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fields, setFields] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const { contextSafe } = useGSAP({ scope: formRef });
+
+  const shake = contextSafe((names: string[]) => {
+    const targets = names
+      .map((name) => formRef.current?.querySelector<HTMLElement>(`#admin-${name}`))
+      .filter((el): el is HTMLElement => Boolean(el));
+    if (targets.length === 0) return;
+    gsap.fromTo(targets, { x: -5 }, { x: 0, duration: 0.42, ease: 'elastic.out(1, 0.32)', clearProps: 'x' });
+  });
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,6 +45,8 @@ export default function AdminLoginPage() {
       const { message, fields: fieldErrors } = await readApiError(res);
       setFields(fieldErrors);
       setError(message);
+      const invalid = Object.keys(fieldErrors);
+      if (invalid.length > 0) shake(invalid);
     } catch {
       setError('Koneksi bermasalah. Periksa internet Anda, lalu coba lagi.');
     } finally {
@@ -41,20 +55,40 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="login-wrap">
-      <div className="login-card">
-        <span className="eyebrow">Portal Admin</span>
-        <h1>Masuk Admin</h1>
-        <p className="sub">PT Solusi Mitra Mandiri · Khusus Staf</p>
+    <main className="login-shell">
+      <aside className="login-aside">
+        <a className="brand" href="/" aria-label="Kembali ke situs publik">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/brand/logo-mark-96.webp" width={82} height={96} alt="" />
+          <span className="brand-text">
+            <strong>Solusi Mitra Mandiri</strong>
+            <span>Sistem Gym</span>
+          </span>
+        </a>
 
-        <form onSubmit={onSubmit} noValidate>
-          <div className="login-field">
-            <label className="form-label" htmlFor="admin-email">
-              Email
-            </label>
+        <div>
+          <h1>
+            Portal <em>admin</em> operasional gym.
+          </h1>
+          <p>
+            Satu pintu masuk untuk permintaan demo, data pengunjung situs, dan logo mitra. Khusus staf
+            PT Solusi Mitra Mandiri.
+          </p>
+        </div>
+
+        <p className="login-meta">Sesi berakhir otomatis setelah 7 hari tidak dipakai</p>
+      </aside>
+
+      <div className="login-main">
+        <form className="login-form" ref={formRef} onSubmit={onSubmit} noValidate>
+          <h2>Masuk</h2>
+          <p className="sub">Gunakan email dan kata sandi yang diberikan tim teknis.</p>
+
+          <div className="field">
+            <label htmlFor="admin-email">Email</label>
             <input
               id="admin-email"
-              className="form-input"
+              className="input"
               type="email"
               name="email"
               autoComplete="username"
@@ -70,13 +104,11 @@ export default function AdminLoginPage() {
             ) : null}
           </div>
 
-          <div className="login-field">
-            <label className="form-label" htmlFor="admin-password">
-              Kata Sandi
-            </label>
+          <div className="field">
+            <label htmlFor="admin-password">Kata sandi</label>
             <input
               id="admin-password"
-              className="form-input"
+              className="input"
               type="password"
               name="password"
               autoComplete="current-password"
@@ -92,23 +124,20 @@ export default function AdminLoginPage() {
             ) : null}
           </div>
 
-          <button className="btn btn-primary" type="submit" disabled={submitting}>
-            {submitting ? 'Sedang masuk…' : 'Masuk'}
+          <button className="btn btn-block" type="submit" disabled={submitting}>
+            {submitting ? 'Sedang masuk…' : 'Masuk ke portal'}
           </button>
+
+          {error ? (
+            <div className="form-status is-error" role="alert">
+              <span>{error}</span>
+            </div>
+          ) : null}
+
+          <p className="login-foot">
+            <a href="/">Kembali ke situs publik</a>
+          </p>
         </form>
-
-        {error ? (
-          <div className="form-status is-error" role="alert">
-            <span aria-hidden="true">!</span>
-            <span>{error}</span>
-          </div>
-        ) : null}
-
-        <p className="login-foot">
-          Anda otomatis keluar setelah 7 hari tidak membuka halaman ini.
-          <br />
-          <a href="/">← Kembali ke halaman utama</a>
-        </p>
       </div>
     </main>
   );

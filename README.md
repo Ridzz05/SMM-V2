@@ -22,16 +22,16 @@ Butuh Go 1.27+ dan Node.js 24+.
 
 Nilai konfigurasi yang dibutuhkan ada di [`.env.example`](.env.example) (server Go)
 dan [`web/.env.example`](web/.env.example) (frontend). Server Go **tidak** membaca
-berkas `.env` sendiri — salin nilainya ke terminal atau manajer rahasia, lalu setel
+berkas `.env` sendiri. Salin nilainya ke terminal atau manajer rahasia, lalu setel
 sebelum menjalankan perintah di bawah.
 
 ```bash
-# Terminal 1 — API Go pada :8080
+# Terminal 1: API Go pada :8080
 export SESSION_SECRET="$(openssl rand -base64 48)"
 export ADMIN_PASSWORD="kata-sandi-pilihan-anda"
 go run ./cmd/server
 
-# Terminal 2 — frontend Next.js pada :3000
+# Terminal 2: frontend Next.js pada :3000
 cd web
 npm install
 npm run dev
@@ -139,7 +139,9 @@ internal/models/    model basis data
 public/             aset media yang dilayani Go (gambar, video)
 uploads/            berkas unggahan pengguna
 web/                aplikasi Next.js (app router)
-web/app/atelier.css sistem desain aio-flat-minimal (lihat DESIGN.md)
+web/app/design.css   sistem desain Ledger (lihat DESIGN.md)
+web/lib/motion.ts    pendaftaran plugin GSAP, satu titik
+web/components/motion/ pembungkus useGSAP: Reveal, RevealGroup, SplitHeadline
 web/scripts/        skrip aset merek (dijalankan manual, butuh `sharp`)
 ```
 
@@ -173,36 +175,38 @@ git push origin main
 
 ## Catatan
 
-- Situs publik menyajikan sistem manajemen gym **All-In-One (AIO)** PT Solusi Mitra Mandiri
-  dengan tata letak minimalis dua dimensi: kanvas putih, hierarki monokrom, dan tanpa efek 3D.
-  Satu-satunya warna adalah warna status semantik, dan warna itu tidak pernah menjadi
-  satu-satunya penanda makna. Rinciannya di [DESIGN.md](DESIGN.md).
-  Seluruh ornamen dekoratif kecerdasan buatan seperti blueprint grid, radial orbs, side-rails,
-  dan sticky card stack telah dirombak menjadi struktur grid responsif yang teratur.
-- Bagian `#domain` menampilkan sembilan modul domain dalam grid 3 kolom yang responsif,
-  memudahkan pemindaian tanpa jebakan gulir lengket.
+- Situs publik memakai sistem desain **Ledger**: kertas hangat, garis rambut, judul serif,
+  angka mono sejajar, dan dua warna merek yang diambil dari logo (biru `#1b5cf0`,
+  bara `#d93a1b`). Rinciannya di [DESIGN.md](DESIGN.md). Tema terang dan gelap
+  dua-duanya berfungsi; pilihan disimpan di `localStorage`, dan tanpa pilihan
+  sistem operasi yang menentukan.
+- Bagian `#modul` menampilkan sembilan modul sebagai indeks bernomor dengan panel
+  angka lengket di kiri pada layar lebar, bukan grid kartu seragam.
+- Animasi memakai GSAP lewat pola React resminya: `useGSAP()` dengan `scope` untuk
+  setiap komponen, `contextSafe()` untuk animasi yang dibuat setelah mount (klik,
+  kirim formulir), dan `gsap.matchMedia()` untuk memisahkan jalur gerak-minimal.
+  Semua tween ikut dibersihkan otomatis saat komponen dilepas. Gerak yang dipakai
+  hanya tiga: baris judul naik dari topeng (SplitText), blok masuk saat masuk viewport
+  (ScrollTrigger batch), dan indikator posisi (garis progres gulir + garis tab aktif).
 - Formulir permintaan demo mengirim pengajuan ke `POST /api/demo-requests` sehingga tetap
   tercatat di portal admin, lalu memindahkan percakapan ke WhatsApp sales (nomornya di
   `WHATSAPP_NUMBER` di `web/lib/site.ts`). Isian formulir disalin apa adanya ke badan pesan;
   kalau tab baru diblokir, halaman yang sama yang berpindah ke WhatsApp.
 - Aset merek di `public/images/brand/` dan ikon aplikasi (`web/app/icon.png`,
   `web/app/apple-icon.png`) dihasilkan dari `assets/solusimitramandiri-logo.png`
-  oleh `web/scripts/brand-assets.mjs` — dijalankan manual dengan
+  oleh `web/scripts/brand-assets.mjs`, dijalankan manual dengan
   `node web/scripts/brand-assets.mjs`, hasilnya deterministik. Skrip memangkas
   margin transparan master, menyisakan 4% ruang napas, lalu mengemit hanya ukuran
   yang dipakai (96/192/384 px untuk header, footer, dan tampilan besar). Jalankan
   ulang bila logo master berubah.
-- Aset media dikompresi ke WebP: poster hero (`ai-gym-hero.webp`) dan avatar
-  founder 216 px, yaitu tiga kali lipat kotak 72 px di `.founder-portrait`.
-  Berkas PNG/JPG asli tetap ada di riwayat git bila sewaktu-waktu dibutuhkan.
-- Media hero memakai rasio **16:9** (`.hero-art`), sama dengan film
-  `public/videos/IMG_3125.mp4` (1280x720). Poster adalah potongan 16:9 yang
-  ditambatkan ke bawah dari citra persegi aslinya agar subjek dan alas mesin
-  latihan tetap utuh. Mengubah kontainer ke rasio potret akan memotong sekitar
-  55% lebar frame film.
+- Hero tidak memakai video. Klip lama dan posternya adalah render bergaya neon yang
+  tidak menunjukkan produk, jadi keduanya dihapus dari repo. Kalau nanti ada rekaman
+  layar produk sungguhan, letakkan di `public/videos/` dan render lewat komponen klien.
+- Avatar founder 216 px, yaitu tiga kali lipat kotak 72 px lama. Berkas PNG/JPG
+  asli tetap ada di riwayat git bila sewaktu-waktu dibutuhkan.
 - Logo mitra di `public/images/partners/` sudah dinormalkan: dipangkas ke batas
   kontennya, dipusatkan pada kanvas persegi 512 px, lalu dikodekan WebP (8–24 KB).
-  Karena itu `.partner-plate img` memakai `object-fit: cover` tanpa pemotongan.
+  Karena itu `.partner img` memakai `object-fit: contain` tanpa pemotongan.
   Master beresolusi penuh ada di `assets/`, bukan di `public/`, supaya tidak
   ikut ter-deploy.
   Lima mitra placeholder di-seed dari `internal/database/seeders.go` hanya saat

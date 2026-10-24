@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { gsap, useGSAP } from '@/lib/motion';
 import { readApiError } from '@/lib/api';
 import { mailtoLink, whatsappLink } from '@/lib/site';
 
@@ -26,26 +27,36 @@ const FIELDS: Array<{
   type: string;
   full?: boolean;
   placeholder: string;
+  hint?: string;
+  autoComplete?: string;
 }> = [
-  { name: 'company_name', label: 'Nama Gym atau Perusahaan', type: 'text', placeholder: 'Contoh: FitClub Indonesia' },
-  { name: 'pic_name', label: 'Nama Anda', type: 'text', placeholder: 'Contoh: Budi Santoso' },
-  { name: 'phone_number', label: 'Nomor WhatsApp', type: 'tel', placeholder: '08xxxxxxxxxx' },
-  { name: 'email', label: 'Email', type: 'email', placeholder: 'nama@perusahaan.com' },
+  {
+    name: 'company_name',
+    label: 'Nama gym atau perusahaan',
+    type: 'text',
+    placeholder: 'FitClub Indonesia',
+    autoComplete: 'organization',
+  },
+  { name: 'pic_name', label: 'Nama Anda', type: 'text', placeholder: 'Nama lengkap', autoComplete: 'name' },
+  {
+    name: 'phone_number',
+    label: 'Nomor WhatsApp',
+    type: 'tel',
+    placeholder: '0812xxxxxxx',
+    autoComplete: 'tel',
+    hint: 'Dipakai untuk mengirim jadwal demo.',
+  },
+  { name: 'email', label: 'Email', type: 'email', placeholder: 'nama@gym.com', autoComplete: 'email' },
   {
     name: 'notes',
-    label: 'Ceritakan Sedikit soal Gym Anda (opsional)',
+    label: 'Kondisi gym Anda sekarang (opsional)',
     type: 'textarea',
     full: true,
-    placeholder: 'Misalnya: punya 2 cabang, sekitar 800 member aktif, dan laporan bulanan masih dihitung manual di Excel.',
+    placeholder: 'Jumlah cabang, jumlah member aktif, dan bagian mana yang masih dicatat manual.',
   },
 ];
 
-/**
- * Pengajuan sudah tersimpan di server, lalu percakapan dilanjutkan di WhatsApp sales.
- * Isian formulir disalin apa adanya ke badan pesan supaya pengunjung tidak mengetik ulang.
- * Tab baru dipakai agar halaman tetap terbuka; kalau diblokir, tab yang sama yang
- * dipindahkan supaya pengunjung tetap sampai ke WhatsApp.
- */
+/** Permintaan tersimpan di server lebih dulu, lalu percakapan pindah ke WhatsApp. */
 function forwardToWhatsApp(values: FormState) {
   const url = whatsappLink(
     [
@@ -62,10 +73,27 @@ function forwardToWhatsApp(values: FormState) {
 }
 
 export default function DemoForm() {
+  const formRef = useRef<HTMLFormElement>(null);
   const [values, setValues] = useState<FormState>(EMPTY);
   const [fields, setFields] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const { contextSafe } = useGSAP({ scope: formRef });
+
+  // Getar halus pada field yang ditolak server: satu-satunya gerak di form,
+  // dan hanya muncul saat ada kesalahan yang perlu ditunjuk.
+  const shakeInvalid = contextSafe((names: string[]) => {
+    names.forEach((name) => {
+      const el = formRef.current?.querySelector<HTMLElement>(`#demo-${name}`);
+      if (!el) return;
+      gsap.fromTo(
+        el,
+        { x: -5 },
+        { x: 0, duration: 0.42, ease: 'elastic.out(1, 0.32)', clearProps: 'x' },
+      );
+    });
+  });
 
   const update = (name: keyof FormState, value: string) => {
     setValues((prev) => ({ ...prev, [name]: value }));
@@ -92,7 +120,7 @@ export default function DemoForm() {
 
       if (res.ok) {
         const body: { message?: string } = await res.json();
-        setStatus({ kind: 'ok', text: body.message ?? 'Terima kasih. Permintaan Anda sudah kami terima.' });
+        setStatus({ kind: 'ok', text: body.message ?? 'Permintaan terkirim. Kami hubungi Anda untuk menjadwalkan demo.' });
         forwardToWhatsApp(values);
         setValues(EMPTY);
         return;
@@ -101,10 +129,12 @@ export default function DemoForm() {
       const { message, fields: fieldErrors } = await readApiError(res);
       setFields(fieldErrors);
       setStatus({ kind: 'error', text: message });
+      const invalid = Object.keys(fieldErrors);
+      if (invalid.length > 0) shakeInvalid(invalid);
     } catch {
       setStatus({
         kind: 'error',
-        text: 'Koneksi bermasalah. Periksa internet Anda, lalu coba kirim ulang.',
+        text: 'Koneksi bermasalah. Periksa internet Anda, lalu kirim ulang.',
       });
     } finally {
       setSubmitting(false);
@@ -112,8 +142,8 @@ export default function DemoForm() {
   }
 
   return (
-    <>
-      <form className="cta-form" onSubmit={onSubmit} noValidate>
+    <div>
+      <form ref={formRef} className="form-grid" onSubmit={onSubmit} noValidate>
         {FIELDS.map((field) => {
           const error = fields[field.name];
           const inputId = `demo-${field.name}`;
@@ -122,23 +152,22 @@ export default function DemoForm() {
             name: field.name,
             value: values[field.name],
             placeholder: field.placeholder,
+            autoComplete: field.autoComplete,
             'aria-invalid': error ? true : undefined,
             'aria-describedby': error ? `${inputId}-error` : undefined,
-            onChange: (
-              event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-            ) => update(field.name, event.target.value),
+            onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+              update(field.name, event.target.value),
           };
 
           return (
-            <div className={field.full ? 'form-group full' : 'form-group'} key={field.name}>
-              <label className="form-label" htmlFor={inputId}>
-                {field.label}
-              </label>
+            <div className={field.full ? 'field field-full' : 'field'} key={field.name}>
+              <label htmlFor={inputId}>{field.label}</label>
               {field.type === 'textarea' ? (
-                <textarea className="form-textarea" rows={4} {...shared} />
+                <textarea className="textarea" rows={4} {...shared} />
               ) : (
-                <input className="form-input" type={field.type} {...shared} />
+                <input className="input" type={field.type} {...shared} />
               )}
+              {field.hint && !error ? <span className="hint-line">{field.hint}</span> : null}
               {error ? (
                 <span className="field-error" id={`${inputId}-error`}>
                   {error}
@@ -148,30 +177,23 @@ export default function DemoForm() {
           );
         })}
 
-        <div className="form-group full" style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-          <button className="btn btn-primary" type="submit" disabled={submitting}>
-            {submitting ? 'Mengirim…' : 'Kirim & Lanjut ke WhatsApp'}
-            <span className="arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
-            </span>
-          </button>
-          <a
-            className="btn btn-ghost"
-            href={mailtoLink('Saya ingin bertanya soal sistem manajemen gym')}
-          >
-            Kirim Email Saja
-          </a>
+        <div className="field field-full">
+          <div className="form-foot">
+            <button className="btn" type="submit" disabled={submitting}>
+              {submitting ? 'Mengirim…' : 'Kirim dan lanjut ke WhatsApp'}
+            </button>
+            <a className="btn btn-quiet" href={mailtoLink('Pertanyaan soal sistem manajemen gym')}>
+              Kirim lewat email
+            </a>
+          </div>
+
+          {status ? (
+            <div className={status.kind === 'ok' ? 'form-status is-ok' : 'form-status is-error'} role="status">
+              <span>{status.text}</span>
+            </div>
+          ) : null}
         </div>
       </form>
-
-      {status ? (
-        <div className={status.kind === 'ok' ? 'form-status is-ok' : 'form-status is-error'} role="status">
-          <span aria-hidden="true">{status.kind === 'ok' ? '✓' : '!'}</span>
-          <span>{status.text}</span>
-        </div>
-      ) : null}
-    </>
+    </div>
   );
 }

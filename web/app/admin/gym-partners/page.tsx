@@ -2,10 +2,24 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { readApiError, type AdminIdentity, type AdminPartnersData } from '@/lib/api';
+import Pager from '@/components/Pager';
+import ThemeToggle from '@/components/ThemeToggle';
+import { gsap, useGSAP } from '@/lib/motion';
+import { usePagination } from '@/lib/use-pagination';
+import { readApiError, type AdminIdentity, type AdminPartnersData, type DemoRequest } from '@/lib/api';
 
 const MAX_LOGO_BYTES = 5 * 1024 * 1024;
-const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-TFKE3G9D2K';
+const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-TF3KE3G9D2K';
+
+const STATUS_LABEL: Record<string, string> = {
+  pending: 'Belum dihubungi',
+  contacted: 'Sudah dihubungi',
+  scheduled: 'Demo terjadwal',
+  completed: 'Selesai',
+  cancelled: 'Dibatalkan',
+};
+
+const STATUS_FILTERS = ['all', 'pending', 'contacted', 'scheduled', 'completed', 'cancelled'] as const;
 
 function formatDate(value: string): string {
   const date = new Date(value);
@@ -24,23 +38,45 @@ function getWhatsAppUrl(phone: string, picName: string, company: string): string
   return `https://wa.me/${clean}?text=${encodeURIComponent(text)}`;
 }
 
+type Tab = 'leads' | 'analytics' | 'partners';
+
 export default function AdminPortalDashboard() {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const inkRef = useRef<HTMLSpanElement>(null);
 
   const [admin, setAdmin] = useState<AdminIdentity | null>(null);
   const [data, setData] = useState<AdminPartnersData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [uploading, setUploading] = useState(false);
   const [busyId, setBusyId] = useState<number | null>(null);
-  const [status, setStatus] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
+  const [toast, setToast] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Tab dan Filter State
-  const [activeTab, setActiveTab] = useState<'leads' | 'analytics' | 'partners'>('leads');
+  const [activeTab, setActiveTab] = useState<Tab>('leads');
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState<(typeof STATUS_FILTERS)[number]>('all');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingNotes, setEditingNotes] = useState('');
+
+  const { contextSafe } = useGSAP({ scope: tabsRef });
+
+  const moveInk = contextSafe((tab: Tab) => {
+    const container = tabsRef.current;
+    const ink = inkRef.current;
+    if (!container || !ink) return;
+    const button = container.querySelector<HTMLButtonElement>(`[data-tab="${tab}"]`);
+    if (!button) return;
+    gsap.to(ink, {
+      x: button.offsetLeft,
+      width: button.offsetWidth,
+      duration: 0.42,
+      ease: 'power3.out',
+    });
+  });
 
   const load = useCallback(async () => {
     const res = await fetch('/api/admin/partners', { cache: 'no-store' });
@@ -50,11 +86,12 @@ export default function AdminPortalDashboard() {
     }
     if (!res.ok) {
       const { message } = await readApiError(res);
-      setStatus({ kind: 'error', text: message });
+      setLoadError(message);
       setLoading(false);
       return;
     }
     setData(await res.json());
+    setLoadError(null);
     setLoading(false);
   }, [router]);
 
@@ -79,12 +116,27 @@ export default function AdminPortalDashboard() {
     };
   }, [load, router]);
 
+  // Indikator tab harus menempel pada tombol aktif, termasuk setelah resize dan
+  // saat font selesai dimuat (lebar tombol berubah beberapa piksel).
+  useEffect(() => {
+    moveInk(activeTab);
+    const onResize = () => moveInk(activeTab);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [activeTab, moveInk, loading]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 6000);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+
   async function onUpload(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const input = fileRef.current;
     const file = input?.files?.[0];
 
-    setStatus(null);
+    setToast(null);
     setFieldErrors({});
 
     if (!name.trim()) {
@@ -96,7 +148,7 @@ export default function AdminPortalDashboard() {
       return;
     }
     if (file.size > MAX_LOGO_BYTES) {
-      setFieldErrors({ logo: 'Logo terlalu besar. Maksimal 5 MB. Coba perkecil dulu gambarnya.' });
+      setFieldErrors({ logo: 'Logo terlalu besar. Maksimal 5 MB.' });
       return;
     }
 
@@ -116,29 +168,27 @@ export default function AdminPortalDashboard() {
       if (!res.ok) {
         const { message, fields } = await readApiError(res);
         setFieldErrors(fields);
-        setStatus({ kind: 'error', text: message });
+        setToast({ kind: 'error', text: message });
         return;
       }
 
       const payload: { message?: string } = await res.json();
-      setStatus({ kind: 'ok', text: payload.message ?? 'Logo mitra sudah tayang di halaman publik.' });
+      setToast({ kind: 'ok', text: payload.message ?? 'Logo mitra sudah tayang di halaman publik.' });
       setName('');
       if (input) input.value = '';
       await load();
     } catch {
-      setStatus({ kind: 'error', text: 'Unggahan gagal. Periksa koneksi lalu coba lagi.' });
+      setToast({ kind: 'error', text: 'Unggahan gagal. Periksa koneksi lalu coba lagi.' });
     } finally {
       setUploading(false);
     }
   }
 
   async function onDelete(id: number, partnerName: string) {
-    if (!window.confirm(`Hapus mitra "${partnerName}"? Logo juga akan ikut terhapus.`)) {
-      return;
-    }
+    if (!window.confirm(`Hapus mitra "${partnerName}"? Logo juga ikut terhapus.`)) return;
 
     setBusyId(id);
-    setStatus(null);
+    setToast(null);
 
     try {
       const res = await fetch(`/api/admin/partners/${id}`, { method: 'DELETE' });
@@ -150,22 +200,22 @@ export default function AdminPortalDashboard() {
 
       if (!res.ok) {
         const { message } = await readApiError(res);
-        setStatus({ kind: 'error', text: message });
+        setToast({ kind: 'error', text: message });
         return;
       }
 
       const payload: { message?: string } = await res.json();
-      setStatus({ kind: 'ok', text: payload.message ?? 'Mitra sudah dihapus dari daftar.' });
+      setToast({ kind: 'ok', text: payload.message ?? 'Mitra sudah dihapus.' });
       await load();
     } catch {
-      setStatus({ kind: 'error', text: 'Gagal menghapus mitra. Periksa koneksi lalu coba lagi.' });
+      setToast({ kind: 'error', text: 'Gagal menghapus mitra. Periksa koneksi lalu coba lagi.' });
     } finally {
       setBusyId(null);
     }
   }
 
   async function onUpdateDemoRequest(id: number, updates: { status?: string; notes?: string }) {
-    setStatus(null);
+    setToast(null);
     try {
       const res = await fetch(`/api/admin/demo-requests/${id}`, {
         method: 'PATCH',
@@ -180,21 +230,15 @@ export default function AdminPortalDashboard() {
 
       if (!res.ok) {
         const { message } = await readApiError(res);
-        setStatus({ kind: 'error', text: message });
+        setToast({ kind: 'error', text: message });
         return;
       }
 
-      setStatus({ kind: 'ok', text: 'Perubahan sudah disimpan.' });
+      setToast({ kind: 'ok', text: 'Perubahan tersimpan.' });
+      setEditingId(null);
       await load();
     } catch {
-      setStatus({ kind: 'error', text: 'Gagal menyimpan perubahan. Periksa koneksi lalu coba lagi.' });
-    }
-  }
-
-  async function onPromptEditNotes(id: number, currentNotes: string) {
-    const newNotes = window.prompt('Tulis atau ubah catatan tindak lanjut untuk permintaan ini:', currentNotes || '');
-    if (newNotes !== null && newNotes !== currentNotes) {
-      await onUpdateDemoRequest(id, { notes: newNotes });
+      setToast({ kind: 'error', text: 'Gagal menyimpan perubahan. Periksa koneksi lalu coba lagi.' });
     }
   }
 
@@ -203,13 +247,15 @@ export default function AdminPortalDashboard() {
     router.replace('/admin/login');
   }
 
-  const demoRequests = data?.demoRequests ?? [];
+  const demoRequests: DemoRequest[] = data?.demoRequests ?? [];
   const partners = data?.partners ?? [];
 
-  const pendingCount = demoRequests.filter((r) => r.status === 'pending').length;
-  const contactedCount = demoRequests.filter((r) => r.status === 'contacted').length;
-  const scheduledCount = demoRequests.filter((r) => r.status === 'scheduled').length;
-  const completedCount = demoRequests.filter((r) => r.status === 'completed').length;
+  const counts = {
+    pending: demoRequests.filter((r) => r.status === 'pending').length,
+    contacted: demoRequests.filter((r) => r.status === 'contacted').length,
+    scheduled: demoRequests.filter((r) => r.status === 'scheduled').length,
+    completed: demoRequests.filter((r) => r.status === 'completed').length,
+  };
 
   const filteredRequests = demoRequests.filter((req) => {
     const matchesStatus = statusFilter === 'all' || req.status === statusFilter;
@@ -220,429 +266,525 @@ export default function AdminPortalDashboard() {
       req.pic_name.toLowerCase().includes(q) ||
       req.email.toLowerCase().includes(q) ||
       req.phone_number.includes(q) ||
-      (req.notes && req.notes.toLowerCase().includes(q));
+      (req.notes ?? '').toLowerCase().includes(q);
     return matchesStatus && matchesSearch;
   });
 
-  if (loading) {
-    return (
-      <main className="container admin-wrap">
-        <p className="hint" style={{ padding: '40px 0', textAlign: 'center' }}>
-          Sedang memuat data…
-        </p>
-      </main>
-    );
-  }
+  const leadsPage = usePagination(filteredRequests, 8);
+  const partnersPage = usePagination(partners, 8);
 
   return (
-    <main className="container admin-wrap">
-      {/* Header Utama Admin */}
-      <div className="admin-head">
-        <div>
-          <span className="eyebrow">Portal Admin</span>
-          <h1>Dasbor Admin</h1>
+    <>
+      <header className="admin-bar">
+        <div className="wrap">
+          <div className="admin-bar-inner">
+            <a className="brand" href="/">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/brand/logo-mark-96.webp" width={82} height={96} alt="" />
+              <span className="brand-text">
+                <strong>Solusi Mitra Mandiri</strong>
+                <span>Portal admin</span>
+              </span>
+            </a>
+
+            <div className="nav-actions">
+              <span className="admin-who">{admin?.email ?? ''}</span>
+              <ThemeToggle />
+              <a className="link-quiet" href="/" target="_blank" rel="noopener noreferrer">
+                Situs publik
+              </a>
+              <button className="btn btn-quiet btn-sm" type="button" onClick={onLogout}>
+                Keluar
+              </button>
+            </div>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-          {admin ? <span className="who">{admin.email}</span> : null}
-          <a className="btn btn-ghost btn-sm" href="/" target="_blank" rel="noopener noreferrer">
-            Lihat Situs Publik ↗
-          </a>
-          <button className="btn btn-ghost btn-sm" type="button" onClick={onLogout}>
-            Keluar
+      </header>
+
+      <main className="wrap admin-main" id="main">
+        <div className="admin-title">
+          <div>
+            <p className="eyebrow">Portal admin</p>
+            <h1>Dasbor operasional</h1>
+            <p>Permintaan demo, pengunjung situs, dan logo mitra dalam satu layar.</p>
+          </div>
+        </div>
+
+        <div className="tabs" role="tablist" ref={tabsRef}>
+          <button
+            type="button"
+            role="tab"
+            data-tab="leads"
+            aria-selected={activeTab === 'leads'}
+            className="tab"
+            onClick={() => setActiveTab('leads')}
+          >
+            Permintaan demo
+            <span className="tab-count">{demoRequests.length}</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            data-tab="analytics"
+            aria-selected={activeTab === 'analytics'}
+            className="tab"
+            onClick={() => setActiveTab('analytics')}
+          >
+            Pengunjung situs
+          </button>
+          <button
+            type="button"
+            role="tab"
+            data-tab="partners"
+            aria-selected={activeTab === 'partners'}
+            className="tab"
+            onClick={() => setActiveTab('partners')}
+          >
+            Mitra gym
+            <span className="tab-count">{partners.length}</span>
+          </button>
+          <span className="tab-ink" ref={inkRef} aria-hidden="true" />
+        </div>
+
+        {loading ? (
+          <div className="panel empty" role="status">
+            <strong>Memuat data</strong>
+            <p>Menghubungi server untuk permintaan demo dan daftar mitra.</p>
+          </div>
+        ) : loadError ? (
+          <div className="panel empty" role="alert">
+            <strong>Data gagal dimuat</strong>
+            <p>{loadError}</p>
+            <button
+              className="btn btn-sm"
+              type="button"
+              onClick={() => {
+                setLoading(true);
+                void load();
+              }}
+            >
+              Coba lagi
+            </button>
+          </div>
+        ) : (
+          <>
+            {activeTab === 'leads' ? (
+              <section className="panel" aria-label="Permintaan demo">
+                <dl className="ledger-strip">
+                  <div>
+                    <dt>Total</dt>
+                    <dd>{demoRequests.length}</dd>
+                  </div>
+                  <div>
+                    <dt>Belum dihubungi</dt>
+                    <dd data-tone="attention">{counts.pending}</dd>
+                  </div>
+                  <div>
+                    <dt>Sudah dihubungi</dt>
+                    <dd>{counts.contacted}</dd>
+                  </div>
+                  <div>
+                    <dt>Terjadwal</dt>
+                    <dd>{counts.scheduled}</dd>
+                  </div>
+                  <div>
+                    <dt>Selesai</dt>
+                    <dd>{counts.completed}</dd>
+                  </div>
+                </dl>
+
+                <div className="toolbar">
+                  <input
+                    type="search"
+                    className="search"
+                    placeholder="Cari nama gym, nama orang, email, atau nomor HP"
+                    value={searchQuery}
+                    onChange={(event) => {
+                      setSearchQuery(event.target.value);
+                      leadsPage.setPage(1);
+                    }}
+                    aria-label="Cari permintaan demo"
+                  />
+                  <div className="seg" role="group" aria-label="Filter status">
+                    {STATUS_FILTERS.map((status) => (
+                      <button
+                        key={status}
+                        type="button"
+                        aria-pressed={statusFilter === status}
+                        onClick={() => {
+                          setStatusFilter(status);
+                          leadsPage.setPage(1);
+                        }}
+                      >
+                        {status === 'all' ? 'Semua' : STATUS_LABEL[status]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {filteredRequests.length > 0 ? (
+                  <>
+                    <div className="table-scroll">
+                      <table className="data">
+                        <thead>
+                          <tr>
+                            <th scope="col">Gym</th>
+                            <th scope="col">Kontak</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Catatan</th>
+                            <th scope="col">Masuk</th>
+                            <th scope="col" style={{ textAlign: 'right' }}>
+                              Tindakan
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {leadsPage.rows.map((request) => (
+                            <tr key={request.id}>
+                              <td>
+                                <span className="cell-strong">{request.company_name}</span>
+                                <span className="cell-sub">{request.pic_name}</span>
+                              </td>
+                              <td>
+                                <span className="cell-sub">{request.phone_number}</span>
+                                <span className="cell-sub">{request.email}</span>
+                              </td>
+                              <td>
+                                <select
+                                  className="status-select"
+                                  data-status={request.status}
+                                  value={request.status}
+                                  aria-label={`Ubah status untuk ${request.company_name}`}
+                                  onChange={(event) => onUpdateDemoRequest(request.id, { status: event.target.value })}
+                                >
+                                  {Object.entries(STATUS_LABEL).map(([value, label]) => (
+                                    <option key={value} value={value}>
+                                      {label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </td>
+                              <td>
+                                <p className="cell-notes">{request.notes || 'Belum ada catatan.'}</p>
+                              </td>
+                              <td>
+                                <span className="cell-sub">{formatDate(request.created_at)}</span>
+                              </td>
+                              <td style={{ textAlign: 'right' }}>
+                                <div className="row-actions">
+                                  <a
+                                    className="btn btn-quiet btn-sm"
+                                    href={getWhatsAppUrl(request.phone_number, request.pic_name, request.company_name)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    WhatsApp
+                                  </a>
+                                  <a
+                                    className="btn btn-quiet btn-sm"
+                                    href={`mailto:${request.email}?subject=${encodeURIComponent(
+                                      `Permintaan demo sistem manajemen gym (${request.company_name})`,
+                                    )}`}
+                                  >
+                                    Email
+                                  </a>
+                                  <button
+                                    className="btn btn-quiet btn-sm"
+                                    type="button"
+                                    aria-expanded={editingId === request.id}
+                                    onClick={() => {
+                                      setEditingId(editingId === request.id ? null : request.id);
+                                      setEditingNotes(request.notes ?? '');
+                                    }}
+                                  >
+                                    Catatan
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                          {editingId !== null && leadsPage.rows.some((r) => r.id === editingId) ? (
+                            <tr className="row-notes">
+                              <td colSpan={6}>
+                                <div className="row-notes-inner">
+                                  <label className="field" htmlFor="lead-notes">
+                                    <span style={{ fontSize: 12.5, fontWeight: 600 }}>
+                                      Catatan tindak lanjut
+                                    </span>
+                                    <textarea
+                                      id="lead-notes"
+                                      value={editingNotes}
+                                      onChange={(event) => setEditingNotes(event.target.value)}
+                                      placeholder="Hasil panggilan, jadwal yang disepakati, atau kendala calon member."
+                                    />
+                                  </label>
+                                  <div className="row-notes-actions">
+                                    <button
+                                      className="btn btn-sm"
+                                      type="button"
+                                      onClick={() => onUpdateDemoRequest(editingId, { notes: editingNotes })}
+                                    >
+                                      Simpan catatan
+                                    </button>
+                                    <button
+                                      className="btn btn-quiet btn-sm"
+                                      type="button"
+                                      onClick={() => setEditingId(null)}
+                                    >
+                                      Batal
+                                    </button>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          ) : null}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <Pager
+                      page={leadsPage.page}
+                      pageCount={leadsPage.pageCount}
+                      range={leadsPage.range}
+                      total={leadsPage.total}
+                      unit="permintaan"
+                      onPage={leadsPage.setPage}
+                    />
+                  </>
+                ) : (
+                  <div className="empty">
+                    <strong>
+                      {searchQuery || statusFilter !== 'all' ? 'Tidak ada yang cocok' : 'Belum ada permintaan demo'}
+                    </strong>
+                    <p>
+                      {searchQuery || statusFilter !== 'all'
+                        ? 'Ubah kata kunci atau pilih status lain untuk melihat permintaan yang tersimpan.'
+                        : 'Setiap formulir yang dikirim dari halaman publik akan muncul di sini.'}
+                    </p>
+                    {searchQuery || statusFilter !== 'all' ? (
+                      <button
+                        className="btn btn-sm"
+                        type="button"
+                        onClick={() => {
+                          setSearchQuery('');
+                          setStatusFilter('all');
+                        }}
+                      >
+                        Hapus filter
+                      </button>
+                    ) : null}
+                  </div>
+                )}
+              </section>
+            ) : null}
+
+            {activeTab === 'analytics' ? (
+              <section className="panel" aria-label="Pengunjung situs">
+                <div className="admin-card">
+                  <div className="ga-head">
+                    <div>
+                      <h2>Google Analytics</h2>
+                      <p className="hint">
+                        Situs ini mengirim data kunjungan ke properti Google Analytics berikut. Angka
+                        pengunjung tidak disalin ke dasbor ini karena API pelaporan butuh kredensial
+                        terpisah; tautan di bawah membuka laporan aslinya.
+                      </p>
+                    </div>
+                    <span className="ga-live">Laporan asli</span>
+                  </div>
+
+                  <div className="form-foot">
+                    <a
+                      className="btn btn-sm"
+                      href="https://analytics.google.com/analytics/web/#/realtime"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Buka laporan waktu nyata
+                    </a>
+                    <a
+                      className="btn btn-quiet btn-sm"
+                      href="https://analytics.google.com/analytics/web/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Semua laporan
+                    </a>
+                  </div>
+
+                  <div className="ga-events">
+                    <div className="ga-event">
+                      <code>Measurement ID: {GA_TRACKING_ID}</code>
+                      <p>Pengenal properti yang dipasang di semua halaman, termasuk portal admin.</p>
+                    </div>
+                    <div className="ga-event">
+                      <code>page_view</code>
+                      <p>Setiap halaman dibuka, beserta kota dan sumber kunjungannya.</p>
+                    </div>
+                    <div className="ga-event">
+                      <code>demo_request_submitted</code>
+                      <p>Terkirim saat formulir permintaan demo berhasil disimpan server.</p>
+                    </div>
+                    <div className="ga-event">
+                      <code>whatsapp_lead_outbound</code>
+                      <p>Terkirim saat pengunjung memilih langsung menghubungi lewat WhatsApp.</p>
+                    </div>
+                  </div>
+
+                  <ol className="ga-steps">
+                    <li>Buka laporan waktu nyata untuk melihat siapa yang sedang membuka situs.</li>
+                    <li>Buka Akuisisi untuk melihat asal pengunjung: iklan, media sosial, atau pencarian.</li>
+                    <li>Bandingkan kenaikan pengunjung dengan jumlah permintaan di tab permintaan demo.</li>
+                  </ol>
+                </div>
+              </section>
+            ) : null}
+
+            {activeTab === 'partners' ? (
+              <section className="panel" aria-label="Mitra gym">
+                <div className="admin-card">
+                  <h2>Tambah logo mitra</h2>
+                  <p className="hint">
+                    Logo langsung tampil di bagian mitra pada halaman publik. Berkas PNG, JPG, atau WebP,
+                    maksimal 5 MB.
+                  </p>
+
+                  <form onSubmit={onUpload} noValidate>
+                    <div className="upload-row">
+                      <div className="field">
+                        <label htmlFor="partner-name">Nama gym</label>
+                        <input
+                          id="partner-name"
+                          className="input"
+                          type="text"
+                          value={name}
+                          maxLength={120}
+                          placeholder="Nama gym atau studio"
+                          aria-invalid={fieldErrors.name ? true : undefined}
+                          aria-describedby={fieldErrors.name ? 'partner-name-error' : undefined}
+                          onChange={(event) => {
+                            setName(event.target.value);
+                            setFieldErrors((prev) => {
+                              if (!prev.name) return prev;
+                              const next = { ...prev };
+                              delete next.name;
+                              return next;
+                            });
+                          }}
+                        />
+                        {fieldErrors.name ? (
+                          <span className="field-error" id="partner-name-error">
+                            {fieldErrors.name}
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <div className="field">
+                        <label htmlFor="partner-logo">Berkas logo</label>
+                        <input
+                          id="partner-logo"
+                          ref={fileRef}
+                          className="file"
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp"
+                          aria-invalid={fieldErrors.logo ? true : undefined}
+                          aria-describedby={fieldErrors.logo ? 'partner-logo-error' : undefined}
+                        />
+                        {fieldErrors.logo ? (
+                          <span className="field-error" id="partner-logo-error">
+                            {fieldErrors.logo}
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <button className="btn" type="submit" disabled={uploading}>
+                        {uploading ? 'Mengunggah…' : 'Unggah logo'}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                <div className="admin-card">
+                  <h2>Mitra terdaftar</h2>
+                  <p className="hint">Logo yang saat ini tampil di halaman utama situs.</p>
+
+                  {partners.length > 0 ? (
+                    <>
+                      <div className="table-scroll" style={{ marginTop: 16 }}>
+                        <table className="data">
+                          <thead>
+                            <tr>
+                              <th scope="col">Logo</th>
+                              <th scope="col">Nama gym</th>
+                              <th scope="col">Status</th>
+                              <th scope="col">Diunggah</th>
+                              <th scope="col" style={{ textAlign: 'right' }}>
+                                Tindakan
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {partnersPage.rows.map((partner) => (
+                              <tr key={partner.id}>
+                                <td>
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img className="partner-thumb" src={partner.logo_path} alt={`Logo ${partner.name}`} />
+                                </td>
+                                <td className="cell-strong">{partner.name}</td>
+                                <td>
+                                  <span className="chip" data-status={partner.is_active ? 'completed' : 'cancelled'}>
+                                    {partner.is_active ? 'Tampil' : 'Disembunyikan'}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span className="cell-sub">{formatDate(partner.created_at)}</span>
+                                </td>
+                                <td style={{ textAlign: 'right' }}>
+                                  <button
+                                    className="btn btn-quiet btn-sm"
+                                    type="button"
+                                    disabled={busyId === partner.id}
+                                    onClick={() => onDelete(partner.id, partner.name)}
+                                  >
+                                    {busyId === partner.id ? 'Menghapus…' : 'Hapus'}
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <Pager
+                        page={partnersPage.page}
+                        pageCount={partnersPage.pageCount}
+                        range={partnersPage.range}
+                        total={partnersPage.total}
+                        unit="mitra"
+                        onPage={partnersPage.setPage}
+                      />
+                    </>
+                  ) : (
+                    <div className="empty" style={{ marginTop: 16 }}>
+                      <strong>Belum ada mitra</strong>
+                      <p>Unggah logo pertama lewat formulir di atas, dan logo itu langsung tampil di situs.</p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            ) : null}
+          </>
+        )}
+      </main>
+
+      {toast ? (
+        <div className="toast" data-kind={toast.kind} role="status">
+          <span>{toast.text}</span>
+          <button type="button" onClick={() => setToast(null)} aria-label="Tutup notifikasi">
+            ×
           </button>
         </div>
-      </div>
-
-      {/* Pesan Notifikasi Status */}
-      {status ? (
-        <div className={status.kind === 'ok' ? 'form-status is-ok' : 'form-status is-error'} role="status" style={{ marginBottom: 24 }}>
-          <span aria-hidden="true">{status.kind === 'ok' ? '✓' : '!'}</span>
-          <span>{status.text}</span>
-        </div>
       ) : null}
-
-      {/* Tab Navigasi Admin */}
-      <div className="admin-tabs" role="tablist">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'leads'}
-          className={activeTab === 'leads' ? 'admin-tab is-active' : 'admin-tab'}
-          onClick={() => setActiveTab('leads')}
-        >
-          Permintaan Demo ({pendingCount > 0 ? `${pendingCount} baru` : demoRequests.length})
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'analytics'}
-          className={activeTab === 'analytics' ? 'admin-tab is-active' : 'admin-tab'}
-          onClick={() => setActiveTab('analytics')}
-        >
-          Pengunjung Situs
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'partners'}
-          className={activeTab === 'partners' ? 'admin-tab is-active' : 'admin-tab'}
-          onClick={() => setActiveTab('partners')}
-        >
-          Mitra Gym ({partners.length})
-        </button>
-      </div>
-
-      {/* TAB 1: PERMINTAAN DEMO & LEADS FOLLOW UP */}
-      {activeTab === 'leads' ? (
-        <section aria-label="Permintaan demo dan tindak lanjut">
-          {/* Ringkasan angka */}
-          <div className="admin-kpi-grid">
-            <div className="admin-kpi-card">
-              <span className="admin-kpi-num">{demoRequests.length}</span>
-              <span className="admin-kpi-label">Total Permintaan</span>
-            </div>
-            <div className="admin-kpi-card">
-              <span className="admin-kpi-num amber">{pendingCount}</span>
-              <span className="admin-kpi-label">Belum Dihubungi</span>
-            </div>
-            <div className="admin-kpi-card">
-              <span className="admin-kpi-num blue">{contactedCount}</span>
-              <span className="admin-kpi-label">Sudah Dihubungi</span>
-            </div>
-            <div className="admin-kpi-card">
-              <span className="admin-kpi-num coral">{scheduledCount}</span>
-              <span className="admin-kpi-label">Demo Terjadwal</span>
-            </div>
-            <div className="admin-kpi-card">
-              <span className="admin-kpi-num green">{completedCount}</span>
-              <span className="admin-kpi-label">Selesai</span>
-            </div>
-          </div>
-
-          <div className="admin-panel">
-            <h2>Daftar Permintaan Demo</h2>
-            <p className="hint">
-              Semua yang mengisi formulir di situs publik masuk ke daftar ini. Tekan tombol WhatsApp untuk
-              langsung membalas dengan pesan yang sudah disiapkan.
-            </p>
-
-            {/* Filter dan Pencarian */}
-            <div className="admin-filter-bar">
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Cari nama gym, nama orang, email, atau nomor HP…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <select
-                className="filter-select"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                aria-label="Filter status permintaan"
-              >
-                <option value="all">Semua Status ({demoRequests.length})</option>
-                <option value="pending">Belum Dihubungi ({pendingCount})</option>
-                <option value="contacted">Sudah Dihubungi ({contactedCount})</option>
-                <option value="scheduled">Demo Terjadwal ({scheduledCount})</option>
-                <option value="completed">Selesai ({completedCount})</option>
-              </select>
-            </div>
-
-            {filteredRequests.length > 0 ? (
-              <div className="table-wrap">
-                <table className="data">
-                  <thead>
-                    <tr>
-                      <th scope="col">Gym / Perusahaan</th>
-                      <th scope="col">Nama</th>
-                      <th scope="col">Kontak</th>
-                      <th scope="col">Catatan</th>
-                      <th scope="col">Status</th>
-                      <th scope="col">Tanggal Masuk</th>
-                      <th scope="col" style={{ textAlign: 'right' }}>Tindakan</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRequests.map((request) => (
-                      <tr key={request.id}>
-                        <td className="strong">{request.company_name}</td>
-                        <td>{request.pic_name}</td>
-                        <td className="mono">
-                          {request.phone_number}
-                          <br />
-                          {request.email}
-                        </td>
-                        <td style={{ maxWidth: 220 }}>
-                          <span style={{ fontSize: 13, color: 'var(--ink-soft)' }}>
-                            {request.notes || '-'}
-                          </span>
-                        </td>
-                        <td>
-                          <select
-                            className="status-select"
-                            value={request.status}
-                            aria-label={`Ubah status untuk ${request.company_name}`}
-                            onChange={(e) => onUpdateDemoRequest(request.id, { status: e.target.value })}
-                          >
-                            <option value="pending">Belum Dihubungi</option>
-                            <option value="contacted">Sudah Dihubungi</option>
-                            <option value="scheduled">Demo Terjadwal</option>
-                            <option value="completed">Selesai</option>
-                            <option value="cancelled">Dibatalkan</option>
-                          </select>
-                        </td>
-                        <td className="mono">{formatDate(request.created_at)}</td>
-                        <td style={{ textAlign: 'right' }}>
-                          <div style={{ display: 'inline-flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                            <a
-                              className="btn-wa"
-                              href={getWhatsAppUrl(request.phone_number, request.pic_name, request.company_name)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title="Balas lewat WhatsApp dengan pesan yang sudah disiapkan"
-                            >
-                              <span>Chat WA</span>
-                            </a>
-                            <a
-                              className="btn-email"
-                              href={`mailto:${request.email}?subject=${encodeURIComponent(
-                                `Permintaan demo sistem manajemen gym (${request.company_name})`
-                              )}`}
-                              title="Balas lewat email"
-                            >
-                              <span>Email</span>
-                            </a>
-                            <button
-                              type="button"
-                              className="btn btn-ghost btn-sm"
-                              style={{ padding: '6px 10px', fontSize: 12 }}
-                              onClick={() => onPromptEditNotes(request.id, request.notes)}
-                              title="Tulis atau ubah catatan tindak lanjut"
-                            >
-                              Catatan
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="empty-state">
-                <p>
-                  {searchQuery || statusFilter !== 'all'
-                    ? 'Tidak ada permintaan yang cocok dengan pencarian atau filter ini.'
-                    : 'Belum ada permintaan demo yang masuk.'}
-                </p>
-              </div>
-            )}
-          </div>
-        </section>
-      ) : null}
-
-      {/* TAB 2: ANALISIS PENGUNJUNG & GOOGLE ANALYTICS */}
-      {activeTab === 'analytics' ? (
-        <section aria-label="Data pengunjung situs">
-          <div className="ga-box">
-            <div className="ga-status-header">
-              <div>
-                <span className="eyebrow">Data Pengunjung</span>
-                <h2 style={{ fontFamily: 'var(--sans)', fontSize: 22, marginTop: 4 }}>Google Analytics</h2>
-              </div>
-              <div className="ga-pill">
-                <span className="ga-pill-dot" />
-                <span>Sedang Merekam</span>
-              </div>
-            </div>
-
-            <p style={{ fontFamily: 'var(--body)', fontSize: 14, color: 'var(--ink-soft)', lineHeight: 1.6, maxWidth: 680 }}>
-              Situs Anda sudah tersambung ke Google Analytics. Setiap orang yang membuka halaman, dari mana
-              mereka datang (iklan, media sosial, atau pencarian Google), dan berapa yang mengisi formulir,
-              semuanya tercatat otomatis.
-            </p>
-
-            <div style={{ display: 'flex', gap: 14, marginTop: 20, flexWrap: 'wrap' }}>
-              <a
-                className="btn btn-primary btn-sm"
-                href="https://analytics.google.com/analytics/web/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Buka Google Analytics ↗
-              </a>
-              <a
-                className="btn btn-ghost btn-sm"
-                href="https://analytics.google.com/analytics/web/#/realtime"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Lihat Pengunjung Sekarang ↗
-              </a>
-            </div>
-          </div>
-
-          <div className="admin-panel">
-            <h2>Yang Dicatat Sistem</h2>
-            <p className="hint">
-              Hal-hal berikut dicatat otomatis setiap kali ada pengunjung di situs Anda:
-            </p>
-
-            <div className="ga-events-grid">
-              <div className="ga-event-item">
-                <code>Kode properti (Measurement ID): {GA_TRACKING_ID}</code>
-                <p>Kode pengenal akun Google Analytics milik situs ini. Jangan diubah tanpa bantuan tim teknis.</p>
-              </div>
-              <div className="ga-event-item">
-                <code>Halaman dibuka (page_view)</code>
-                <p>Setiap kali ada orang membuka halaman situs, termasuk halaman admin.</p>
-              </div>
-              <div className="ga-event-item">
-                <code>Formulir demo dikirim (demo_request_submitted)</code>
-                <p>Tercatat saat ada orang selesai mengisi dan mengirim formulir permintaan demo.</p>
-              </div>
-              <div className="ga-event-item">
-                <code>Chat WhatsApp dibuka (whatsapp_lead_outbound)</code>
-                <p>Tercatat saat pengunjung memilih langsung menghubungi kami lewat WhatsApp.</p>
-              </div>
-            </div>
-
-            <div style={{ marginTop: 24, padding: 18, background: 'var(--surface-2)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--line-faint)' }}>
-              <h4 style={{ fontFamily: 'var(--sans)', fontSize: 14, marginBottom: 6, color: 'var(--ink)' }}>
-                Cara melihat data pengunjung:
-              </h4>
-              <ol style={{ fontFamily: 'var(--body)', fontSize: 13, color: 'var(--ink-mute)', lineHeight: 1.7, paddingLeft: 20 }}>
-                <li>Klik tombol <strong>Buka Google Analytics</strong> di atas, lalu masuk dengan akun Google yang terdaftar.</li>
-                <li>Pilih menu <strong>Laporan → Waktu Nyata</strong> untuk melihat siapa yang sedang membuka situs Anda saat ini, beserta kota asalnya.</li>
-                <li>Pilih menu <strong>Akuisisi → Akuisisi Pengguna</strong> untuk melihat dari mana pengunjung datang: iklan Instagram, TikTok, pencarian Google, atau langsung.</li>
-                <li>Bandingkan jumlah pengunjung yang naik dengan jumlah formulir yang masuk di tab <strong>Permintaan Demo</strong>.</li>
-              </ol>
-            </div>
-          </div>
-        </section>
-      ) : null}
-
-      {/* TAB 3: MANAJEMEN MITRA GYM */}
-      {activeTab === 'partners' ? (
-        <section aria-label="Kelola mitra gym">
-          <div className="admin-panel">
-            <h2>Tambah Logo Mitra</h2>
-            <p className="hint">
-              Logo yang diunggah langsung muncul di bagian &ldquo;Mitra&rdquo; pada halaman publik situs.
-              Pakai berkas gambar PNG, JPG, atau WebP, ukuran maksimal 5 MB.
-            </p>
-
-            <form className="admin-form" onSubmit={onUpload} noValidate>
-              <div>
-                <label className="form-label" htmlFor="partner-name">
-                  Nama Gym
-                </label>
-                <input
-                  id="partner-name"
-                  className="form-input"
-                  type="text"
-                  value={name}
-                  maxLength={120}
-                  placeholder="Contoh: FitDay Studio"
-                  aria-invalid={fieldErrors.name ? true : undefined}
-                  aria-describedby={fieldErrors.name ? 'partner-name-error' : undefined}
-                  onChange={(event) => {
-                    setName(event.target.value);
-                    setFieldErrors((prev) => {
-                      if (!prev.name) return prev;
-                      const next = { ...prev };
-                      delete next.name;
-                      return next;
-                    });
-                  }}
-                />
-                {fieldErrors.name ? (
-                  <span className="field-error" id="partner-name-error">
-                    {fieldErrors.name}
-                  </span>
-                ) : null}
-              </div>
-
-              <div>
-                <label className="form-label" htmlFor="partner-logo">
-                  Berkas Logo
-                </label>
-                <input
-                  id="partner-logo"
-                  ref={fileRef}
-                  className="file-input"
-                  type="file"
-                  accept="image/png,image/jpeg,image/webp"
-                  aria-invalid={fieldErrors.logo ? true : undefined}
-                  aria-describedby={fieldErrors.logo ? 'partner-logo-error' : undefined}
-                />
-                {fieldErrors.logo ? (
-                  <span className="field-error" id="partner-logo-error">
-                    {fieldErrors.logo}
-                  </span>
-                ) : null}
-              </div>
-
-              <button className="btn btn-primary" type="submit" disabled={uploading} style={{ minHeight: 44 }}>
-                {uploading ? 'Mengunggah…' : 'Unggah Logo'}
-              </button>
-            </form>
-          </div>
-
-          <div className="admin-panel">
-            <h2>Mitra Gym Terdaftar ({partners.length})</h2>
-            <p className="hint">Logo yang saat ini tampil di halaman utama situs.</p>
-
-            {partners.length > 0 ? (
-              <div className="table-wrap">
-                <table className="data">
-                  <thead>
-                    <tr>
-                      <th scope="col">Logo</th>
-                      <th scope="col">Nama Gym</th>
-                      <th scope="col">Status</th>
-                      <th scope="col">Tanggal Diunggah</th>
-                      <th scope="col" style={{ textAlign: 'right' }}>Tindakan</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {partners.map((partner) => (
-                      <tr key={partner.id}>
-                        <td className="logo-cell">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={partner.logo_path} alt={`Logo ${partner.name}`} />
-                        </td>
-                        <td className="strong">{partner.name}</td>
-                        <td>
-                          <span className={partner.is_active ? 'badge is-active' : 'badge'}>
-                            {partner.is_active ? 'Tampil' : 'Tidak Tampil'}
-                          </span>
-                        </td>
-                        <td className="mono">{formatDate(partner.created_at)}</td>
-                        <td style={{ textAlign: 'right' }}>
-                          <button
-                            className="btn btn-ghost btn-sm btn-danger"
-                            type="button"
-                            disabled={busyId === partner.id}
-                            onClick={() => onDelete(partner.id, partner.name)}
-                          >
-                            {busyId === partner.id ? 'Menghapus…' : 'Hapus Mitra'}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="empty-state">
-                <p>Belum ada mitra terdaftar. Tambahkan logo pertama lewat formulir di atas.</p>
-              </div>
-            )}
-          </div>
-        </section>
-      ) : null}
-    </main>
+    </>
   );
 }
