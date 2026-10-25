@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import { Reveal, RevealGroup } from '@/components/motion/Reveal';
 import { SplitHeadline } from '@/components/motion/SplitHeadline';
 import { CONTACT_EMAIL, mailtoLink } from '@/lib/site';
+import InstagramSection from '@/components/InstagramSection';
 import ProductShot from '@/components/ProductShot';
 import { DESKTOP_SHOT, MOBILE_SHOT } from '@/lib/produk';
 import { FAQ, structuredData } from '@/lib/seo';
@@ -378,6 +379,8 @@ export default async function HomePage() {
           </div>
         </section>
 
+        <InstagramSection />
+
         <section className="section" id="demo">
           <div className="wrap">
             <div className="demo-panel">
@@ -436,6 +439,7 @@ export default async function HomePage() {
               <a href="#aturan">Aturan sistem</a>
               <a href="#mitra">Mitra</a>
               <a href="#tim">Tim</a>
+              <a href="#instagram">Instagram</a>
               <a href="#tanya">Pertanyaan umum</a>
               <a href="#demo">Jadwalkan demo</a>
               <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>

@@ -10,6 +10,7 @@ const SECTIONS = [
   { id: 'produk', label: 'Tampilan' },
   { id: 'aturan', label: 'Aturan' },
   { id: 'mitra', label: 'Mitra' },
+  { id: 'instagram', label: 'Instagram' },
   { id: 'tanya', label: 'Tanya' },
   { id: 'tim', label: 'Tim' },
 ] as const;

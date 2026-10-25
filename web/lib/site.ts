@@ -4,6 +4,11 @@ export const CONTACT_EMAIL = 'info@solusimitramandiri.com';
 /** Nomor WhatsApp sales, format internasional tanpa tanda plus (wa.me). */
 export const WHATSAPP_NUMBER = '6281222827630';
 
+/** Akun Instagram resmi, tanpa tanda @. */
+export const INSTAGRAM_HANDLE = 'solusimitramandiri';
+
+export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`;
+
 /** Tautan surel dengan subjek terisi untuk tombol konsultasi di halaman publik. */
 export function mailtoLink(subject: string): string {
   return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`;

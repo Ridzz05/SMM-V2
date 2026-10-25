@@ -223,6 +223,14 @@ textarea {
   visibility: hidden;
 }
 
+/* Topeng baris SplitText memotong tepat di kotak garis, sedangkan kotak huruf
+   Instrument Serif lebih tinggi: pada 72px font ascent + descent 93px, sementara
+   line box display hanya 79px. Selama animasi potongan itu yang diinginkan;
+   setelah selesai ia memotong descender "g"/"y" secara permanen.
+   `overflow-clip-margin` tidak menolong karena potongan tetap di kotak garis.
+   Karena itu SplitHeadline mengembalikan `overflow` ke `visible` lewat inline
+   style begitu baris berhenti bergerak (lihat components/motion/SplitHeadline).
+   Aturan di sini hanya menjaga jarak antarbaris tetap sama dengan rancangan. */
 .split-line {
   will-change: transform;
 }
@@ -2287,5 +2295,112 @@ input[type='file'].file::file-selector-button {
   .shot-legend li {
     grid-template-columns: 22px minmax(0, 1fr);
     gap: 8px;
+  }
+}
+
+/* ---------- Instagram ---------- */
+
+.insta {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(24px, 5vw, 64px);
+  align-items: start;
+}
+
+.insta-title {
+  font-family: var(--serif);
+  font-size: var(--step-4);
+  line-height: 1.14;
+  letter-spacing: -0.025em;
+  max-width: 20ch;
+  margin: 10px 0 16px;
+}
+
+.insta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.insta-panel {
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  background: var(--paper-raised);
+}
+
+.insta-handle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: var(--step-0);
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.insta-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+}
+
+.insta-facts {
+  display: grid;
+  gap: 0;
+}
+
+.insta-facts div {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.insta-facts dt {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding-top: 2px;
+}
+
+.insta-facts dd {
+  margin: 0;
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+}
+
+.insta-note {
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}
+
+@media (max-width: 1024px) {
+  .insta {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .insta-facts div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
   }
 }
