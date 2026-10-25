@@ -7,6 +7,7 @@ import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '@/lib/motion';
 const SECTIONS = [
   { id: 'masalah', label: 'Masalah' },
   { id: 'modul', label: 'Modul' },
+  { id: 'produk', label: 'Tampilan' },
   { id: 'aturan', label: 'Aturan' },
   { id: 'mitra', label: 'Mitra' },
   { id: 'tanya', label: 'Tanya' },

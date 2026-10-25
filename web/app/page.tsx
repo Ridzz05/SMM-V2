@@ -4,6 +4,8 @@ import Navbar from '@/components/Navbar';
 import { Reveal, RevealGroup } from '@/components/motion/Reveal';
 import { SplitHeadline } from '@/components/motion/SplitHeadline';
 import { CONTACT_EMAIL, mailtoLink } from '@/lib/site';
+import ProductShot from '@/components/ProductShot';
+import { DESKTOP_SHOT, MOBILE_SHOT } from '@/lib/produk';
 import { FAQ, structuredData } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
@@ -238,6 +240,30 @@ export default async function HomePage() {
           </div>
         </section>
 
+        <section className="section" id="produk">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="eyebrow">Di dalam sistem</p>
+                <SplitHeadline as="h2">Tampilan asli, bukan gambar rancangan.</SplitHeadline>
+              </div>
+              <p className="lede">
+                Dua tangkapan layar di bawah diambil dari sistem yang berjalan dengan data uji.
+                Nomor pada gambar menunjuk elemen yang sama pada daftar keterangan.
+              </p>
+            </div>
+
+            <div className="shots">
+              <Reveal>
+                <ProductShot shot={DESKTOP_SHOT} variant="wide" />
+              </Reveal>
+              <Reveal>
+                <ProductShot shot={MOBILE_SHOT} variant="tall" />
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
         <section className="section band" id="aturan">
           <div className="wrap">
             <div className="section-head">
@@ -406,6 +432,7 @@ export default async function HomePage() {
             <nav className="foot-links" aria-label="Tautan kaki halaman">
               <a href="#masalah">Masalah</a>
               <a href="#modul">Modul</a>
+              <a href="#produk">Tampilan sistem</a>
               <a href="#aturan">Aturan sistem</a>
               <a href="#mitra">Mitra</a>
               <a href="#tim">Tim</a>

@@ -173,6 +173,22 @@ git push origin main
 - `API_ORIGIN` dibaca saat `next build`, bukan `next start`; mengubahnya di
   server tanpa rebuild tidak berpengaruh.
 
+## Tangkapan layar produk
+
+Seksi `#produk` di halaman publik menampilkan dua tangkapan layar sistem BossQueen
+ERP yang benar-benar berjalan (desktop 1440x900 dan ponsel 390x844), dengan kotak
+sorot bernomor dan daftar keterangan di bawahnya.
+
+- Tangkapan mentah disimpan di `web/assets/screenshots/`, tidak ikut ter-deploy.
+- `web/scripts/annotate-shots.mjs` membakar kotak dan nomor ke piksel, lalu
+  menulis WebP ke `public/images/produk/`. Jalankan ulang setelah tangkapan
+  diganti: `node web/scripts/annotate-shots.mjs`.
+- Posisi kotak di skrip itu diukur dari DOM aplikasi pada viewport yang sama
+  dengan tangkapannya, dalam piksel gambar. Anotasi sengaja di piksel, bukan
+  overlay CSS, supaya tidak bergeser saat gambar mengecil.
+- Teks keterangan ada di `web/lib/produk.ts`; nomornya harus sama dengan nomor
+  di gambar.
+
 ## SEO
 
 - Metadata, canonical, Open Graph, Twitter card, dan robots diatur di
