@@ -10,18 +10,25 @@ import './design.css';
  * cepat dan tidak ada FOUT), dan `size-adjust` fallback buatan Next menjaga
  * CLS tetap nol saat font selesai dimuat.
  */
+/* Preload hanya untuk serif: ia font judul, jadi ia yang muncul di LCP.
+   Inter dan Plex Mono dipakai untuk teks isi dan label; keduanya bisa menyusul
+   tanpa menahan render, dan preload-nya hanya menambah permintaan kritis. */
 const serif = Instrument_Serif({
   subsets: ['latin'],
   weight: '400',
   style: ['normal', 'italic'],
   variable: '--font-serif',
   display: 'swap',
+  preload: false,
+  adjustFontFallback: true,
 });
 
 const sans = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
   display: 'swap',
+  preload: false,
+  adjustFontFallback: true,
 });
 
 const mono = IBM_Plex_Mono({
@@ -29,6 +36,8 @@ const mono = IBM_Plex_Mono({
   weight: ['400', '500'],
   variable: '--font-mono',
   display: 'swap',
+  preload: false,
+  adjustFontFallback: true,
 });
 
 export const metadata: Metadata = {

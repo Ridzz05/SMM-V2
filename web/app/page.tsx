@@ -5,8 +5,6 @@ import { Reveal, RevealGroup } from '@/components/motion/Reveal';
 import { SplitHeadline } from '@/components/motion/SplitHeadline';
 import { CONTACT_EMAIL, mailtoLink } from '@/lib/site';
 import InstagramSection from '@/components/InstagramSection';
-import ProductShot from '@/components/ProductShot';
-import { DESKTOP_SHOT, MOBILE_SHOT } from '@/lib/produk';
 import { FAQ, structuredData } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
@@ -241,27 +239,24 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section" id="produk">
+        {/* Tangkapan layar dipindah ke /tampilan: dua gambar 1800px dan 488px
+            terlalu berat untuk muatan awal beranda, dan halaman terpisah punya
+            URL sendiri yang bisa diindeks. Di sini hanya tautan. */}
+        <section className="section" id="tampilan">
           <div className="wrap">
-            <div className="section-head">
+            <Reveal className="link-teaser">
               <div>
                 <p className="eyebrow">Di dalam sistem</p>
-                <SplitHeadline as="h2">Tampilan asli, bukan gambar rancangan.</SplitHeadline>
+                <h2>Lihat tampilan aslinya, bukan gambar rancangan.</h2>
+                <p>
+                  Dua tangkapan layar dari sistem yang berjalan: dasbor di layar desktop dan di ponsel,
+                  lengkap dengan keterangan tiap elemen.
+                </p>
               </div>
-              <p className="lede">
-                Dua tangkapan layar di bawah diambil dari sistem yang berjalan dengan data uji.
-                Nomor pada gambar menunjuk elemen yang sama pada daftar keterangan.
-              </p>
-            </div>
-
-            <div className="shots">
-              <Reveal>
-                <ProductShot shot={DESKTOP_SHOT} variant="wide" />
-              </Reveal>
-              <Reveal>
-                <ProductShot shot={MOBILE_SHOT} variant="tall" />
-              </Reveal>
-            </div>
+              <a className="btn" href="/tampilan">
+                Buka halaman tampilan
+              </a>
+            </Reveal>
           </div>
         </section>
 
@@ -435,7 +430,7 @@ export default async function HomePage() {
             <nav className="foot-links" aria-label="Tautan kaki halaman">
               <a href="#masalah">Masalah</a>
               <a href="#modul">Modul</a>
-              <a href="#produk">Tampilan sistem</a>
+              <a href="/tampilan">Tampilan sistem</a>
               <a href="#aturan">Aturan sistem</a>
               <a href="#mitra">Mitra</a>
               <a href="#tim">Tim</a>

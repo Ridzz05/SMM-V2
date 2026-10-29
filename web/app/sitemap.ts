@@ -19,5 +19,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 1,
     },
+    {
+      // Halaman lampiran produk: satu URL sendiri supaya bisa muncul di hasil
+      // pencarian untuk kata kunci "tampilan sistem manajemen gym".
+      url: `${SITE_URL}/tampilan`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
   ];
 }

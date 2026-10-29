@@ -7,7 +7,6 @@ import { gsap, useGSAP, ScrollTrigger, MOTION_OK } from '@/lib/motion';
 const SECTIONS = [
   { id: 'masalah', label: 'Masalah' },
   { id: 'modul', label: 'Modul' },
-  { id: 'produk', label: 'Tampilan' },
   { id: 'aturan', label: 'Aturan' },
   { id: 'mitra', label: 'Mitra' },
   { id: 'instagram', label: 'Instagram' },
@@ -15,8 +14,26 @@ const SECTIONS = [
   { id: 'tim', label: 'Tim' },
 ] as const;
 
+/** Rute terpisah, bukan seksi: halaman ini memuat gambar berat. */
+const PAGE_LINKS = [{ href: '/tampilan', label: 'Tampilan' }] as const;
+
 /** Seksi yang dilacak untuk penanda posisi, termasuk yang tidak punya tautan. */
 const TRACKED = [...SECTIONS.map((section) => section.id), 'demo'];
+
+/** Logo navbar. Dipakai juga oleh halaman yang tidak mengirim prop sendiri. */
+function DefaultBrandMark() {
+  return (
+    /* eslint-disable-next-line @next/next/no-img-element */
+    <img
+      src="/images/brand/logo-mark-96.webp"
+      srcSet="/images/brand/logo-mark-96.webp 1x, /images/brand/logo-mark-192.webp 2x"
+      width={82}
+      height={96}
+      alt=""
+      decoding="async"
+    />
+  );
+}
 
 /**
  * Navigasi utama.
@@ -27,7 +44,19 @@ const TRACKED = [...SECTIONS.map((section) => section.id), 'demo'];
  * 3. Lembar mobile = urutan masuk berstagger supaya item terbaca satu per satu.
  * Semua dibuat di dalam useGSAP sehingga ikut dibersihkan saat unmount.
  */
-export default function Navbar({ brandMark }: { brandMark: React.ReactNode }) {
+export default function Navbar({
+  brandMark,
+  variant = 'home',
+}: {
+  brandMark?: React.ReactNode;
+  /**
+   * `home` = navigasi seksi ber-anchor di landing. `page` = halaman lain, di mana
+   * anchor seksi tidak ada: semua tautan kembali ke beranda, dan penanda posisi
+   * dimatikan karena tidak ada seksi untuk dilacak.
+   */
+  variant?: 'home' | 'page';
+}) {
+  const isHome = variant === 'home';
   const navRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
@@ -39,7 +68,7 @@ export default function Navbar({ brandMark }: { brandMark: React.ReactNode }) {
       const mm = gsap.matchMedia();
 
       mm.add(MOTION_OK, () => {
-        if (progressRef.current) {
+        if (isHome && progressRef.current) {
           gsap.to(progressRef.current, {
             scaleX: 1,
             ease: 'none',
@@ -49,6 +78,7 @@ export default function Navbar({ brandMark }: { brandMark: React.ReactNode }) {
       });
 
       TRACKED.forEach((id) => {
+        if (!isHome) return;
         const section = document.getElementById(id);
         if (!section) return;
         ScrollTrigger.create({
@@ -97,8 +127,8 @@ export default function Navbar({ brandMark }: { brandMark: React.ReactNode }) {
       <div className="nav-progress" ref={progressRef} aria-hidden="true" />
       <div className="wrap">
         <div className="nav-inner">
-          <a className="brand" href="#top" aria-label="PT Solusi Mitra Mandiri, ke atas halaman">
-            {brandMark}
+          <a className="brand" href="/" aria-label="PT Solusi Mitra Mandiri, kembali ke beranda">
+            {brandMark ?? <DefaultBrandMark />}
             <span className="brand-text">
               <strong>Solusi Mitra Mandiri</strong>
               <span>Sistem Gym</span>
@@ -109,7 +139,14 @@ export default function Navbar({ brandMark }: { brandMark: React.ReactNode }) {
             <ul className="nav-links">
               {SECTIONS.map(({ id, label }) => (
                 <li key={id}>
-                  <a href={`#${id}`} aria-current={active === id ? 'true' : undefined}>
+                  <a href={`/#${id}`} aria-current={active === id ? 'true' : undefined}>
+                    {label}
+                  </a>
+                </li>
+              ))}
+              {PAGE_LINKS.map(({ href, label }) => (
+                <li key={href}>
+                  <a href={href} aria-current={!isHome && href === '/tampilan' ? 'true' : undefined}>
                     {label}
                   </a>
                 </li>
@@ -122,7 +159,7 @@ export default function Navbar({ brandMark }: { brandMark: React.ReactNode }) {
             <a className="link-quiet" href="/admin/login">
               Masuk Admin
             </a>
-            <a className="btn btn-sm" href="#demo">
+            <a className="btn btn-sm" href="/#demo">
               Jadwalkan Demo
             </a>
             <button
@@ -145,14 +182,19 @@ export default function Navbar({ brandMark }: { brandMark: React.ReactNode }) {
           <div className="wrap">
             <div className="nav-sheet-inner">
               {SECTIONS.map(({ id, label }) => (
-                <a key={id} href={`#${id}`} data-sheet-item onClick={() => setOpen(false)}>
+                <a key={id} href={`/#${id}`} data-sheet-item onClick={() => setOpen(false)}>
+                  {label}
+                </a>
+              ))}
+              {PAGE_LINKS.map(({ href, label }) => (
+                <a key={href} href={href} data-sheet-item onClick={() => setOpen(false)}>
                   {label}
                 </a>
               ))}
               <a href="/admin/login" data-sheet-item onClick={() => setOpen(false)}>
                 Masuk Admin
               </a>
-              <a className="btn" href="#demo" data-sheet-item onClick={() => setOpen(false)}>
+              <a className="btn" href="/#demo" data-sheet-item onClick={() => setOpen(false)}>
                 Jadwalkan Demo
               </a>
             </div>
